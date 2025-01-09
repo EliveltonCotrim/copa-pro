@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('banner_path')->nullable();
             $table->string('regulation_path')->nullable();
             $table->string('game_platform')->nullable();
-            $table->string('max_playes')->nullable();
+            $table->integer('max_playes')->nullable();
             $table->tinyInteger('championship_format')->nullable(); // 'cup', 'league', 'KNOCKOUT'
             $table->string('wpp_group_link')->nullable();
             $table->string('registration_link')->nullable();

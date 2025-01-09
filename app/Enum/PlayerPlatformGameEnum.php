@@ -2,14 +2,16 @@
 
 namespace App\Enum;
 
-enum PlayerPlatformGameEnum: int
+use Filament\Support\Contracts\HasLabel;
+
+enum PlayerPlatformGameEnum: int implements HasLabel
 {
     case PLAYSTATION = 1;
-    case XBOX = 3;
-    case PC = 2;
-    case MOBILE = 3;
+    case XBOX = 2;
+    case PC = 3;
+    case MOBILE = 4;
 
-    public function getName()
+    public function getLabel(): ?string
     {
         return match ($this){
             self::PLAYSTATION => 'Playstation',
