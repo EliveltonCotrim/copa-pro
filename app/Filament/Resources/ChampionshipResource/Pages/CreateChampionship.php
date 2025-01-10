@@ -5,8 +5,24 @@ namespace App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Notifications\Notification;
 
 class CreateChampionship extends CreateRecord
 {
     protected static string $resource = ChampionshipResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+    public function getCreatedNotification(): ?Notification
+    {
+        $campeonato = $this->record;
+
+        return Notification::make()
+            ->success()
+            ->title('Campeonato criado')
+            ->body("<strong>{$campeonato->name}</strong> foi criado.");
+    }
 }

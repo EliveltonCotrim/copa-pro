@@ -2,38 +2,43 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\ChampionshipFormatEnum;
-use App\Enum\ChampionshipGamesEnum;
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\{ChampionshipFormatEnum,ChampionshipGamesEnum,ChampionshipStatusEnum,PlayerPlatformGameEnum};
 use App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource\RelationManagers;
 use App\Models\Championship;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Forms\{Form,Get,Set};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\{Builder,SoftDeletingScope};
+use Filament\Forms\Components\{Select,TextInput,DatePicker,Textarea,FileUpload};
+use Filament\Tables\Columns\TextColumn;
 use Leandrocfe\FilamentPtbrFormFields\Money;
+use Filament\Notifications\Notification;
 
 class ChampionshipResource extends Resource
 {
     protected static ?string $model = Championship::class;
 
-    protected static ?string $label = 'Campeonatos';
+    protected static ?string $navigationLabel = 'Campeonatos';
+
+    protected static ?string $label = 'Campeonato';
+
+    protected static ?string $pluralLabel = 'Campeonatos';
 
     protected static ?string $navigationIcon = 'heroicon-o-trophy';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label('Nome')
                     ->required()
                     ->maxLength(255),
@@ -41,10 +46,10 @@ class ChampionshipResource extends Resource
                     ->label('Taxa de inscrição')
                     ->required()
                     ->default('0,00'),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->label('Descrição')
                     ->columnSpanFull(),
-                Forms\Components\DatePicker::make('start_date')
+                DatePicker::make('start_date')
                     ->label('Data de início')
                     ->minDate(now()->format('Y-m-d'))
                     ->beforeOrEqual('end_date')
@@ -54,7 +59,7 @@ class ChampionshipResource extends Resource
                     ])
                     ->date()
                     ->required(),
-                Forms\Components\DatePicker::make('end_date')
+                DatePicker::make('end_date')
                     ->label('Data de término')
                     ->required()
                     ->afterOrEqual('start_date')
@@ -62,7 +67,7 @@ class ChampionshipResource extends Resource
                         'after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
                     ])
                     ->date(),
-                Forms\Components\FileUpload::make('banner_path')
+                FileUpload::make('banner_path')
                     ->image()
                     ->live()
                     ->imageEditor()
@@ -71,28 +76,28 @@ class ChampionshipResource extends Resource
                     ->maxSize(2048)
                     ->directory('banners-championships')
                     ->label('Banner'),
-                Forms\Components\FileUpload::make('regulation_path')
+                FileUpload::make('regulation_path')
                     ->label('Regulamento')
                     ->preserveFilenames()
                     ->directory('regulations-championships')
                     ->acceptedFileTypes(['application/pdf']),
-                Forms\Components\Select::make('game_platform')
+                Select::make('game_platform')
                     ->options(PlayerPlatformGameEnum::class)
                     ->searchable()
                     ->required()
                     ->label('Plataforma do jogo'),
-                Forms\Components\Select::make('game')
+                Select::make('game')
                     ->options(ChampionshipGamesEnum::class)
                     ->searchable()
                     ->required()
                     ->label('Jogo'),
-                Forms\Components\Select::make('championship_format')
+                Select::make('championship_format')
                     ->options(ChampionshipFormatEnum::class)
                     ->searchable()
                     ->required()
                     ->live()
                     ->label('Formato do campeonato'),
-                Forms\Components\Select::make('max_playes')
+                Select::make('max_playes')
                     ->visible(fn(Get $get): bool => $get('championship_format') == ChampionshipFormatEnum::CUP->value)
                     ->options([
                         '8' => '8',
@@ -100,7 +105,7 @@ class ChampionshipResource extends Resource
                         '32' => '32',
                         '64' => '64',
                     ])->label('Número máximo de jogadores')->required(),
-                Forms\Components\Select::make('max_playes')
+                Select::make('max_playes')
                     ->visible(function (Get $get, Set $set) {
                         return $get('championship_format') == ChampionshipFormatEnum::KNOCKOUT->value;
                     })
@@ -111,7 +116,7 @@ class ChampionshipResource extends Resource
                         '2' => '2',
                     ])->label('Número máximo de jogadores')
                     ->helperText('Oitavas, quartas, semifinal, ou final')->required(),
-                Forms\Components\TextInput::make('max_playes')
+                TextInput::make('max_playes')
                     ->visible(fn(Get $get): bool => $get('championship_format') == ChampionshipFormatEnum::LEAGUE->value)
                     ->label('Número máximo de jogadores')
                     ->maxValue(32)
@@ -119,19 +124,20 @@ class ChampionshipResource extends Resource
                     ->numeric()
                     ->required()
                     ->minValue(0),
-                Forms\Components\TextInput::make('wpp_group_link')
+                TextInput::make('wpp_group_link')
                     ->label('Link do grupo de WhatsApp')
                     ->url()
                     ->prefix('https://')
                     ->maxLength(255),
-                // Forms\Components\TextInput::make('registration_link')
+                // TextInput::make('registration_link')
                 //     ->url()
                 //     ->prefix('https://')
                 //     ->label('Link de inscrição')
                 //     ->maxLength(255),
-                Forms\Components\Textarea::make('information')
+                Textarea::make('information')
+                    ->label('Informação')
                     ->columnSpanFull(),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->options(ChampionshipStatusEnum::class)
                     ->in(ChampionshipStatusEnum::cases())
                     ->required(),
@@ -142,40 +148,66 @@ class ChampionshipResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('start_date')
+                TextColumn::make('start_date')
                     ->label('Data de início')
-                    ->date()
+                    ->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->format('d/m/Y'))
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('registration_fee')
+                TextColumn::make('end_date')
+                    ->label('Data de término')
+                    ->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->format('d/m/Y'))
+                    ->searchable()
+                    ->toggleable()
+                    ->sortable(),
+                TextColumn::make('registration_fee')
                     ->label('Taxa de inscrição')
                     ->toggleable()
                     ->money('BRL')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable()
+                TextColumn::make('status')
                     ->toggleable()
-                    ->sortable()
                     ->badge(),
-            ])->defaultSort('start_date')
+            ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->visible(fn ($record) => !$record->trashed()),
+                Tables\Actions\DeleteAction::make()
+                    ->successNotification(function ($record) {
+                        return Notification::make()
+                            ->warning()
+                            ->title("Campeonato desativado")
+                            ->body("<strong>{$record->name}</strong> está na lixeira.");
+                    }),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotification(function ($record) {
+                        return Notification::make()
+                            ->success()
+                            ->title("Campeonato restaurado")
+                            ->body("<strong>{$record->name}</strong> está restaurado.");
+                    })
+                ->visible(fn ($record) => $record->trashed()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    //Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->groups([
+                Tables\Grouping\Group::make('created_at')
+                    ->label('Data de criação')
+                    ->date()
+                    ->collapsible(),
+            ])
+            ->defaultSort('start_date');
     }
 
     public static function getRelations(): array
