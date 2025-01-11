@@ -6,6 +6,7 @@ use App\Filament\Resources\ChampionshipResource;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Notifications\Notification;
 
 class EditChampionship extends EditRecord
 {
@@ -15,6 +16,7 @@ class EditChampionship extends EditRecord
     {
         return [
             Actions\ViewAction::make(),
+            //Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
         ];
@@ -36,6 +38,4 @@ class EditChampionship extends EditRecord
 
         return Notification::make()->success()->title('Campeonato atualizado')->body("O campeonato {$championship->name} foi alterado com sucesso.");
     }
-
-
 }
