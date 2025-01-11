@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ChampionshipResource\Pages;
 
 use App\Filament\Resources\ChampionshipResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Notification;
 
@@ -21,18 +22,20 @@ class EditChampionship extends EditRecord
         ];
     }
 
+    public function getTitle(): string
+    {
+        return 'Campeonato';
+    }
+    
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
     }
 
-    public function getSavedNotification(): ?Notification
+    protected function getSavedNotification(): ?Notification
     {
-        $campeonato = $this->record;
+        $championship = $this->record;
 
-        return Notification::make()
-            ->info()
-            ->title('Campeonato alterado')
-            ->body("<strong>{$campeonato->name}</strong> foi alterado.");
+        return Notification::make()->success()->title('Campeonato atualizado')->body("O campeonato {$championship->name} foi alterado com sucesso.");
     }
 }

@@ -25,4 +25,9 @@ class CreateChampionship extends CreateRecord
             ->title('Campeonato criado')
             ->body("<strong>{$campeonato->name}</strong> foi criado.");
     }
+  
+    public function getTitle(): string
+    {
+        return 'Criar Campeonato';
+    }
 }
