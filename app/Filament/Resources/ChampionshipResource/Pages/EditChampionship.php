@@ -6,7 +6,6 @@ use App\Filament\Resources\ChampionshipResource;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Notifications\Notification;
 
 class EditChampionship extends EditRecord
 {
@@ -26,7 +25,7 @@ class EditChampionship extends EditRecord
     {
         return 'Campeonato';
     }
-    
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
