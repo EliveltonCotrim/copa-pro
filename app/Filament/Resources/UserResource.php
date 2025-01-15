@@ -8,8 +8,8 @@ use App\Models\Organizer;
 use App\Models\User;
 use App\RoleEnum;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\{Select,TextInput};
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -24,13 +24,14 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Usuários';
     protected static ?string $label = 'Usuário';
     protected static ?string $pluralLabel = 'Usuários';
-
-
+    protected static ?string $navigationBadgeTooltip = 'Número de usuários';
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Configurações';
 
     public static function form(Form $form): Form
     {
@@ -55,6 +56,7 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
                     ->dehydrated(fn($state) => filled($state))
                     ->required(fn(string $context): bool => $context === 'create')
+                    ->hidden(fn (string $context): bool => $context !== 'create')
                     ->maxLength(255),
                 Select::make('roles')
                     ->options(RoleEnum::class)
@@ -66,6 +68,7 @@ class UserResource extends Resource
                     })
                     ->in(RoleEnum::cases())
                     ->required()
+                    ->relationship('roles', 'name')
                     ->label('Função'),
                 TextInput::make('phone')
                     ->visible(function (Get $get) {
@@ -88,21 +91,25 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label('E-mail')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('userable_type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('userable_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('roles')
-                    ->label('Funções')
-                    ->sortable(),
-
+                TextColumn::make('roles')
+                    ->label('Papéis')
+                    ->formatStateUsing(function ($record) {
+                        if ($record->roles->isNotEmpty()) {
+                            return $record->roles->pluck('name')->join(', ');
+                        }
+                    })
+                    ->searchable(query: function (Builder $query, string $search) {
+                        $query->whereHas('roles', function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        });
+                    })
+                    ->placeholder('Sem papéis'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
