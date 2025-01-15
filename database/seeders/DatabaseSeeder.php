@@ -29,13 +29,13 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123456'),
         ])->assignRole(RoleEnum::ADMIN->value);
 
-        $organizer = Organizer::create([
-            'name' => 'Organizer Test',
-            'phone' => '999999999',
-            'descrition' => 'Organizer Test Description',
-        ]);
+        // $organizer = Organizer::create([
+        //     'name' => 'Organizer Test',
+        //     'phone' => '999999999',
+        //     'descrition' => 'Organizer Test Description',
+        // ]);
 
-        $organizer->user()->create([
+        User::create([
             'name' => 'Organizer test',
             'email' => 'organizerTest@example.com',
             'email_verified_at' => now(),

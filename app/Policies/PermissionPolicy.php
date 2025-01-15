@@ -29,7 +29,7 @@ class PermissionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('permissions:create');
+        return false;
     }
 
     /**
@@ -37,7 +37,7 @@ class PermissionPolicy
      */
     public function update(User $user, ModelsPermission $permissions): bool
     {
-        return $user->hasPermissionTo('permissions:edit');
+        return false;
     }
 
     /**
@@ -45,7 +45,7 @@ class PermissionPolicy
      */
     public function delete(User $user, ModelsPermission $permissions): bool
     {
-        return $user->hasPermissionTo('permissions:delete');
+        return false;
     }
 
     /**
@@ -53,7 +53,7 @@ class PermissionPolicy
      */
     public function restore(User $user, ModelsPermission $permissions): bool
     {
-        return $user->hasPermissionTo('permissions:restore');
+        return false;
     }
 
     /**
@@ -61,6 +61,6 @@ class PermissionPolicy
      */
     public function forceDelete(User $user, ModelsPermission $permissions): bool
     {
-        return $user->hasPermissionTo('permissions:forceDelete');
+        return false;
     }
 }

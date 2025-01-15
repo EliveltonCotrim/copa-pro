@@ -6,7 +6,7 @@ use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
 use App\Models\Role;
 use Filament\Forms;
-use Filament\Forms\Components\{TextInput,Select};
+use Filament\Forms\Components\{TextInput, Select};
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -32,6 +32,7 @@ class RoleResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->unique(ignoreRecord: true)
+                    ->readOnly(fn(string $context): bool => $context !== 'create')
                     ->required()
                     ->maxLength(255),
                 Select::make('permissions')
@@ -47,16 +48,16 @@ class RoleResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('permissions')
-                    ->label('Permissões')
-                    ->formatStateUsing(function ($record) {
-                        if ($record->permissions->isNotEmpty()) {
-                            return $record->permissions->pluck('name')->join(', ');
-                        }
-                        return 'Sem permissões';
-                    })
-                    ->searchable()
-                    ->placeholder('Sem permissões'),
+                // TextColumn::make('permissions')
+                //     ->label('Permissões')
+                //     ->formatStateUsing(function ($record) {
+                //         if ($record->permissions->isNotEmpty()) {
+                //             return $record->permissions->pluck('name')->join(' ');
+                //         }
+                //         return 'Sem permissões';
+                //     })->badge()
+                //     ->searchable()
+                //     ->placeholder('Sem permissões'),
                 // ->toggleable(isToggledHiddenByDefault: true),
 
             ])
@@ -65,11 +66,11 @@ class RoleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

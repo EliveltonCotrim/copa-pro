@@ -22,19 +22,19 @@ class PermissionsSeed extends Seeder
 
         Permission::findOrCreate('roles:list');
         Permission::findOrCreate('roles:view');
-        Permission::findOrCreate('roles:create');
+        // Permission::findOrCreate('roles:create');
         Permission::findOrCreate('roles:edit');
-        Permission::findOrCreate('roles:delete');
-        Permission::findOrCreate('roles:restore');
-        Permission::findOrCreate('roles:forceDelete');
+        // Permission::findOrCreate('roles:delete');
+        // Permission::findOrCreate('roles:restore');
+        // Permission::findOrCreate('roles:forceDelete');
 
         Permission::findOrCreate('permissions:list');
         Permission::findOrCreate('permissions:view');
-        Permission::findOrCreate('permissions:create');
-        Permission::findOrCreate('permissions:edit');
-        Permission::findOrCreate('permissions:delete');
-        Permission::findOrCreate('permissions:restore');
-        Permission::findOrCreate('permissions:forceDelete');
+        // Permission::findOrCreate('permissions:create');
+        // Permission::findOrCreate('permissions:edit');
+        // Permission::findOrCreate('permissions:delete');
+        // Permission::findOrCreate('permissions:restore');
+        // Permission::findOrCreate('permissions:forceDelete');
 
         Permission::findOrCreate('championships:list');
         Permission::findOrCreate('championships:view');

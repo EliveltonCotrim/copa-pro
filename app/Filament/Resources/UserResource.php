@@ -49,47 +49,28 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255),
                 TextInput::make('password')
-                    ->required()
                     ->label('Senha')
                     ->minLength(8)
                     ->password()
+                    ->revealable()
                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
                     ->dehydrated(fn($state) => filled($state))
                     ->required(fn(string $context): bool => $context === 'create')
-                    ->hidden(fn (string $context): bool => $context !== 'create')
                     ->maxLength(255),
                 Select::make('roles')
                     ->options(RoleEnum::class)
-                    ->live()
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        if ($state === RoleEnum::ORGANIZATION->value) {
-                            $set('phone', null);
-                        }
-                    })
-                    ->in(RoleEnum::cases())
                     ->required()
+                    ->searchable()
+                    ->preload()
                     ->relationship('roles', 'name')
                     ->label('Função'),
-                TextInput::make('phone')
-                    ->visible(function (Get $get) {
-                        return $get('roles') == RoleEnum::ORGANIZATION->value;
-                    })
-                    ->label('Telefone')
-                    ->mask('(99) 99999-9999')
-                    ->placeholder('(99) 99999-9999')
-                    ->tel()
-                    ->required()
-                    ->maxLength(255),
-                // Select::make('roles')
-                //     ->multiple()
-                //     ->relationship(titleAttribute: 'name')
-                //     ->preload()
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('id', auth()->id()))
             ->columns([
                 TextColumn::make('name')
                     ->label('Nome')
