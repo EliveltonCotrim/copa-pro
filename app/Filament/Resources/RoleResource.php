@@ -6,7 +6,8 @@ use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
 use App\Models\Role;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\{TextInput,Select};
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -17,14 +18,19 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-identification';
+    protected static ?string $navigationLabel = 'Papéis';
+    protected static ?string $pluralLabel = 'Papéis';
+    protected static ?string $label = 'Papel';
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Configurações';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
@@ -39,15 +45,18 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('guard_name')
+                TextColumn::make('permissions')
+                    ->label('Permissões')
+                    ->formatStateUsing(function ($record) {
+                        if ($record->permissions->isNotEmpty()) {
+                            return $record->permissions->pluck('name')->join(', ');
+                        }
+                        return 'Sem permissões';
+                    })
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Data de criação')
-                    ->dateTime('d/m/Y')
-                    ->sortable()
+                    ->placeholder('Sem permissões'),
                 // ->toggleable(isToggledHiddenByDefault: true),
 
             ])

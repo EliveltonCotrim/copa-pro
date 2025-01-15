@@ -6,7 +6,8 @@ use App\Filament\Resources\PermissionResource\Pages;
 use App\Filament\Resources\PermissionResource\RelationManagers;
 use App\Models\Permission;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\{TextInput,Select};
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -17,18 +18,19 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
-
+    protected static ?string $navigationIcon = 'heroicon-o-key';
     protected static ?string $navigationLabel = 'Permissões';
     protected static ?string $label = 'Permissão';
     protected static ?string $pluralLabel = 'Permissões';
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Configurações';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
@@ -43,17 +45,9 @@ class PermissionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('guard_name')
-                    ->label('Guarda')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Data de criação')
-                    ->dateTime('d/m/Y')
-                    ->sortable(),
             ])
             ->filters([
                 //
