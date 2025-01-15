@@ -1,0 +1,19 @@
+<?php
+
+namespace App;
+
+use Filament\Support\Contracts\HasLabel;
+
+enum RoleEnum: string implements HasLabel
+{
+    case ADMIN = 'admin';
+    case ORGANIZATION = 'organização';
+
+    public function getLabel(): string|null{
+        return match($this){
+            self::ADMIN => 'Administrador',
+            self::ORGANIZATION => 'Organização',
+            default => 'Função não encontrada',
+        };
+    }
+}

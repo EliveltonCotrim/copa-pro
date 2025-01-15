@@ -2,18 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\{ChampionshipFormatEnum,ChampionshipGamesEnum,ChampionshipStatusEnum,PlayerPlatformGameEnum};
+use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
 use App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource\RelationManagers;
 use App\Models\Championship;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\{Form,Get,Set};
+use Filament\Forms\{Form, Get, Set};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\{Builder,SoftDeletingScope};
-use Filament\Forms\Components\{Select,TextInput,DatePicker,Textarea,FileUpload};
+use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
+use Filament\Forms\Components\{Select, TextInput, DatePicker, Textarea, FileUpload};
 use Filament\Tables\Columns\TextColumn;
 use Leandrocfe\FilamentPtbrFormFields\Money;
 use Filament\Notifications\Notification;
@@ -153,13 +153,13 @@ class ChampionshipResource extends Resource
                     ->searchable(),
                 TextColumn::make('start_date')
                     ->label('Data de início')
-                    ->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->format('d/m/Y'))
+                    ->dateTime('d/m/Y')
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
                 TextColumn::make('end_date')
                     ->label('Data de término')
-                    ->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->format('d/m/Y'))
+                    ->dateTime('d/m/Y')
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
@@ -177,7 +177,7 @@ class ChampionshipResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()->visible(fn ($record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()->visible(fn($record) => !$record->trashed()),
                 Tables\Actions\DeleteAction::make()
                     ->successNotification(function ($record) {
                         return Notification::make()
@@ -192,7 +192,7 @@ class ChampionshipResource extends Resource
                             ->title("Campeonato restaurado")
                             ->body("<strong>{$record->name}</strong> está restaurado.");
                     })
-                ->visible(fn ($record) => $record->trashed()),
+                    ->visible(fn($record) => $record->trashed()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
