@@ -64,7 +64,7 @@ RUN chown -R www-data:www-data /var/www/html
 
 # Instalar dependências PHP e Node.js
 RUN composer install --optimize-autoloader --no-dev
-RUN npm ci
+RUN npm install
 RUN npm run build
 
 EXPOSE 80
