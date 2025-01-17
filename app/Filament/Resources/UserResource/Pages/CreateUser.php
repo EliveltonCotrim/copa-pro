@@ -31,31 +31,31 @@ class CreateUser extends CreateRecord
     //     return $data;
     // }
 
-    protected function handleRecordCreation(array $data): Model
-    {
-        $user = DB::transaction(function () use ($data) {
+    // protected function handleRecordCreation(array $data): Model
+    // {
+    //     $user = DB::transaction(function () use ($data) {
 
-            if ($data['roles'] !== RoleEnum::ADMIN->value) {
-                $organizer = Organizer::create([
-                    'name' => $data['name'],
-                    'phone' => $data['phone'],
-                ]);
+    //         if ($data['roles'] !== RoleEnum::ADMIN->value) {
+    //             $organizer = Organizer::create([
+    //                 'name' => $data['name'],
+    //                 'phone' => $data['phone'],
+    //             ]);
 
-                $user = static::getModel()::create(array_merge($data, [
-                    'userable_type' => 'App\Models\Organizer',
-                    'userable_id' => $organizer->id,
-                ]));
-            } else {
-                $user = static::getModel()::create($data);
-            }
+    //             $user = static::getModel()::create(array_merge($data, [
+    //                 'userable_type' => 'App\Models\Organizer',
+    //                 'userable_id' => $organizer->id,
+    //             ]));
+    //         } else {
+    //             $user = static::getModel()::create($data);
+    //         }
 
-            return $user;
-        });
+    //         return $user;
+    //     });
 
-        $user->assignRole($data['roles']);
+    //     $user->assignRole($data['roles']);
 
-        return $user;
-    }
+    //     return $user;
+    // }
 
 
     public function getRedirectUrl(): string
