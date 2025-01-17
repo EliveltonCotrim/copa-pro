@@ -31,14 +31,17 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->profile(isSimple: false)
             ->favicon('favicon.ico')
+            ->brandLogo(asset('images/logo-futpro-primary.png'))
+            ->brandLogoHeight(fn() => auth()->check() ? '1.6rem' : '3rem')
             ->default()
             ->id('admin')
             ->path('admin')
             ->login()
             ->passwordReset()
             ->emailVerification()
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#6CA632',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
