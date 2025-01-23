@@ -9,6 +9,7 @@ use App\Models\Championship;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\{Form, Get, Set};
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -67,12 +68,13 @@ class ChampionshipResource extends Resource
                         'after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
                     ])
                     ->date(),
-                FileUpload::make('banner_path')
+                SpatieMediaLibraryFileUpload::make('banner_path')
                     ->image()
                     ->live()
                     ->imageEditor()
                     ->preserveFilenames()
                     ->previewable()
+                    ->optimize('webp')
                     ->maxSize(2048)
                     ->directory('banners-championships')
                     ->label('Banner'),
