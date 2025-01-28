@@ -8,7 +8,10 @@ use App\Models\Organizer;
 use App\Models\User;
 use App\RoleEnum;
 use Filament\Forms;
-use Filament\Forms\Components\{Select,TextInput};
+use Filament\Forms\Components\{Select, TextInput};
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -64,14 +67,21 @@ class UserResource extends Resource
                     ->preload()
                     ->relationship('roles', 'name')
                     ->label('Função'),
+                // SpatieMediaLibraryFileUpload::make('avatar_url')
+                //     ->label('Foto')
+                //     ->rules('image')
+                //     ->maxFiles(1),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('id', auth()->id()))
+            ->modifyQueryUsing(fn(Builder $query) => $query->whereNot('id', auth()->id()))
             ->columns([
+                ImageColumn::make('avatar_url')
+                    ->rounded()
+                    ->label('Foto'),
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),

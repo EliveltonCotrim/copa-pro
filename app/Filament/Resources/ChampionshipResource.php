@@ -12,6 +12,7 @@ use Filament\Forms\{Form, Get, Set};
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
 use Filament\Forms\Components\{Select, TextInput, DatePicker, Textarea, FileUpload};
@@ -50,9 +51,9 @@ class ChampionshipResource extends Resource
                 Textarea::make('description')
                     ->label('Descrição')
                     ->columnSpanFull(),
-                DatePicker::make('start_date')
+                DatePicker::make(name: 'start_date')
                     ->label('Data de início')
-                    ->minDate(now()->format('Y-m-d'))
+                    ->minDate(fn(string $context): string|null => $context == "create" ? now()->format('Y-m-d') : null)
                     ->beforeOrEqual('end_date')
                     ->validationMessages([
                         'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
@@ -150,6 +151,7 @@ class ChampionshipResource extends Resource
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('banner_path')->label('Banner')->size('55px'),
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
