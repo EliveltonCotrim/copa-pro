@@ -12,11 +12,16 @@ enum ChampionshipFormatEnum: int implements HasLabel
 
     public function getLabel(): ?string
     {
-        return match ($this){
+        return match ($this) {
             self::LEAGUE => 'Liga',
             self::KNOCKOUT => 'Mata-mata',
             self::CUP => 'Copa',
             default => 'Formato não encotrado',
         };
+    }
+
+    public static function values(): array
+    {
+        return array_map(fn($case) => $case->value, ChampionshipFormatEnum::cases());
     }
 }

@@ -53,4 +53,9 @@ enum PaymentStatusEnum: int implements HasLabel, HasColor, HasIcon
         };
     }
 
+    public static function values(): array
+    {
+        return array_map(fn($case) => $case->value, PaymentStatusEnum::cases());
+    }
+
 }

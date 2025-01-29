@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
 use App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource\RelationManagers;
+use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayerRelationManager;
+use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayersRelationManager;
 use App\Models\Championship;
 use Closure;
 use Filament\Forms;
@@ -12,6 +14,8 @@ use Filament\Forms\{Form, Get, Set};
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
@@ -35,6 +39,7 @@ class ChampionshipResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
@@ -172,9 +177,9 @@ class ChampionshipResource extends Resource
                     ->toggleable()
                     ->money('BRL')
                     ->sortable(),
-                TextColumn::make('status')
-                    ->toggleable()
-                    ->badge(),
+                SelectColumn::make('status')
+                    ->options(ChampionshipStatusEnum::class)
+                    ->label('Status')->rules(['required']),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -217,7 +222,7 @@ class ChampionshipResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RegistrationPlayersRelationManager::class,
         ];
     }
 

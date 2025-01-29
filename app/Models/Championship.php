@@ -97,9 +97,9 @@ class Championship extends Model implements HasMedia
         return $this->hasOne(Addres::class);
     }
 
-    public function players(): HasMany
+    public function registrationPlayers(): HasMany
     {
-        return $this->hasMany(Player::class);
+        return $this->hasMany(RegistrationPlayer::class, 'championship_id', 'id');
     }
 
     public function organizers(): BelongsToMany

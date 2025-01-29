@@ -2,13 +2,15 @@
 
 namespace App\Enum;
 
-enum PaymentMethodEnum: int
+use Filament\Support\Contracts\HasLabel;
+
+enum PaymentMethodEnum: int implements HasLabel
 {
     case CREADIT_CARD = 1;
     case PIX = 2;
     case BANK_SLIP = 3;
 
-    public function getName(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::CREADIT_CARD => "Catão de Crédito",
@@ -30,5 +32,10 @@ enum PaymentMethodEnum: int
             default:
                 return null;
         }
+    }
+
+    public static function values(): array
+    {
+        return array_map(fn($case) => $case->value, PaymentMethodEnum::cases());
     }
 }

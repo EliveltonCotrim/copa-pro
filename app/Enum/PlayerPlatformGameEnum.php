@@ -13,12 +13,17 @@ enum PlayerPlatformGameEnum: int implements HasLabel
 
     public function getLabel(): ?string
     {
-        return match ($this){
+        return match ($this) {
             self::PLAYSTATION => 'Playstation',
             self::XBOX => 'Xbox',
             self::PC => 'PC',
             self::MOBILE => 'Dispositivo Móvel',
             default => 'Plataforma não encotrada',
         };
+    }
+
+    public static function values(): array
+    {
+        return array_map(fn($case) => $case->value, PlayerPlatformGameEnum::cases());
     }
 }

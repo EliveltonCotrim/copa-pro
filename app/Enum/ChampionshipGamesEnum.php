@@ -12,11 +12,16 @@ enum ChampionshipGamesEnum: int implements HasLabel
 
     public function getLabel(): ?string
     {
-        return match ($this){
+        return match ($this) {
             self::EFOOTBALL => 'EFOOTBALL',
             self::FIFA => 'FIFA',
             self::UFL => 'UFL',
             default => 'Game não encotrado',
         };
+    }
+
+    public static function values(): array
+    {
+        return array_map(fn($case) => $case->value, ChampionshipGamesEnum::cases());
     }
 }

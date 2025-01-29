@@ -43,4 +43,9 @@ enum ChampionshipStatusEnum: int implements HasLabel, HasColor, HasIcon
             self::IN_PROGRESS => 'heroicon-m-clock',
         };
     }
+
+    public static function values(): array
+    {
+        return array_map(fn($case) => $case->value, ChampionshipStatusEnum::cases());
+    }
 }

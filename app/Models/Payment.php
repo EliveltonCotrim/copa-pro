@@ -32,6 +32,6 @@ class Payment extends Model
 
     public function player(): BelongsTo
     {
-        return $this->belongsTo(Player::class);
+        return $this->belongsTo(RegistrationPlayer::class, 'player_id');
     }
 }
