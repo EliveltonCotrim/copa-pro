@@ -3,9 +3,11 @@
 namespace App\Enum;
 
 use App\Models\RegistrationPlayer;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum RegistrationPlayerStatusEnum: int implements HasLabel
+enum RegistrationPlayerStatusEnum: int implements HasLabel, HasColor, HasIcon
 {
     case REGISTERED = 1;
     case PENDING = 2;
@@ -18,6 +20,24 @@ enum RegistrationPlayerStatusEnum: int implements HasLabel
             self::PENDING => 'PENDENTE',
             self::APPROVED => 'APROVADO',
             default => 'Status não encotrado',
+        };
+    }
+
+    public function getColor(): string|array|null
+    {
+        return match ($this) {
+            self::REGISTERED => 'primary',
+            self::PENDING => 'danger',
+            self::APPROVED => 'success',
+        };
+    }
+
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            self::REGISTERED => 'heroicon-m-check',
+            self::PENDING => 'heroicon-m-clock',
+            self::APPROVED => 'heroicon-m-check',
         };
     }
 

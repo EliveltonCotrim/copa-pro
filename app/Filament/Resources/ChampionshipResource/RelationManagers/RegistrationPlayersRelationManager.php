@@ -77,6 +77,9 @@ class RegistrationPlayersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('heart_team_name')->searchable()->label('Time do Coração'),
                 Tables\Columns\TextColumn::make('wpp_number')->label('WhatsApp'),
+                Tables\Columns\TextColumn::make('status')->label('Status')
+                ->toggleable()->badge(),
+
             ])->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\TrashedFilter::make()
