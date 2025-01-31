@@ -17,5 +17,6 @@ class RolesSeed extends Seeder
     {
         Role::findOrCreate(RoleEnum::ADMIN->value)->givePermissionTo(Permission::all()->pluck('name')->toArray());
         Role::findOrCreate(RoleEnum::ORGANIZATION->value)->givePermissionTo(Permission::where('name', 'like', 'championships:%')->pluck('name')->toArray());
+        Role::findOrCreate(RoleEnum::PLAYER->value)->givePermissionTo(Permission::where('name', 'like', 'championships:%')->pluck('name')->toArray()); // criar permissions para jogador
     }
 }

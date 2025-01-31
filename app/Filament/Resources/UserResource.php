@@ -112,7 +112,7 @@ class UserResource extends Resource
                         return Notification::make()
                             ->success()
                             ->title('Desativado com Sucesso')
-                            ->message("O usuário <strong>{$record->name}</strong> foi desativado com sucesso.");
+                            ->body("O usuário <strong>{$record->name}</strong> foi desativado com sucesso.");
                     }),
                 Tables\Actions\RestoreAction::make()
                     ->successNotification(function ($record) {

@@ -25,7 +25,7 @@ class ManagePermissions extends ManageRecords
         return Notification::make()
             ->success()
             ->title('Permissão criada')
-            ->message("<strong>{$permission->name}</strong> foi criada.");
+            ->body("<strong>{$permission->name}</strong> foi criada.");
     }
 
 

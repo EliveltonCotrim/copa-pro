@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\PaymentStatusEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\Enum\PlayerStatusEnum;
@@ -18,21 +19,15 @@ class RegistrationPlayer extends Model
 
     protected $fillable = [
         'championship_id',
-        'name',
-        'email',
-        'heart_team_name',
         'championship_team_name',
-        'wpp_number',
-        'birth_dt',
-        'sex',
-        'game_platform',
+        'player_id',
         'status',
+        'payment_status',
     ];
 
     protected $casts = [
-        'sex' => PlayerSexEnum::class,
-        'game_platform' => PlayerPlatformGameEnum::class,
         'status' => RegistrationPlayerStatusEnum::class,
+        'payment_status' => PaymentStatusEnum::class,
     ];
 
     public function championship(): BelongsTo
@@ -43,5 +38,10 @@ class RegistrationPlayer extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function player(): BelongsTo
+    {
+        return $this->belongsTo(Player::class);
     }
 }

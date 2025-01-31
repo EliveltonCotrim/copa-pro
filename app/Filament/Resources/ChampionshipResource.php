@@ -11,6 +11,7 @@ use App\Models\Championship;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\{Form, Get, Set};
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -53,9 +54,10 @@ class ChampionshipResource extends Resource
                     ->label('Taxa de inscrição')
                     ->required()
                     ->default('0,00'),
-                Textarea::make('description')
-                    ->label('Descrição')
-                    ->columnSpanFull(),
+                RichEditor::make('description')
+                    ->label('Descrição'),
+                Textarea::make('information')
+                    ->label('Informação'),
                 DatePicker::make(name: 'start_date')
                     ->label('Data de início')
                     ->minDate(fn(string $context): string|null => $context == "create" ? now()->format('Y-m-d') : null)
@@ -137,18 +139,15 @@ class ChampionshipResource extends Resource
                     ->url()
                     ->prefix('https://')
                     ->maxLength(255),
+                Select::make('status')
+                    ->options(ChampionshipStatusEnum::class)
+                    ->in(ChampionshipStatusEnum::cases())
+                    ->required(),
                 // TextInput::make('registration_link')
                 //     ->url()
                 //     ->prefix('https://')
                 //     ->label('Link de inscrição')
                 //     ->maxLength(255),
-                Textarea::make('information')
-                    ->label('Informação')
-                    ->columnSpanFull(),
-                Select::make('status')
-                    ->options(ChampionshipStatusEnum::class)
-                    ->in(ChampionshipStatusEnum::cases())
-                    ->required(),
             ]);
     }
 

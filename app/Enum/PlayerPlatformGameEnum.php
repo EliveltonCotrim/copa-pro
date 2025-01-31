@@ -10,6 +10,8 @@ enum PlayerPlatformGameEnum: int implements HasLabel
     case XBOX = 2;
     case PC = 3;
     case MOBILE = 4;
+    case ALL = 5;
+    case OTHER = 6;
 
     public function getLabel(): ?string
     {
@@ -18,6 +20,8 @@ enum PlayerPlatformGameEnum: int implements HasLabel
             self::XBOX => 'Xbox',
             self::PC => 'PC',
             self::MOBILE => 'Dispositivo Móvel',
+            self::ALL => 'Todas as plataformas',
+            self::OTHER => 'Outra',
             default => 'Plataforma não encotrada',
         };
     }

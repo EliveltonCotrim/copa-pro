@@ -29,6 +29,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
         'avatar_url',
     ];
 
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::created(function (User $user) {
+            if ($user->userable_type == Player::class) {
+                $user->assignRole(RoleEnum::PLAYER->value);
+            }
+        });
+    }
+
     public function getFilamentAvatarUrl(): ?string
     {
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');

@@ -38,18 +38,30 @@ enum PaymentStatusEnum: int implements HasLabel, HasColor, HasIcon
     public function getColor(): string|array|null
     {
         return match ($this) {
+            self::CANCELLED => 'danger',
             self::PENDING => 'warning',
+            self::REFUNDED => 'success',
             self::PAID => 'success',
-            self::REJECTED => 'red',
+            self::AUTHORIZED => 'success',
+            self::CHARGED_BACK => 'gray',
+            self::IN_MEDIATION => 'info',
+            self::REJECTED => 'danger',
+            self::IN_PROCESS => 'warning',
         };
     }
 
     public function getIcon(): ?string
     {
-        return match ($this){
+        return match ($this) {
             self::PENDING => 'heroicon-m-clock',
+            self::REFUNDED => 'heroicon-m-check',
             self::PAID => 'heroicon-m-check',
-            self::REJECTED => 'heroicon-m-x',
+            self::AUTHORIZED => 'heroicon-m-check',
+            self::CHARGED_BACK => 'heroicon-m-clock',
+            self::IN_MEDIATION => 'heroicon-m-code-bracket-square',
+            self::CANCELLED => 'heroicon-o-x-circle',
+            self::REJECTED => 'heroicon-o-x-circle',
+            self::IN_PROCESS => 'heroicon-m-clock',
         };
     }
 

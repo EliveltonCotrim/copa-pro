@@ -2,7 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\PlayerSexEnum;
+use App\Enum\PlayerStatusEnum;
 use App\Models\Organizer;
+use App\Models\Player;
 use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -29,17 +33,35 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123456'),
         ])->assignRole(RoleEnum::ADMIN->value);
 
-        // $organizer = Organizer::create([
-        //     'name' => 'Organizer Test',
-        //     'phone' => '999999999',
-        //     'descrition' => 'Organizer Test Description',
-        // ]);
-
-        User::create([
+        $userOrganizer = User::create([
             'name' => 'Organizer test',
             'email' => 'organizerTest@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('123456'),
         ])->assignRole(RoleEnum::ORGANIZATION->value);
+
+        $organizer = Organizer::create([
+            'name' => 'Organizer Test',
+            'phone' => '999999999',
+            'descrition' => 'Organizer Test Description',
+        ]);
+
+        $organizer->user()->save($userOrganizer);
+
+        $player = Player::create([
+            'phone' => '999999999',
+            'bio' => 'Organizer Test bio',
+            'heart_team_name' => 'Vasco',
+            'birth_dt' => now()->format('Y-m-d'),
+            'sex' => PlayerSexEnum::MALE->value,
+            'status' => PlayerStatusEnum::ACTIVE->value,
+            'game_platform' => PlayerPlatformGameEnum::PC->value,
+        ]);
+
+        $player->user()->create([
+            'name' => 'Player Test',
+            'email' => 'player@mail.com',
+            'password' => Hash::make('123456'),
+        ])->assignRole(RoleEnum::PLAYER->value);
     }
 }

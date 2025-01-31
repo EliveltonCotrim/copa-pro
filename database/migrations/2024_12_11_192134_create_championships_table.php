@@ -1,9 +1,8 @@
 <?php
 
 use App\Enum\ChampionshipFormatEnum;
-use App\Enum\ChampionshipGamesEnum;
 use App\Enum\ChampionshipStatusEnum;
-use App\Enum\ProjectStatusEnum;
+use App\Enum\PlayerPlatformGameEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,7 +22,7 @@ return new class extends Migration {
             $table->decimal('registration_fee', 10, 2)->default(0);
             $table->string('banner_path')->nullable();
             $table->string('regulation_path')->nullable();
-            $table->enum('game_platform', ChampionshipGamesEnum::values())->nullable();
+            $table->enum('game_platform', PlayerPlatformGameEnum::values())->nullable();
             $table->integer('max_playes')->nullable();
             $table->enum('championship_format', ChampionshipFormatEnum::values())->nullable(); // 'cup', 'league', 'KNOCKOUT'
             $table->string('wpp_group_link')->nullable();
