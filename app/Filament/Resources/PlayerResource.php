@@ -2,20 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\PaymentStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\Enum\PlayerStatusEnum;
+use App\Enum\{PaymentStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
 use App\Filament\Resources\PlayerResource\Pages;
 use App\Filament\Resources\PlayerResource\RelationManagers;
 use App\Models\Player;
 use Filament\Actions\DeleteAction;
 use Filament\Forms;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\{DatePicker, Group, Select, Textarea, TextInput};
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -26,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Illuminate\Support\Facades\Hash;
 
 class PlayerResource extends Resource
 {
@@ -62,17 +57,20 @@ class PlayerResource extends Resource
                         ->label('Senha')
                         ->required()
                         ->minLength(6)
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
+                        ->dehydrated(fn ($state) => filled($state))
+                        ->required(fn (string $context): bool => $context === 'create'),
                 ])->columnSpanFull(),
                 TextInput::make('nickname')
-                    ->label('Nickname do Jogador')
+                    ->label('Nickname do jogador')
                     ->maxLength(50),
                 TextInput::make('heart_team_name')
-                    ->label('Time do Coração')
+                    ->label('Time do coração')
                     ->maxLength(255),
                 DatePicker::make('birth_dt')
                     ->maxDate(now()->format('Y-m-d'))
-                    ->label('Data de Nascimento'),
+                    ->label('Data de nascimento'),
                 Select::make('sex')
                     ->options(PlayerSexEnum::class)
                     ->searchable()
@@ -87,7 +85,7 @@ class PlayerResource extends Resource
                     ->options(PlayerStatusEnum::class)
                     ->required(),
                 Select::make('game_platform')
-                    ->label('Plataforma de Jogo')
+                    ->label('Plataforma de jogo')
                     ->options(PlayerPlatformGameEnum::class)
                     ->required(),
             ]);
@@ -97,28 +95,35 @@ class PlayerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nickname')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('heart_team_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('birth_dt')
-                    ->date()
+                TextColumn::make('nickname')
+                    ->placeholder('Sem nickname'),
+                TextColumn::make('heart_team_name')
+                    ->placeholder('Sem time do coração')
+                    ->label('Time do coração'),
+                TextColumn::make('birth_dt')
+                    ->label('Data de nascimento')
+                    ->dateTime('d/m/Y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sex'),
-                Tables\Columns\TextColumn::make('phone')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('game_platform'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                TextColumn::make('sex')
+                    ->label('Gênero'),
+                TextColumn::make('phone')
+                    ->label('Telefone'),
+                TextColumn::make('status'),
+                TextColumn::make('game_platform')
+                    ->label('Plataforma de jogo'),
+                TextColumn::make('created_at')
+                    ->label('Criado em')
+                    ->dateTime('d/m/Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                TextColumn::make('updated_at')
+                    ->label('Atualizado em')
+                    ->dateTime('d/m/Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
+                TextColumn::make('deleted_at')
+                    ->label('Inativado em')
+                    ->dateTime('d/m/Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -133,21 +138,27 @@ class PlayerResource extends Resource
                     if ($record->hasActiveChampionships()) {
                         // Impede a exclusão e exibe um erro
                         Notification::make()
-                            ->title('warning')
-                            ->body('Este jogador está inscrito em campeonatos ativos ou em andamento e não pode ser excluído.')
                             ->warning()
+                            ->title("Atenção!")
+                            ->body("<strong>{$record->user->name}</strong> está inscrito(a) em campeonatos ativos ou em andamento e não pode ser excluído(a).")
                             ->send();
 
                         $action->cancel();
                     }
                 }),
-                Tables\Actions\RestoreAction::make(),
-
+                Tables\Actions\RestoreAction::make()
+                    ->successNotification(function ($record) {
+                        return Notification::make()
+                            ->success()
+                            ->title("Player restaurado(a)")
+                            ->body("<strong>{$record->user->name}</strong> está restaurado(a).");
+                    })
+                    ->visible(fn($record) => $record->trashed()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    //Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);

@@ -24,7 +24,7 @@ class PermissionResource extends Resource
     protected static ?string $pluralLabel = 'Permissões';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 4;
-    protected static ?string $navigationGroup = 'Configurações';
+    protected static ?string $navigationGroup = 'Controle de acesso';
 
     public static function form(Form $form): Form
     {

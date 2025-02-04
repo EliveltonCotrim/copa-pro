@@ -24,7 +24,7 @@ class RoleResource extends Resource
     protected static ?string $label = 'Papel';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 3;
-    protected static ?string $navigationGroup = 'Configurações';
+    protected static ?string $navigationGroup = 'Controle de acesso';
 
     public static function form(Form $form): Form
     {
@@ -47,7 +47,8 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label("Nome"),
                 // TextColumn::make('permissions')
                 //     ->label('Permissões')
                 //     ->formatStateUsing(function ($record) {
