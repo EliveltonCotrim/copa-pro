@@ -2,17 +2,12 @@
 
 namespace App\Models;
 
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\RoleEnum;
-use Illuminate\Database\Eloquent\Builder;
+use App\Enum\{ChampionshipStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
+use Illuminate\Database\Eloquent\{Builder, SoftDeletes, Model};
+use Illuminate\Database\Eloquent\Relations\{HasMany, MorphOne};
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\RoleEnum;
 
 class Player extends Model
 {
@@ -32,7 +27,7 @@ class Player extends Model
 
     protected $casts = [
         'sex' => PlayerSexEnum::class,
-        'status' => PlayerSexEnum::class,
+        'status' => PlayerStatusEnum::class,
         'game_platform' => PlayerPlatformGameEnum::class,
         'level_experience' => PlayerExperienceLevelEnum::class,
     ];

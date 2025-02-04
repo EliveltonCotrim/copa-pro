@@ -27,14 +27,14 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
     protected static ?string $navigationLabel = 'Usuários';
     protected static ?string $label = 'Usuário';
     protected static ?string $pluralLabel = 'Usuários';
     protected static ?string $navigationBadgeTooltip = 'Número de usuários';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 2;
-    protected static ?string $navigationGroup = 'Configurações';
+    protected static ?string $navigationGroup = 'Controle de acesso';
 
     public static function form(Form $form): Form
     {
@@ -81,7 +81,8 @@ class UserResource extends Resource
             ->columns([
                 ImageColumn::make('avatar_url')
                     ->rounded()
-                    ->label('Foto'),
+                    ->label('Foto')
+                    ->placeholder("Sem avatar"),
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),

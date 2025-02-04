@@ -14,7 +14,7 @@ class ListPlayers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label("Criar jogador"),
         ];
     }
 }
