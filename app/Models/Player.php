@@ -28,6 +28,7 @@ class Player extends Model
     protected $casts = [
         'sex' => PlayerSexEnum::class,
         'status' => PlayerStatusEnum::class,
+        'status' => PlayerStatusEnum::class,
         'game_platform' => PlayerPlatformGameEnum::class,
         'level_experience' => PlayerExperienceLevelEnum::class,
     ];

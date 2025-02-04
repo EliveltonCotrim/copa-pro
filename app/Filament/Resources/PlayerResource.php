@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
+use PhpParser\Node\Stmt\Label;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Illuminate\Support\Facades\Hash;
 
@@ -106,25 +107,25 @@ class PlayerResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nickname')
-                    ->placeholder('Sem nickname'),
-                TextColumn::make('heart_team_name')
-                    ->placeholder('Sem time do coração')
-                    ->label('Time do coração'),
-                TextColumn::make('birth_dt')
-                    ->label('Data de nascimento')
-                    ->dateTime('d/m/Y')
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Nome')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('nickname')
+                    ->label('Nickname')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('birth_dt')
+                    ->label('Data de Nascimento')
+                    ->date()
                     ->sortable(),
-                TextColumn::make('sex')
-                    ->label('Gênero'),
-                TextColumn::make('phone')
-                    ->label('Telefone'),
-                TextColumn::make('status'),
-                TextColumn::make('game_platform')
-                    ->label('Plataforma de jogo'),
-                TextColumn::make('created_at')
-                    ->label('Criado em')
-                    ->dateTime('d/m/Y H:i:s')
+                Tables\Columns\TextColumn::make('sex'),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('WhatsApp')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status')->label('Status'),
+                Tables\Columns\TextColumn::make('game_platform')
+                    ->Label('Plataforma de Jogo'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
