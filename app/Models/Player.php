@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\ChampionshipStatusEnum;
+use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\RoleEnum;
@@ -26,12 +27,14 @@ class Player extends Model
         'bio',
         'status',
         'game_platform',
+        'level_experience',
     ];
 
     protected $casts = [
         'sex' => PlayerSexEnum::class,
         'status' => PlayerSexEnum::class,
         'game_platform' => PlayerPlatformGameEnum::class,
+        'level_experience' => PlayerExperienceLevelEnum::class,
     ];
 
     protected static function booted()

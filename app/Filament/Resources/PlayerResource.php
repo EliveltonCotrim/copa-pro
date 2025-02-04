@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enum\PaymentStatusEnum;
+use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\Enum\PlayerStatusEnum;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class PlayerResource extends Resource
@@ -54,13 +56,16 @@ class PlayerResource extends Resource
                         ->maxLength(255),
                     TextInput::make('email')
                         ->label('E-mail')
+                        ->unique(ignoreRecord: true)
                         ->required()
                         ->maxLength(255),
                     TextInput::make('password')
                         ->revealable()
                         ->password()
                         ->label('Senha')
-                        ->required()
+                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                        ->dehydrated(fn($state) => filled($state))
+                        ->required(fn(string $context): bool => $context === 'create')
                         ->minLength(6)
                         ->maxLength(255),
                 ])->columnSpanFull(),
@@ -80,6 +85,11 @@ class PlayerResource extends Resource
                     ->required(),
                 PhoneInput::make('phone')
                     ->label('WhatsApp')
+                    ->required(),
+                Select::make('level_experience')
+                    ->label('Nível de Experiência')
+                    ->options(PlayerExperienceLevelEnum::class)
+                    ->searchable()
                     ->required(),
                 Textarea::make('bio')
                     ->columnSpanFull(),

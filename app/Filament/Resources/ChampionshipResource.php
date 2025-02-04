@@ -48,6 +48,7 @@ class ChampionshipResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Nome')
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
                 Money::make('registration_fee')

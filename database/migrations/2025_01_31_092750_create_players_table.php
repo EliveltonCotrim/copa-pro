@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\Enum\PlayerStatusEnum;
@@ -18,9 +19,10 @@ return new class extends Migration {
             $table->string('nickname', 50)->nullable();
             $table->string('heart_team_name')->nullable();
             $table->date('birth_dt')->nullable();
-            $table->enum('sex', PlayerSexEnum::values());
+            $table->enum('sex', PlayerSexEnum::values())->nullable();
             $table->string('phone', 20);
             $table->text('bio')->nullable();
+            $table->enum('level_experience', PlayerExperienceLevelEnum::values());
             $table->enum('status', PlayerStatusEnum::values())->default(PlayerStatusEnum::ACTIVE);
             $table->enum('game_platform', PlayerPlatformGameEnum::values());
 
