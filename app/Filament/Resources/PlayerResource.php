@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\{PaymentStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
+
+use App\Enum\{PaymentStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
+
 use App\Filament\Resources\PlayerResource\Pages;
 use App\Filament\Resources\PlayerResource\RelationManagers;
 use App\Models\Player;
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Illuminate\Support\Facades\Hash;
 
@@ -49,13 +52,16 @@ class PlayerResource extends Resource
                         ->maxLength(255),
                     TextInput::make('email')
                         ->label('E-mail')
+                        ->unique(ignoreRecord: true)
                         ->required()
                         ->maxLength(255),
                     TextInput::make('password')
                         ->revealable()
                         ->password()
                         ->label('Senha')
-                        ->required()
+                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                        ->dehydrated(fn($state) => filled($state))
+                        ->required(fn(string $context): bool => $context === 'create')
                         ->minLength(6)
                         ->maxLength(255)
                         ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
@@ -78,6 +84,11 @@ class PlayerResource extends Resource
                     ->required(),
                 PhoneInput::make('phone')
                     ->label('WhatsApp')
+                    ->required(),
+                Select::make('level_experience')
+                    ->label('Nível de Experiência')
+                    ->options(PlayerExperienceLevelEnum::class)
+                    ->searchable()
                     ->required(),
                 Textarea::make('bio')
                     ->columnSpanFull(),

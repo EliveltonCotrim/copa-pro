@@ -19,9 +19,11 @@ class Championship extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, InteractsWithMedia;
 
+
     protected $fillable = [
         'uuid',
         'name',
+        'slug',
         'description',
         'start_date',
         'end_date',
@@ -67,6 +69,13 @@ class Championship extends Model implements HasMedia
             if ($championship->regulation_path !== $regulationPath && $regulationPath) {
                 Storage::disk('public')->delete($regulationPath);
             }
+
+            $championship->slug = Str::slug($championship->name);
+
+        });
+
+        static::creating(function (Championship $championship) {
+            $championship->slug = Str::slug($championship->name);
         });
     }
 
@@ -75,6 +84,11 @@ class Championship extends Model implements HasMedia
         'status' => ChampionshipStatusEnum::class,
         'game' => ChampionshipGamesEnum::class,
     ];
+
+    // public function getRouteKey()
+    // {
+    //     return 'uuid';
+    // }
 
     protected static function boot()
     {

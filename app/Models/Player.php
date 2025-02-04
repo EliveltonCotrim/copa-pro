@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Enum\{ChampionshipStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
+use App\Enum\{ChampionshipStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
 use Illuminate\Database\Eloquent\{Builder, SoftDeletes, Model};
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphOne};
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\RoleEnum;
 
@@ -21,12 +22,14 @@ class Player extends Model
         'bio',
         'status',
         'game_platform',
+        'level_experience',
     ];
 
     protected $casts = [
         'sex' => PlayerSexEnum::class,
         'status' => PlayerStatusEnum::class,
         'game_platform' => PlayerPlatformGameEnum::class,
+        'level_experience' => PlayerExperienceLevelEnum::class,
     ];
 
     protected static function booted()
