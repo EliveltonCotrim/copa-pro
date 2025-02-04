@@ -45,11 +45,6 @@ class RegistrationPlayersRelationManager extends RelationManager
                     ->searchable()
                     ->required()
                     ->label('Status do Pagamento'),
-                Select::make('level_experience')
-                    ->label('Nível de Experiência')
-                    ->options(PlayerExperienceLevelEnum::class)
-                    ->searchable()
-                    ->required(),
                 Select::make('player_id')
                     ->options(Player::with('user')->get()->pluck('user.name', 'id'))
                     ->unique('registration_players', 'player_id', ignoreRecord: true, modifyRuleUsing: function ($rule, $get, $livewire) {

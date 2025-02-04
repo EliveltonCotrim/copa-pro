@@ -24,7 +24,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use PhpParser\Node\Stmt\Label;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
-use Illuminate\Support\Facades\Hash;
 
 class PlayerResource extends Resource
 {
