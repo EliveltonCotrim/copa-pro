@@ -106,9 +106,9 @@ class Championship extends Model implements HasMedia
         return 'uuid';
     }
 
-    public function addres()
+    public function address()
     {
-        return $this->hasOne(Addres::class);
+        return $this->hasOne(Address::class);
     }
 
     public function registrationPlayers(): HasMany
