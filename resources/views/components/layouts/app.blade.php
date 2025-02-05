@@ -19,8 +19,6 @@
     @filamentStyles
     @vite('resources/css/app.css')
 
-    <wireui:scripts />
-    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
 <body class="antialiased">
