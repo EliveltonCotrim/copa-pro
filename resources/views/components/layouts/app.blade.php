@@ -16,17 +16,15 @@
         }
     </style>
 
-    @filamentStyles
-    @vite('resources/css/app.css')
-
+    <tallstackui:script />
+    @livewireStyles
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="antialiased">
     {{ $slot }}
 
-    @livewire('notifications')
-    @filamentScripts
-    @vite('resources/js/app.js')
+    @livewireScripts
 </body>
 
 </html>
