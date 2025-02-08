@@ -15,7 +15,7 @@ enum PlayerStatusEnum: int implements HasLabel
             self::ACTIVE => 'Ativo',
             self::BANNED => 'Banido',
             self::INACTIVE => 'Inativo',
-            default => 'Status não encotrado',
+            default => 'Status não encontrado',
         };
     }
 

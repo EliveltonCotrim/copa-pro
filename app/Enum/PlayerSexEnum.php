@@ -15,7 +15,7 @@ enum PlayerSexEnum: int implements HasLabel
             self::MALE => 'Masculino',
             self::FEMALE => 'Feminino',
             self::OTHER => 'Outro',
-            default => 'Sexo não encotrado',
+            default => 'Gênero não encontrado',
         };
     }
 

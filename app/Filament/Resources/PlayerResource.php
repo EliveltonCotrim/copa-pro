@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 
 use App\Enum\{PaymentStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
-
 use App\Filament\Resources\PlayerResource\Pages;
 use App\Filament\Resources\PlayerResource\RelationManagers;
 use App\Models\Player;
@@ -63,10 +62,7 @@ class PlayerResource extends Resource
                         ->dehydrated(fn($state) => filled($state))
                         ->required(fn(string $context): bool => $context === 'create')
                         ->minLength(6)
-                        ->maxLength(255)
-                        ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->required(fn (string $context): bool => $context === 'create'),
+                        ->maxLength(255),
                 ])->columnSpanFull(),
                 TextInput::make('nickname')
                     ->label('Nickname do jogador')
@@ -80,13 +76,13 @@ class PlayerResource extends Resource
                 Select::make('sex')
                     ->options(PlayerSexEnum::class)
                     ->searchable()
-                    ->label('Sexo')
+                    ->label('Gênero')
                     ->required(),
                 PhoneInput::make('phone')
                     ->label('WhatsApp')
                     ->required(),
                 Select::make('level_experience')
-                    ->label('Nível de Experiência')
+                    ->label('Nível de experiência')
                     ->options(PlayerExperienceLevelEnum::class)
                     ->searchable()
                     ->required(),
@@ -113,16 +109,18 @@ class PlayerResource extends Resource
                     ->label('Nickname')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birth_dt')
-                    ->label('Data de Nascimento')
-                    ->date()
+                    ->label('Data de nascimento')
+                    ->dateTime('d/m/Y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sex'),
+                Tables\Columns\TextColumn::make('sex')
+                    ->label('Gênero'),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('WhatsApp')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')->label('Status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status'),
                 Tables\Columns\TextColumn::make('game_platform')
-                    ->Label('Plataforma de Jogo'),
+                    ->Label('Plataforma de jogo'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

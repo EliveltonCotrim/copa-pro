@@ -23,7 +23,7 @@ enum PlayerExperienceLevelEnum: int implements HasLabel
             self::STAR => 'Craque',
             self::SUPERSTAR => 'Superastro',
             self::LEGEND => 'Lenda',
-            default => 'Nível não encotrado',
+            default => 'Nível não encontrado',
         };
     }
 

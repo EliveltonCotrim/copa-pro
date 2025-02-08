@@ -11,19 +11,17 @@ use App\Models\Championship;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\{Form, Get, Set};
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ColumnGroup;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\{SelectColumn, TextColumn, SpatieMediaLibraryImageColumn};
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
-use Filament\Forms\Components\{Select, TextInput, DatePicker, Textarea, FileUpload};
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Textarea, FileUpload, Grid, RichEditor};
 use Leandrocfe\FilamentPtbrFormFields\Money;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\Wizard;
 
 class ChampionshipResource extends Resource
 {
@@ -41,115 +39,166 @@ class ChampionshipResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Nome')
-                    ->unique(ignoreRecord: true)
-                    ->required()
-                    ->maxLength(255),
-                Money::make('registration_fee')
-                    ->label('Taxa de inscrição')
-                    ->required()
-                    ->default('0,00'),
-                RichEditor::make('description')
-                    ->label('Descrição'),
-                Textarea::make('information')
-                    ->label('Informação'),
-                DatePicker::make(name: 'start_date')
-                    ->label('Data de início')
-                    ->minDate(fn(string $context): string|null => $context == "create" ? now()->format('Y-m-d') : null)
-                    ->beforeOrEqual('end_date')
-                    ->validationMessages([
-                        'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
-                        'before_or_equal' => 'A data de início deve ser igual ou anterior à data de término.',
-                    ])
-                    ->date()
-                    ->required(),
-                DatePicker::make('end_date')
-                    ->label('Data de término')
-                    ->required()
-                    ->afterOrEqual('start_date')
-                    ->validationMessages([
-                        'after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
-                    ])
-                    ->date(),
-                SpatieMediaLibraryFileUpload::make('banner_path')
-                    ->image()
-                    ->live()
-                    ->imageEditor()
-                    ->preserveFilenames()
-                    ->previewable()
-                    ->optimize('webp')
-                    ->maxSize(2048)
-                    ->directory('banners-championships')
-                    ->label('Banner'),
-                FileUpload::make('regulation_path')
-                    ->label('Regulamento')
-                    ->preserveFilenames()
-                    ->directory('regulations-championships')
-                    ->acceptedFileTypes(['application/pdf']),
-                Select::make('game_platform')
-                    ->options(PlayerPlatformGameEnum::class)
-                    ->searchable()
-                    ->required()
-                    ->label('Plataforma do jogo'),
-                Select::make('game')
-                    ->options(ChampionshipGamesEnum::class)
-                    ->searchable()
-                    ->required()
-                    ->label('Jogo'),
-                Select::make('championship_format')
-                    ->options(ChampionshipFormatEnum::class)
-                    ->searchable()
-                    ->required()
-                    ->live()
-                    ->label('Formato do campeonato'),
-                Select::make('max_playes')
-                    ->visible(fn(Get $get): bool => $get('championship_format') == ChampionshipFormatEnum::CUP->value)
-                    ->options([
-                        '8' => '8',
-                        '16' => '16',
-                        '32' => '32',
-                        '64' => '64',
-                    ])->label('Número máximo de jogadores')->required(),
-                Select::make('max_playes')
-                    ->visible(function (Get $get, Set $set) {
-                        return $get('championship_format') == ChampionshipFormatEnum::KNOCKOUT->value;
-                    })
-                    ->options([
-                        '16' => '16',
-                        '8' => '8',
-                        '4' => '4',
-                        '2' => '2',
-                    ])->label('Número máximo de jogadores')
-                    ->helperText('Oitavas, quartas, semifinal, ou final')->required(),
-                TextInput::make('max_playes')
-                    ->visible(fn(Get $get): bool => $get('championship_format') == ChampionshipFormatEnum::LEAGUE->value)
-                    ->label('Número máximo de jogadores')
-                    ->maxValue(32)
-                    ->minValue(2)
-                    ->numeric()
-                    ->required()
-                    ->minValue(0),
-                TextInput::make('wpp_group_link')
-                    ->label('Link do grupo de WhatsApp')
-                    ->url()
-                    ->prefix('https://')
-                    ->maxLength(255),
-                Select::make('status')
-                    ->options(ChampionshipStatusEnum::class)
-                    ->in(ChampionshipStatusEnum::cases())
-                    ->required(),
-                // TextInput::make('registration_link')
-                //     ->url()
-                //     ->prefix('https://')
-                //     ->label('Link de inscrição')
-                //     ->maxLength(255),
-            ]);
+        return $form->schema([
+            Wizard::make([
+                Wizard\Step::make('Descrição')
+                    ->schema([
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            TextInput::make('name')
+                                ->label('Nome')
+                                ->unique(ignoreRecord: true)
+                                ->required()
+                                ->maxLength(255),
+                            Money::make('registration_fee')
+                                ->label('Taxa de inscrição')
+                                ->required()
+                                ->default('0,00'),
+                        ]),
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            RichEditor::make('description')
+                                ->label('Descrição'),
+                            Textarea::make('information')
+                                ->label('Informação'),
+                        ]),
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            DatePicker::make('start_date')
+                                ->label('Data de início')
+                                ->minDate(fn() => now()->format('Y-m-d'))
+                                ->beforeOrEqual('end_date')
+                                ->validationMessages([
+                                    'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
+                                    'before_or_equal' => 'A data de início deve ser igual ou anterior à data de término.',
+                                ])
+                                ->required(),
+                            DatePicker::make('end_date')
+                                ->label('Data de término')
+                                ->required()
+                                ->afterOrEqual('start_date')
+                                ->validationMessages([
+                                    'after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
+                                ]),
+                        ]),
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            SpatieMediaLibraryFileUpload::make('banner_path')
+                                ->image()
+                                ->preserveFilenames()
+                                ->previewable()
+                                ->maxSize(2048)
+                                ->directory('banners-championships')
+                                ->label('Banner'),
+                            FileUpload::make('regulation_path')
+                                ->label('Regulamento')
+                                ->preserveFilenames()
+                                ->directory('regulations-championships')
+                                ->acceptedFileTypes(['application/pdf']),
+                        ]),
+                    ]),
+
+                Wizard\Step::make('Formato')
+                    ->schema([
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            Select::make('game_platform')
+                                ->options(PlayerPlatformGameEnum::class)
+                                ->searchable()
+                                ->required()
+                                ->label('Plataforma do jogo'),
+                            Select::make('game')
+                                ->options(ChampionshipGamesEnum::class)
+                                ->searchable()
+                                ->required()
+                                ->label('Jogo'),
+                        ]),
+                        Select::make('championship_format')
+                            ->options(ChampionshipFormatEnum::class)
+                            ->searchable()
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                        	$set('max_playes', null);
+                    	    })
+                            ->label('Formato do campeonato'),
+                        Select::make('max_playes')
+                            ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::CUP->value)
+                            ->options([
+                                '8' => '8',
+                                '16' => '16',
+                                '32' => '32',
+                                '64' => '64',
+                            ])
+                            ->label('Número máximo de jogadores')->required(),
+                        Select::make('max_playes')
+                            ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
+                            ->options([
+                                '16' => '16',
+                                '8' => '8',
+                                '4' => '4',
+                                '2' => '2',
+                            ])
+                            ->label('Número máximo de jogadores')
+                            ->helperText('Oitavas, quartas, semifinal, ou final')
+                            ->required(),
+                        TextInput::make('max_playes')
+                            ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
+                            ->label('Número máximo de jogadores')
+                            ->numeric()
+                            ->maxValue(32)
+                            ->minValue(2)
+                            ->required(),
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            TextInput::make('wpp_group_link')
+                                ->label('Link do grupo de WhatsApp')
+                                ->url()
+                                ->prefix('https://')
+                                ->maxLength(255),
+                            Select::make('status')
+                                ->options(ChampionshipStatusEnum::class)
+                                ->required()
+                                ->label('Status'),
+                        ]),
+                    ]),
+
+                Wizard\Step::make('Endereço')
+                    ->schema([
+                        Group::make()->relationship('address')->schema([
+                            Hidden::make('championship_id')
+                                    ->default(fn (callable $get) => $get('id'))
+                                    ->disabled(),
+                            Grid::make(['default' => 1, 'lg' => 2])->schema([
+                                TextInput::make('street')
+                                    ->label('Rua')
+                                    ->required(),
+                                TextInput::make('number')
+                                    ->label('Número')
+                                    ->required()
+                                    ->integer()
+                                    ->mask('9999'),
+                            ]),
+                            Grid::make(['default' => 1, 'lg' => 2])->schema([
+                                TextInput::make('complement')
+                                    ->label('Complemento'),
+                                TextInput::make('neighborhood')
+                                    ->label('Bairro')
+                                    ->required(),
+                            ]),
+                            Grid::make(['default' => 1, 'lg' => 2])->schema([
+                                TextInput::make('city')
+                                    ->label('Cidade')
+                                    ->required(),
+                                TextInput::make('state')
+                                    ->label('Estado')
+                                    ->required(),
+                            ]),
+                            Grid::make(['default' => 1, 'lg' => 2])->schema([
+                                TextInput::make('country')
+                                    ->label('País')
+                                    ->required(),
+                            ]),
+                        ]),
+                    ]),
+            ])->columnSpan(['lg' => 3]),
+        ]);
     }
 
     public static function table(Table $table): Table

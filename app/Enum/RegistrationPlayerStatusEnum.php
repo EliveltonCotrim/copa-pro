@@ -19,7 +19,7 @@ enum RegistrationPlayerStatusEnum: int implements HasLabel, HasColor, HasIcon
             self::REGISTERED => 'INSCRITO',
             self::PENDING => 'PENDENTE',
             self::APPROVED => 'APROVADO',
-            default => 'Status não encotrado',
+            default => 'Status não encontrado',
         };
     }
 

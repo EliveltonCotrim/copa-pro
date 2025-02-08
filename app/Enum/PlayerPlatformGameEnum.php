@@ -22,7 +22,7 @@ enum PlayerPlatformGameEnum: int implements HasLabel
             self::MOBILE => 'Dispositivo Móvel',
             self::ALL => 'Todas as plataformas',
             self::OTHER => 'Outra',
-            default => 'Plataforma não encotrada',
+            default => 'Plataforma não encontrada',
         };
     }
 
