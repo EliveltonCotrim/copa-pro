@@ -2,76 +2,108 @@
 
 namespace App\Livewire\Championship;
 
+use App\Enum\PlayerExperienceLevelEnum;
+use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\PlayerSexEnum;
+use App\Livewire\Forms\PlayerForm;
+use App\Livewire\Forms\RegistrationPlayerForm;
+use App\Livewire\Forms\UserForm;
 use App\Models\Championship;
-use Blade;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Illuminate\Support\HtmlString;
+use App\Models\Player;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
-use View;
+use TallStackUi\Traits\Interactions;
 
-class RegistrationForm extends Component implements HasForms
+class RegistrationForm extends Component
 {
-
-    use InteractsWithForms;
+    use Interactions;
 
     public Championship $championship;
-    public ?array $data = [];
+    public RegistrationPlayerForm $registrationForm;
+    public string $step = "1";
+    public array $genders = [];
+    public array $gammingPlatforms = [];
+    public array $experienceLevels = [];
+    public bool $showForm = false;
 
-    public function mount(): void
+    public ?string $nickname = '';
+    public ?string $email = '';
+    protected $player;
+
+
+    public function mount()
     {
-        $this->form->fill();
+        $this->genders = PlayerSexEnum::optionsArrayWithLabelAndValues();
+        $this->gammingPlatforms = PlayerPlatformGameEnum::optionsArrayWithLabelAndValues();
+        $this->experienceLevels = PlayerExperienceLevelEnum::optionsArrayWithLabelAndValues();
     }
 
-    public function form(Form $form)
+    public function nextStepControl()
     {
-        return $form
-            ->schema([
-                Wizard::make()
-                    ->columnSpanFull()
-                    ->schema([
-                        Wizard\Step::make('Inscrição')
-                            ->description('Informe os dados para realizar a inscrição')
-                            ->icon('heroicon-o-user')
-                            ->schema([
-                                TextInput::make('name')
-                                    ->label('Nome')
-                                    ->required(),
-                                TextInput::make('email')
-                                    ->label('E-mail')
-                                    ->required(),
-                                TextInput::make('championship_team_name')
-                                    ->label('Nome do Time do Campeonato')
-                                    ->required()
-                                    ->maxLength(255),
+        $this->showForm = true;
+        $this->registrationForm->validate();
 
-                            ])->afterValidation(function () {
-                                dd('sd');
-                            })->actionFormModel($this->championship),
-                        Wizard\Step::make('Pagamento')
-                            ->icon('heroicon-o-currency-dollar')
-                            ->schema([
-
-                            ]),
-                    ])->submitAction(new HtmlString(Blade::render(<<<BLADE
-                        <x-filament::button
-                            type="submit"
-                            size="sm"
-                        >
-                            Finalizar inscrição
-                        </x-filament::button>
-                    BLADE)))
-            ])->statePath('data');
+        $this->step = '2';
     }
 
-    public function save()
+    public function searchPlayer()
     {
-        dd($this->form->getState());
+        $this->validateSearch();
+        
+        $this->player = $this->findPlayerByNicknameOrEmail();
+
+        if ($this->player) {
+            $this->handleExistingPlayer($this->player);
+        } else {
+            $this->handleNewPlayer();
+        }
+
+        $this->showForm = true;
     }
+
+    private function validateSearch()
+    {
+        $this->validate([
+            'nickname' => 'required_without:email|string',
+            'email' => 'required_without:nickname|email:rfc,dns',
+        ]);
+    }
+
+    /**
+     * Search player by nickname or email
+     * @return Player|null
+     */
+    private function findPlayerByNicknameOrEmail(): ?Player
+    {
+        return Player::when(!empty($this->nickname), function (Builder $query) {
+            $query->where('nickname', $this->nickname);
+        })->when(!empty($this->email), function (Builder $query) {
+            $query->whereHas('user', function (Builder $subquery) {
+                $subquery->where('email', $this->email)->where('userable_type', Player::class);
+            });
+        })->first();
+    }
+
+    /**
+     * Prepare the form to create a new player whith the nickname and email
+     * @return void
+     */
+    private function handleNewPlayer(): void
+    {
+        $this->registrationForm->email = $this->email;
+        $this->registrationForm->nickname = $this->nickname;
+    }
+
+    /**
+     * Fill out the form with the player's data
+     * @param \App\Models\Player $player
+     * @return void
+     */
+    private function handleExistingPlayer(Player $player): void
+    {
+        $this->registrationForm->setForm($player);
+    }
+
 
     public function render()
     {

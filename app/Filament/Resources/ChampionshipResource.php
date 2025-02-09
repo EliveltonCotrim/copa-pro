@@ -84,6 +84,7 @@ class ChampionshipResource extends Resource
                             SpatieMediaLibraryFileUpload::make('banner_path')
                                 ->image()
                                 ->preserveFilenames()
+                                ->helperText('Dimensão ideal: 1280px × 192px')
                                 ->previewable()
                                 ->maxSize(2048)
                                 ->directory('banners-championships')

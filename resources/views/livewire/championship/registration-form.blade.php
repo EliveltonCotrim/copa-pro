@@ -1,109 +1,103 @@
-<div class="wrapper w-full md:max-w-5xl mx-auto pt-20 px-4">
+<div class="wrapper w-full h-14 md:max-w-5xl mx-auto pt-5 px-4">
     <div class="flex flex-col items-center p-4 space-y-4">
-        <!-- Steps -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-8 sm:space-y-0">
-            <!-- Step 1 -->
-            <div class="flex items-center space-x-4 w-full sm:w-auto">
-                <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white border-2 border-blue-500">
-                    1
-                </div>
-                <div>
-                    <p class="font-semibold text-blue-500">Inscrição</p>
-                    <p class="text-sm text-gray-500">Informe os dados abaixo</p>
-                </div>
-            </div>
-
-            <!-- Separator 1 -->
-            <div class="hidden sm:flex flex-1 items-center px-4">
-                <div class="h-1 w-full bg-gray-300"></div>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="flex items-center space-x-4 w-full sm:w-auto">
-                <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-white text-gray-400 border-2 border-gray-300">
-                    2
-                </div>
-                <div>
-                    <p class="font-semibold text-gray-700">Pagamento</p>
-                    <p class="text-sm text-gray-500">Escolha a forma de pagamento</p>
-                </div>
-            </div>
-
-            <!-- Separator 2 -->
-            <div class="hidden sm:flex flex-1 items-center px-4">
-                <div class="h-1 w-full bg-gray-300"></div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="flex items-center space-x-4 w-full sm:w-auto">
-                <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-white text-gray-400 border-2 border-gray-300">
-                    3
-                </div>
-                <div>
-                    <p class="font-semibold text-gray-700">Confirmação</p>
-                    <p class="text-sm text-gray-500">Revise suas informações</p>
-                </div>
-            </div>
-        </div>
-
         <!-- Card -->
         <div class="w-full bg-white rounded-lg shadow-lg p-6">
             <!-- Header Image -->
-            <div class="w-full h-40 bg-gray-200 rounded-md overflow-hidden">
-                <img src="{{ asset('images/background-login-filter-black.webp') }}" alt="Championship Image"
+            <div class="w-full h-48 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+                <img src="{{ $championship->getFirstMediaUrl() }}" alt="Championship Image"
                     class="w-full h-full object-cover">
             </div>
 
             <!-- Description -->
-            <div class="mt-4">
-                <h2 class="text-xl font-bold">Championship Title</h2>
-                <p class="text-gray-600 mt-2">
-                    This is a brief description of the championship, highlighting key details
-                    and excitement.</p>
+            <div class="mt-8 p-6">
+                <h2 class="text-4xl text-center font-extrabold text-indigo-600">{{ $championship->name }}</h2>
+                <p class="text-gray-700 mt-4 text-lg leading-relaxed">{!! $championship->description !!}</p>
             </div>
 
-            <!-- Form -->
-            <form class="mt-4 space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                    <div class="mb-3">
-                        <x-input label="Nome" placeholder="Nome completo" required />
-                    </div>
-                    <div class="mb-3">
-                        <x-input type="date" label="Data de nascimento" />
-                    </div>
-                    <div class="mb-3">
-                        <x-input label="E-mail" type="email" />
-                    </div>
-                    <div class="mb-3">
-                        <x-input icon="phone" label="Whatsapp" />
-                    </div>
-                    <div class="mb-3">
-                        <x-input label="Time do Campeonato" />
-                    </div>
-                    <div class="mb-3">
-                        <x-input label="Time do coração" />
-                    </div>
-                    <div class="mb-3">
-                        <x-select label="Plataforma de Jogo" placeholder="Selecione uma plataforma" :options="App\Enum\PlayerPlatformGameEnum::options()" />
-                    </div>
-                    <div class="mb-3">
-                        <x-select label="Genêro" placeholder="Selecione um gênero" :options="App\Enum\PlayerSexEnum::options()" />
-                    </div>
-                    <div class="mb-3">
-                        <x-select label="Nível de Experiência" placeholder="Selecione seu nível de experência"
-                            :options="App\Enum\PlayerExperienceLevelEnum::options()" />
-                    </div>
-                </div>
-                <x-button primary label="Primary" />
-            </form>
+            <div class="my-4" x-data="{ showForm: @entangle('showForm') }">
+                <x-step wire:model.live="step" panels>
+                    <x-step.items step="1" title="Inscrição" description="Informe os dados abaixo">
+                        <!-- Form -->
+                        <form class="mt-4 px-2 space-y-4">
+                            <div x-show="!showForm" x-transition>
+                                <div class="mb-3">
+                                    <x-alert
+                                        text="Use o mesmo nickname ou e-mail das inscrições anteriores. Se for a primeira vez, cadastre um novo."
+                                        light />
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                                    <div class="mb-3">
+                                        <x-input label="NickName" wire:model="nickname" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <x-input label="E-mail" wire:model="email" />
+                                    </div>
+                                    <div class="mb-3 flex items-center justify-center">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1">
+                                    <x-button sm icon="magnifying-glass" text="Pesquisar" wire:click="searchPlayer" />
+                                </div>
+                            </div>
+
+                            <div x-show="showForm" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                                <div class="mb-3">
+                                    <x-input label="Nome *" placeholder="Informe seu nome completo"
+                                        wire:model="registrationForm.name" required />
+                                </div>
+                                <div class="mb-3">
+                                    <x-input label="E-mail *" type="email" wire:model="registrationForm.email"
+                                        required />
+                                </div>
+                                <div class="mb-3">
+                                    <x-input label="Nickname *" wire:model="registrationForm.nickname" required/>
+                                </div>
+                                <div class="mb-3">
+                                    <x-select.styled label="Genêro" placeholder="Selecione um gênero"
+                                        wire:model="registrationForm.sex" :options="$genders"
+                                        select="label:label|value:value" />
+                                </div>
+                                <div class="mb-3">
+                                    <x-date label="Data de nascimento" :max-date="now()"
+                                        wire:model="registrationForm.birth_dt" format="DD/MM/YYYY"
+                                        placeholder="00/00/0000" />
+                                </div>
+                                <div class="mb-3">
+                                    <x-input icon="phone" label="Whatsapp *" wire:model="registrationForm.phone"
+                                        x-mask="(99) 99999-9999" placeholder="(00) 00000-0000" required />
+                                </div>
+                                <div class="mb-3">
+                                    <x-input label="Time do coração" wire:model="registrationForm.heart_team_name" />
+                                </div>
+                                <div class="mb-3">
+                                    <x-input label="Time do Campeonato *"
+                                        wire:model="registrationForm.championship_team_name" required />
+                                </div>
+                                <div class="mb-3">
+                                    <x-select.styled label="Plataforma de Jogo *" placeholder="Selecione uma plataforma"
+                                        wire:model="registrationForm.game_platform" :options="$gammingPlatforms"
+                                        select="label:label|value:value" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <x-select.styled label="Nível de Experiência"
+                                        placeholder="Selecione seu nível de experência"
+                                        wire:model="registrationForm.level_experience" :options="$experienceLevels"
+                                        select="label:label|value:value" />
+                                </div>
+                            </div>
+                            <div x-show="showForm" x-transition class="grid grid-cols-1 gap-x-4">
+                                <x-button sm x-show="showForm" icon="chevron-right" position="right" text="Next"
+                                    wire:click="nextStepControl(2)" />
+                            </div>
+                        </form>
+                    </x-step.items>
+                    <x-step.items step="2" title="Pagamento" description="Escolha a forma de pagamento">
+                        Step two...
+                    </x-step.items>
+                </x-step>
+            </div>
+
         </div>
     </div>
-
-    {{-- <form wire:submit="save">
-        {{ $this->form }}
-
-    </form> --}}
 </div>
