@@ -17,11 +17,16 @@
     </style>
 
     <tallstackui:script />
+    @filamentStyles
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 
-<body class="antialiased">
+<body class="antialiased" style="background-image: url({{ asset('images/background-login-filter-black.webp') }});">
+
+    <x-toast />
+    
     {{ $slot }}
 
     @livewireScripts

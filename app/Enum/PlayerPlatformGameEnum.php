@@ -37,4 +37,10 @@ enum PlayerPlatformGameEnum: int implements HasLabel
         return collect(PlayerPlatformGameEnum::cases())
             ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]);
     }
+
+    public static function optionsArrayWithLabelAndValues(): array
+    {
+        return collect(PlayerPlatformGameEnum::cases())
+            ->map(fn($cass) => ['value' => $cass->value, 'label' => $cass->getLabel()])->toArray();
+    }
 }

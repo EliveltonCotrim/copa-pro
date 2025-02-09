@@ -29,4 +29,10 @@ enum PlayerSexEnum: int implements HasLabel
         return collect(PlayerSexEnum::cases())
             ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]);
     }
+
+    public static function optionsArrayWithLabelAndValues(): array
+    {
+        return collect(PlayerSexEnum::cases())
+            ->map(fn($case) => ['value' => $case->value, 'label' => $case->getLabel()])->toArray();
+    }
 }

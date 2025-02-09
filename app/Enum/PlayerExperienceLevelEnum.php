@@ -37,4 +37,10 @@ enum PlayerExperienceLevelEnum: int implements HasLabel
         return collect(PlayerExperienceLevelEnum::cases())
             ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]);
     }
+
+    public static function optionsArrayWithLabelAndValues(): array
+    {
+        return collect(PlayerExperienceLevelEnum::cases())
+            ->map(fn($cass) => ['value' => $cass->value, 'label' => $cass->getLabel()])->toArray();
+    }
 }
