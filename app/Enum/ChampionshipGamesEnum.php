@@ -16,7 +16,7 @@ enum ChampionshipGamesEnum: int implements HasLabel
             self::EFOOTBALL => 'EFOOTBALL',
             self::FIFA => 'FIFA',
             self::UFL => 'UFL',
-            default => 'Game não encotrado',
+            default => 'Game não encontrado',
         };
     }
 

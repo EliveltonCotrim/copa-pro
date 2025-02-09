@@ -2,14 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\Enum\PlayerStatusEnum;
-use App\Models\Organizer;
-use App\Models\Player;
-use App\Models\Role;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
+use App\Models\{Organizer, Player, Role, User};
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\RoleEnum;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -50,6 +45,7 @@ class DatabaseSeeder extends Seeder
 
         $player = Player::create([
             'phone' => '999999999',
+            'level_experience' => PlayerExperienceLevelEnum::BEGINNER->value,
             'bio' => 'Organizer Test bio',
             'heart_team_name' => 'Vasco',
             'birth_dt' => now()->format('Y-m-d'),

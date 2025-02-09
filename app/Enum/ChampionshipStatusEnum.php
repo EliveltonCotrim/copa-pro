@@ -20,7 +20,7 @@ enum ChampionshipStatusEnum: int implements HasLabel, HasColor, HasIcon
             self::INACTIVE => 'Inativo',
             self::FINISHED => 'Finalizado',
             self::IN_PROGRESS => 'Em andamento',
-            default => 'Status não encotrado',
+            default => 'Status não encontrado',
         };
     }
 

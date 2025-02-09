@@ -16,7 +16,7 @@ enum ChampionshipFormatEnum: int implements HasLabel
             self::LEAGUE => 'Liga',
             self::KNOCKOUT => 'Mata-mata',
             self::CUP => 'Copa',
-            default => 'Formato não encotrado',
+            default => 'Formato não encontrado',
         };
     }
 
