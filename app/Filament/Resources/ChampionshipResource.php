@@ -65,7 +65,7 @@ class ChampionshipResource extends Resource
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             DatePicker::make('start_date')
                                 ->label('Data de início')
-                                ->minDate(fn() => now()->format('Y-m-d'))
+                                ->minDate(fn ($record) => $record ? null : now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
                                     'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
@@ -74,6 +74,7 @@ class ChampionshipResource extends Resource
                                 ->required(),
                             DatePicker::make('end_date')
                                 ->label('Data de término')
+                                ->minDate(fn (callable $get) => $get('start_date'))
                                 ->required()
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
@@ -206,7 +207,10 @@ class ChampionshipResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('banner_path')->label('Banner')->size('55px'),
+                SpatieMediaLibraryImageColumn::make('banner_path')
+                    ->label('Banner')
+                    ->size('55px')
+                    ->placeholder("Sem banner"),
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
