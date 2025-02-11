@@ -107,7 +107,8 @@ class PlayerResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nickname')
                     ->label('Nickname')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder("Sem nickname"),
                 Tables\Columns\TextColumn::make('birth_dt')
                     ->label('Data de nascimento')
                     ->dateTime('d/m/Y')
