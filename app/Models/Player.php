@@ -15,6 +15,7 @@ class Player extends Model
 
     protected $fillable = [
         'nickname',
+        'customer_id',
         'heart_team_name',
         'birth_dt',
         'sex',
@@ -23,6 +24,7 @@ class Player extends Model
         'status',
         'game_platform',
         'level_experience',
+        'cpf_cnpj',
     ];
 
     protected $casts = [

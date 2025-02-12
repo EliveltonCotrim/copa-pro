@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Storage;
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes, HasRoles, InteractsWithMedia;
+    use HasFactory, Notifiable, SoftDeletes, HasRoles, InteractsWithMedia, Notifiable;
 
     protected $fillable = [
         'name',
