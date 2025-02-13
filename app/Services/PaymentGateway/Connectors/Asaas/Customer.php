@@ -43,8 +43,8 @@ class Customer implements CustomerInterface
         return $this->http->delete((string) '/customers/' . $id);
     }
 
-    // public function restore(int|string $id): array
-    // {
-    //     return $this->http->post((string) '/customers/' . $id . '/restore');
-    // }
+    public function restore(int|string $id): array
+    {
+        return $this->http->post((string) '/customers/' . $id . '/restore', []);
+    }
 }

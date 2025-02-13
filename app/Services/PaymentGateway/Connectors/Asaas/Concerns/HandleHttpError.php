@@ -3,6 +3,7 @@
 namespace App\Services\PaymentGateway\Connectors\Asaas\Concerns;
 
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\JsonResponse;
 
 trait HandleHttpError
 {
@@ -12,7 +13,7 @@ trait HandleHttpError
             'error' => true,
             'status' => $requestException->getCode(),
             'message' => $requestException->getMessage(),
-            'response' => $requestException->response->reason(),
+            'response' => $requestException?->response?->reason() ?? null,
         ];
     }
 }

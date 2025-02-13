@@ -9,4 +9,5 @@ interface CustomerInterface
     public function show(int|string $id): array;
     public function update(int|string $id, array $data): array;
     public function delete(int|string $id): array;
+    public function restore(int|string $id): array;
 }

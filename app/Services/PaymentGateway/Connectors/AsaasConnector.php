@@ -9,6 +9,7 @@ use App\Services\PaymentGateway\Connectors\Asaas\Concerns\HandleHttpError;
 use App\Services\PaymentGateway\Contracts\AdapterInterface;
 use Http;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\JsonResponse;
 
 class AsaasConnector implements AdapterInterface
 {
@@ -27,8 +28,9 @@ class AsaasConnector implements AdapterInterface
         }
     }
 
-    public function post(string $url, array $params)
+    public function post(string $url, array $params): array
     {
+
         $request = $this->http->post($url, $params);
 
         try {
@@ -40,7 +42,7 @@ class AsaasConnector implements AdapterInterface
         }
     }
 
-    public function delete(string $url)
+    public function delete(string $url): array
     {
         $request = $this->http->delete($url);
 
@@ -53,7 +55,7 @@ class AsaasConnector implements AdapterInterface
         }
     }
 
-    public function put(string $url, array $params)
+    public function put(string $url, array $params): array
     {
         $request = $this->http->put($url, $params);
 
