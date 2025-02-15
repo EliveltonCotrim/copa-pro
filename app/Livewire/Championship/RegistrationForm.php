@@ -121,6 +121,10 @@ class RegistrationForm extends Component
 
     public function verifyCode()
     {
+        $this->validate([
+            'registrationForm.verification_code' => 'required|numeric|digits:5',
+        ]);
+
         $code = (string) Cache::get('verification_code_' . $this->registrationForm->player_id);
 
         if (empty($code)) {
@@ -233,9 +237,20 @@ class RegistrationForm extends Component
         return null;
     }
 
-    public function savePayment()
+    public function checkPayment()
     {
-        dd('savePayment');
+        $this->playerCharge->refresh();
+
+        if ($this->playerCharge->status === PaymentStatusEnum::PAID) {
+            $this->toast()->success('Inscrição realizada com sucesso.')
+                ->flash()
+                ->send();
+
+            // TODO Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
+            // TODO Redirecionar para a página de detalhes do campeonato
+
+            return $this->redirectRoute('championship.register', $this->championship);
+        }
     }
 
     public function render()

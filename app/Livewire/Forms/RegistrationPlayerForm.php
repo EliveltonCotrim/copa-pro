@@ -6,6 +6,9 @@ use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\Models\Player;
+use App\Services\PaymentGateway\Connectors\AsaasConnector;
+use App\Services\PaymentGateway\Gateway;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -25,7 +28,7 @@ class RegistrationPlayerForm extends Form
     public string $phone = '';
     public int $game_platform;
     public int $level_experience;
-    public string $cpf_cnpj = '';
+    public string $cpf_cnpj = '05493282542';
 
     // user table
     public $name = '';
@@ -35,8 +38,6 @@ class RegistrationPlayerForm extends Form
     public $player_id;
     public ?string $customer_id = null;
     public ?string $verification_code = null;
-
-
 
     public function rules()
     {
@@ -85,8 +86,16 @@ class RegistrationPlayerForm extends Form
         $this->customer_id = $player->customer_id;
     }
 
+    public function saveSubscription()
+    {
+
+
+    }
+
     public function updatePlayer(Player $player): Player
     {
+        $this->cpf_cnpj = clear_string($this->cpf_cnpj);
+
         $updatedPlayer = DBTransaction::transaction(function () use ($player) {
             $player->update(
                 $this->except(['name', 'email', 'user_id', 'user_id'])
@@ -105,6 +114,8 @@ class RegistrationPlayerForm extends Form
 
     public function createPlayer(): Player
     {
+        $this->cpf_cnpj = clear_string($this->cpf_cnpj);
+
         $createdPlayer = DBTransaction::transaction(function () {
             $player = Player::create(
                 $this->except(['name', 'email', 'user_id', 'user_id'])
@@ -121,6 +132,20 @@ class RegistrationPlayerForm extends Form
         });
 
         return $createdPlayer;
+    }
+
+    public function createCustomerAsaas(): array
+    {
+        $adapter = app(AsaasConnector::class);
+        $gateway = new Gateway($adapter);
+        $this->cpf_cnpj = clear_string($this->cpf_cnpj);
+
+        return $gateway->customer()->create([
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'cpfCnpj' => $this->cpf_cnpj,
+        ]);
     }
 
 }

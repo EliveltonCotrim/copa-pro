@@ -238,6 +238,7 @@ return [
         'birth_date' => 'data de nascimento',
         'registrationForm.nickname' => 'nickname',
         'registrationForm.email' => 'e-mail',
+        'registrationForm.verification_code' => 'código',
     ],
 
 ];
