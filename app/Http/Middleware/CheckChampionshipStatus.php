@@ -18,10 +18,10 @@ class CheckChampionshipStatus
     {
         $championship = $request->route('championship');
 
-        if ($championship->status !== ChampionshipStatusEnum::ACTIVE) {
-            abort(403, 'Campeonato indisponível para inscrição.');
+        if ($championship->status === ChampionshipStatusEnum::REGISTRATION_OPEN) {
+            return $next($request);
         }
 
-        return $next($request);
+        abort(403, 'Campeonato indisponível para inscrição.');
     }
 }

@@ -58,7 +58,9 @@ class Player extends Model
     public function hasActiveChampionships(): bool
     {
         $exists = $this->registrationsChampionships()->whereHas('championship', function (Builder $query) {
-            $query->where('status', ChampionshipStatusEnum::ACTIVE)->orWhere('status', ChampionshipStatusEnum::IN_PROGRESS);
+            $query->where('status', ChampionshipStatusEnum::REGISTRATION_OPEN)
+                ->orWhere('status', ChampionshipStatusEnum::IN_PROGRESS)
+                ->orWhere('status', ChampionshipStatusEnum::ON_HOLD);
         })->exists();
 
         return $exists;
