@@ -65,7 +65,8 @@ class ChampionshipResource extends Resource
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             DatePicker::make('start_date')
                                 ->label('Data de início')
-                                ->minDate(fn ($record) => $record ? null : now()->format('Y-m-d'))
+                                ->live()
+                                ->minDate(fn ($record) => $record ? $record->start_date : now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
                                     'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
@@ -74,7 +75,7 @@ class ChampionshipResource extends Resource
                                 ->required(),
                             DatePicker::make('end_date')
                                 ->label('Data de término')
-                                ->minDate(fn (callable $get) => $get('start_date'))
+                                ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
                                 ->required()
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
