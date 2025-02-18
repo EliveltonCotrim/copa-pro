@@ -2,14 +2,13 @@
 
 namespace App\Filament\Resources;
 
-
 use App\Enum\{PaymentStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
 use App\Filament\Resources\PlayerResource\Pages;
 use App\Filament\Resources\PlayerResource\RelationManagers;
 use App\Models\Player;
 use Filament\Actions\DeleteAction;
 use Filament\Forms;
-use Filament\Forms\Components\{DatePicker, Group, Select, Textarea, TextInput};
+use Filament\Forms\Components\{DatePicker, Group, Select, Textarea, TextInput, Grid};
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -45,24 +44,26 @@ class PlayerResource extends Resource
         return $form
             ->schema([
                 Group::make()->relationship('user')->schema([
-                    TextInput::make('name')
-                        ->label('Nome')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('email')
-                        ->label('E-mail')
-                        ->unique(ignoreRecord: true)
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('password')
-                        ->revealable()
-                        ->password()
-                        ->label('Senha')
-                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                        ->dehydrated(fn($state) => filled($state))
-                        ->required(fn(string $context): bool => $context === 'create')
-                        ->minLength(6)
-                        ->maxLength(255),
+                    Grid::make(3)->schema([
+                        TextInput::make('name')
+                            ->label('Nome')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->label('E-mail')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('password')
+                            ->revealable()
+                            ->password()
+                            ->label('Senha')
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(string $context): bool => $context === 'create')
+                            ->minLength(6)
+                            ->maxLength(255),
+                    ]),
                 ])->columnSpanFull(),
                 TextInput::make('nickname')
                     ->label('Nickname do jogador')
@@ -102,27 +103,27 @@ class PlayerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Nome')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('nickname')
+                TextColumn::make('nickname')
                     ->label('Nickname')
                     ->searchable()
                     ->placeholder("Sem nickname"),
-                Tables\Columns\TextColumn::make('birth_dt')
+                TextColumn::make('birth_dt')
                     ->label('Data de nascimento')
                     ->dateTime('d/m/Y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sex')
+                TextColumn::make('sex')
                     ->label('Gênero'),
-                Tables\Columns\TextColumn::make('phone')
+                TextColumn::make('phone')
                     ->label('WhatsApp')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status'),
-                Tables\Columns\TextColumn::make('game_platform')
+                TextColumn::make('game_platform')
                     ->Label('Plataforma de jogo'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

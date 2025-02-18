@@ -119,10 +119,10 @@ class ChampionshipResource extends Resource
                             ->required()
                             ->live()
                             ->afterStateUpdated(function (callable $set, $state) {
-                        	$set('max_playes', null);
+                        	    $set('max_players', null);
                     	    })
                             ->label('Formato do campeonato'),
-                        Select::make('max_playes')
+                        Select::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::CUP->value)
                             ->options([
                                 '8' => '8',
@@ -131,7 +131,7 @@ class ChampionshipResource extends Resource
                                 '64' => '64',
                             ])
                             ->label('Número máximo de jogadores')->required(),
-                        Select::make('max_playes')
+                        Select::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
                             ->options([
                                 '16' => '16',
@@ -140,9 +140,9 @@ class ChampionshipResource extends Resource
                                 '2' => '2',
                             ])
                             ->label('Número máximo de jogadores')
-                            ->helperText('Oitavas, quartas, semifinal, ou final')
+                            ->helperText('Oitavas, quartas, semifinal ou final')
                             ->required(),
-                        TextInput::make('max_playes')
+                        TextInput::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
                             ->label('Número máximo de jogadores')
                             ->numeric()

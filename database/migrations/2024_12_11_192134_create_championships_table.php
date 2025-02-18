@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->string('banner_path')->nullable();
             $table->string('regulation_path')->nullable();
             $table->enum('game_platform', PlayerPlatformGameEnum::values())->nullable();
-            $table->integer('max_playes')->nullable();
+            $table->integer('max_players')->nullable();
             $table->enum('championship_format', ChampionshipFormatEnum::values())->nullable(); // 'cup', 'league', 'KNOCKOUT'
             $table->string('wpp_group_link')->nullable();
             $table->string('registration_link')->nullable();
