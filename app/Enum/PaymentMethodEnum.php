@@ -2,36 +2,22 @@
 
 namespace App\Enum;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum PaymentMethodEnum: int implements HasLabel
+enum PaymentMethodEnum: string
 {
-    case CREADIT_CARD = 1;
-    case PIX = 2;
-    case BANK_SLIP = 3;
+    case UNDEFINED = 'UNDEFINED';
+    case BOLETO = 'BOLETO';
+    case CREDIT_CARD = 'CREDIT_CARD';
+    case PIX = 'PIX';
 
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return match ($this) {
-            self::CREADIT_CARD => "Catão de Crédito",
-            self::PIX => "PIX",
-            self::BANK_SLIP => "Boleto Bancário",
-            default => "Método de pagamento não encontrado",
+            self::UNDEFINED => 'Indefinido',
+            self::BOLETO => 'Boleto',
+            self::CREDIT_CARD => 'Cartão de Crédito',
+            self::PIX => 'PIX',
+            default => 'Método de pagamento não encontrado',
         };
-    }
-
-    public static function parse($status)
-    {
-        switch ($status) {
-            case 'credit_card':
-                return self::CREADIT_CARD;
-            case 'bank_transfer':
-                return self::PIX;
-            case 'ticket':
-                return self::BANK_SLIP;
-            default:
-                return null;
-        }
     }
 
     public static function values(): array

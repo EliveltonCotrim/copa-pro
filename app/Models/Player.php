@@ -15,6 +15,7 @@ class Player extends Model
 
     protected $fillable = [
         'nickname',
+        'customer_id',
         'heart_team_name',
         'birth_dt',
         'sex',
@@ -23,6 +24,7 @@ class Player extends Model
         'status',
         'game_platform',
         'level_experience',
+        'cpf_cnpj',
     ];
 
     protected $casts = [
@@ -56,7 +58,9 @@ class Player extends Model
     public function hasActiveChampionships(): bool
     {
         $exists = $this->registrationsChampionships()->whereHas('championship', function (Builder $query) {
-            $query->where('status', ChampionshipStatusEnum::ACTIVE)->orWhere('status', ChampionshipStatusEnum::IN_PROGRESS);
+            $query->where('status', ChampionshipStatusEnum::REGISTRATION_OPEN)
+                ->orWhere('status', ChampionshipStatusEnum::IN_PROGRESS)
+                ->orWhere('status', ChampionshipStatusEnum::ON_HOLD);
         })->exists();
 
         return $exists;

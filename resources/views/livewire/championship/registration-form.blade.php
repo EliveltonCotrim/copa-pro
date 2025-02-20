@@ -1,25 +1,32 @@
-<div class="wrapper w-full h-14 md:max-w-5xl mx-auto pt-5 px-4">
+<div class="wrapper w-full md:max-w-3xl mx-auto pt-3 px-3">
+    <x-loading loading="createPayment, verifyCode, searchPlayer" />
+
     <div class="flex flex-col items-center p-4 space-y-4">
         <!-- Card -->
-        <div class="w-full bg-white rounded-lg shadow-lg p-6">
+        <div class="w-full bg-white rounded-lg shadow-lg p-4">
             <!-- Header Image -->
-            <div class="w-full h-48 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+            <div class="w-full h-32 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
                 <img src="{{ $championship->getFirstMediaUrl() }}" alt="Championship Image"
                     class="w-full h-full object-cover">
             </div>
 
             <!-- Description -->
-            <div class="mt-8 p-6">
-                <h2 class="text-4xl text-center font-extrabold text-indigo-600">{{ $championship->name }}</h2>
-                <p class="text-gray-700 mt-4 text-lg leading-relaxed">{!! $championship->description !!}</p>
+            <div class="mt-2 p-2">
+                <h2 class="text-3xl text-center font-extrabold text-indigo-600">{{ $championship->name }}</h2>
+                <p class="text-gray-700 mt-2 text-lg leading-relaxed">{!! $championship->description !!}</p>
             </div>
 
-            <div class="my-4" x-data="{ showForm: @entangle('showForm') }">
+            <div class="my-2" x-data="{
+                showForm: @entangle('showForm'),
+                showVerificationForm: @entangle('showVerificationForm'),
+                showInitForm: @entangle('showInitForm'),
+                showPaymentForm: @entangle('showPaymentForm')
+            }">
                 <x-step wire:model.live="step" panels>
                     <x-step.items step="1" title="Inscrição" description="Informe os dados abaixo">
                         <!-- Form -->
-                        <form class="mt-4 px-2 space-y-4">
-                            <div x-show="!showForm" x-transition>
+                        <div class="mt-2 px-3 space-y-3">
+                            <div x-show="showInitForm" x-transition>
                                 <div class="mb-3">
                                     <x-alert
                                         text="Use o mesmo nickname ou e-mail das inscrições anteriores. Se for a primeira vez, cadastre um novo."
@@ -27,20 +34,29 @@
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
                                     <div class="mb-3">
-                                        <x-input label="NickName" wire:model="nickname" />
+                                        <x-input label="NickName" wire:model="registrationForm.nickname" />
                                     </div>
                                     <div class="mb-3">
-                                        <x-input label="E-mail" wire:model="email" />
-                                    </div>
-                                    <div class="mb-3 flex items-center justify-center">
+                                        <x-input label="E-mail" wire:model="registrationForm.email" />
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1">
+                                <div class="mt-2 grid grid-cols-1">
                                     <x-button sm icon="magnifying-glass" text="Pesquisar" wire:click="searchPlayer" />
                                 </div>
                             </div>
-
-                            <div x-show="showForm" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                            <div x-show="showVerificationForm" x-transition>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
+                                    <div class="mb-3">
+                                        <x-pin length="5" label="Código"
+                                            wire:model="registrationForm.verification_code"
+                                            hint="Enviamos um código de 5 dígitos para seu e-mail." />
+                                    </div>
+                                </div>
+                                <div class="mt-2 grid grid-cols-1">
+                                    <x-button sm icon="check" text="Validar código" wire:click="verifyCode" />
+                                </div>
+                            </div>
+                            <div x-show="showForm" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
                                 <div class="mb-3">
                                     <x-input label="Nome *" placeholder="Informe seu nome completo"
                                         wire:model="registrationForm.name" required />
@@ -50,7 +66,7 @@
                                         required />
                                 </div>
                                 <div class="mb-3">
-                                    <x-input label="Nickname *" wire:model="registrationForm.nickname" required/>
+                                    <x-input label="Nickname *" wire:model="registrationForm.nickname" required />
                                 </div>
                                 <div class="mb-3">
                                     <x-select.styled label="Genêro" placeholder="Selecione um gênero"
@@ -78,7 +94,6 @@
                                         wire:model="registrationForm.game_platform" :options="$gammingPlatforms"
                                         select="label:label|value:value" />
                                 </div>
-
                                 <div class="mb-3">
                                     <x-select.styled label="Nível de Experiência"
                                         placeholder="Selecione seu nível de experência"
@@ -86,18 +101,59 @@
                                         select="label:label|value:value" />
                                 </div>
                             </div>
-                            <div x-show="showForm" x-transition class="grid grid-cols-1 gap-x-4">
-                                <x-button sm x-show="showForm" icon="chevron-right" position="right" text="Next"
+                            <div x-show="showForm" x-transition class="mt-2 grid grid-cols-1">
+                                <x-button sm x-show="showForm" icon="chevron-right" position="right" text="Avançar"
                                     wire:click="nextStepControl(2)" />
                             </div>
-                        </form>
+                        </div>
                     </x-step.items>
                     <x-step.items step="2" title="Pagamento" description="Escolha a forma de pagamento">
-                        Step two...
+                        <div x-show="showPaymentForm" class="mt-2 px-3 space-y-3" x-transition>
+                            <div class="grid grid-cols-1 gap-x-3">
+                                <div class="mb-3">
+                                    <x-input label="CPF ou CNPJ *" placeholder="Informe seu CPF ou CPNJ"
+                                        wire:model="registrationForm.cpf_cnpj" x-mask:dynamic="cpfCnpjMask"
+                                        maxlength="18" required />
+                                </div>
+                            </div>
+                            <div x-show="showForm" x-transition class="mt-2 grid grid-cols-1">
+                                <x-button sm x-show="showForm" icon="qr-code" position="right" text="Gerar QR Code"
+                                    wire:click="createPayment()" />
+                            </div>
+                        </div>
+                        <div x-show="!showPaymentForm" x-transition>
+                            @if (!$showPaymentForm)
+                                <div wire:poll.4000ms="checkPayment"></div>
+                                <x-payment.card-pix x-if="!showPaymentForm" :qrCode64="$playerCharge->qr_code_64" :qrCode="$playerCharge->qr_code"
+                                    :price="$championship->registration_fee" />
+                            @endif
+                        </div>
                     </x-step.items>
                 </x-step>
             </div>
-
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        function cpfCnpjMask(input) {
+            value = input.replace(/\D/g, ""); // Remove tudo o que não é dígito
+
+            if (value.length <= 11) {
+                //CPF
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            } else if (value.length > 11 && value.length <= 18) {
+                // CNPJ: 00.000.000/0000-00
+                value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+                value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+                value = value.replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+            }
+
+            return value;
+        }
+    </script>
+@endpush

@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->string('wpp_group_link')->nullable();
             $table->string('registration_link')->nullable();
             $table->text('information')->nullable();
-            $table->enum('status', ChampionshipStatusEnum::values())->default(ChampionshipStatusEnum::INACTIVE->value); // 'active', 'inactive', 'finished'
+            $table->enum('status', ChampionshipStatusEnum::values())->default(ChampionshipStatusEnum::REGISTRATION_CLOSED->value); // 'active', 'inactive', 'finished'
 
             $table->timestamps();
             $table->softDeletes();

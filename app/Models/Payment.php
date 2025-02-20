@@ -16,6 +16,8 @@ class Payment extends Model
     protected $fillable = [
         'transaction_id',
         'player_id',
+        'value',
+        'netValue',
         'method',
         'status',
         'installments',
@@ -23,6 +25,7 @@ class Payment extends Model
         'qr_code_64',
         'qr_code',
         'ticket_url',
+        'expiration_date',
     ];
 
     protected $casts = [

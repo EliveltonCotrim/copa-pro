@@ -26,10 +26,12 @@
 <body class="antialiased" style="background-image: url({{ asset('images/background-login-filter-black.webp') }});">
 
     <x-toast />
-    
+
     {{ $slot }}
 
     @livewireScripts
+
+    @stack('scripts')
 </body>
 
 </html>
