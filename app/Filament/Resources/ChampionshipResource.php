@@ -19,10 +19,9 @@ use Filament\Tables\Columns\{SelectColumn, TextColumn, SpatieMediaLibraryImageCo
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
 use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Textarea, FileUpload, Grid, RichEditor};
-use Leandrocfe\FilamentPtbrFormFields\Money;
+use Leandrocfe\FilamentPtbrFormFields\{Money, Cep};
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Wizard;
-use Rmsramos\PostalCode\Components\PostalCode;
 
 class ChampionshipResource extends Resource
 {
@@ -170,12 +169,13 @@ class ChampionshipResource extends Resource
                                     ->default(fn (callable $get) => $get('id'))
                                     ->disabled(),
                             Grid::make(['default' => 1, 'lg' => 3])->schema([
-                                PostalCode::make('postal_code')
+                                Cep::make('postal_code')
                                     ->required()
                                     ->label('CEP')
                                     ->mask('99999-999')
                                     ->helperText('Digite um CEP válido e clique sobre a lupa')
                                     ->viaCep(
+                                        mode: 'suffix',
                                         errorMessage: 'CEP inválido.',
                                         setFields: [
                                             'state'         => 'uf',
@@ -244,7 +244,9 @@ class ChampionshipResource extends Resource
                     ->sortable(),
                 SelectColumn::make('status')
                     ->options(ChampionshipStatusEnum::class)
-                    ->label('Status')->rules(['required']),
+                    ->label('Status')
+                    ->rules(['required'])
+                    ->selectablePlaceholder(false),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
