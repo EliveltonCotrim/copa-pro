@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionsSeed::class,
             RolesSeed::class,
+            UFSeeder::class,
         ]);
 
         User::create([

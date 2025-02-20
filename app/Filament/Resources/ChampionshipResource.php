@@ -7,7 +7,7 @@ use App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource\RelationManagers;
 use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayerRelationManager;
 use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayersRelationManager;
-use App\Models\Championship;
+use App\Models\{Championship, UF};
 use Closure;
 use Filament\Forms;
 use Filament\Forms\{Form, Get, Set};
@@ -22,6 +22,7 @@ use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Tex
 use Leandrocfe\FilamentPtbrFormFields\Money;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Wizard;
+use Rmsramos\PostalCode\Components\PostalCode;
 
 class ChampionshipResource extends Resource
 {
@@ -168,35 +169,44 @@ class ChampionshipResource extends Resource
                             Hidden::make('championship_id')
                                     ->default(fn (callable $get) => $get('id'))
                                     ->disabled(),
+                            Grid::make(['default' => 1, 'lg' => 3])->schema([
+                                PostalCode::make('postal_code')
+                                    ->required()
+                                    ->label('CEP')
+                                    ->mask('99999-999')
+                                    ->helperText('Digite um CEP válido e clique sobre a lupa')
+                                    ->viaCep(
+                                        errorMessage: 'CEP inválido.',
+                                        setFields: [
+                                            'state'         => 'uf',
+                                            'city'          => 'localidade',
+                                        ]
+                                    ),
+                                Select::make('state')
+                                    ->required()
+                                    ->label('UF')
+                                    ->options(UF::all()->pluck('state', 'acronym'))
+                                    ->rules('exists:ufs,acronym'),
+                                TextInput::make('city')
+                                    ->required()
+                                    ->label('Cidade'),
+                            ]),
                             Grid::make(['default' => 1, 'lg' => 2])->schema([
+                                TextInput::make('neighborhood')
+                                    ->label('Bairro')
+                                    ->required(),
                                 TextInput::make('street')
                                     ->label('Rua')
                                     ->required(),
+                            ]),
+                            Grid::make(['default' => 1, 'lg' => 2])->schema([
                                 TextInput::make('number')
                                     ->label('Número')
                                     ->required()
                                     ->integer()
                                     ->mask('9999'),
-                            ]),
-                            Grid::make(['default' => 1, 'lg' => 2])->schema([
                                 TextInput::make('complement')
                                     ->label('Complemento'),
-                                TextInput::make('neighborhood')
-                                    ->label('Bairro')
-                                    ->required(),
-                            ]),
-                            Grid::make(['default' => 1, 'lg' => 2])->schema([
-                                TextInput::make('city')
-                                    ->label('Cidade')
-                                    ->required(),
-                                TextInput::make('state')
-                                    ->label('Estado')
-                                    ->required(),
-                            ]),
-                            Grid::make(['default' => 1, 'lg' => 2])->schema([
-                                TextInput::make('country')
-                                    ->label('País')
-                                    ->required(),
                             ]),
                         ]),
                     ]),

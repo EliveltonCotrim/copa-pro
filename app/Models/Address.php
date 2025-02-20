@@ -13,13 +13,13 @@ class Address extends Model
 
     protected $fillable = [
         'championship_id',
+        'postal_code',
+        'state',
+        'city',
+        'neighborhood',
         'street',
         'number',
         'complement',
-        'neighborhood',
-        'city',
-        'state',
-        'country',
     ];
 
     public function championship(): BelongsTo
