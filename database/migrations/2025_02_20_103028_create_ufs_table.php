@@ -11,16 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('addresses', function (Blueprint $table) {
+        Schema::create('ufs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('championship_id')->constrained()->onDelete('cascade');
-            $table->string('postal_code');
             $table->string('state');
-            $table->string('city');
-            $table->string('neighborhood');
-            $table->string('street');
-            $table->string('number');
-            $table->string('complement')->nullable();
+            $table->string('acronym', 2);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('addresses');
+        Schema::dropIfExists('ufs');
     }
 };

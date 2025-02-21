@@ -7,7 +7,7 @@ use App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource\RelationManagers;
 use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayerRelationManager;
 use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayersRelationManager;
-use App\Models\Championship;
+use App\Models\{Championship, UF};
 use Closure;
 use Filament\Forms;
 use Filament\Forms\{Form, Get, Set};
@@ -19,7 +19,7 @@ use Filament\Tables\Columns\{SelectColumn, TextColumn, SpatieMediaLibraryImageCo
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
 use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Textarea, FileUpload, Grid, RichEditor};
-use Leandrocfe\FilamentPtbrFormFields\Money;
+use Leandrocfe\FilamentPtbrFormFields\{Money, Cep};
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Wizard;
 
@@ -65,7 +65,8 @@ class ChampionshipResource extends Resource
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             DatePicker::make('start_date')
                                 ->label('Data de início')
-                                ->minDate(fn ($record) => $record ? null : now()->format('Y-m-d'))
+                                ->live()
+                                ->minDate(fn ($record) => $record ? $record->start_date : now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
                                     'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
@@ -74,7 +75,7 @@ class ChampionshipResource extends Resource
                                 ->required(),
                             DatePicker::make('end_date')
                                 ->label('Data de término')
-                                ->minDate(fn (callable $get) => $get('start_date'))
+                                ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
                                 ->required()
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
@@ -118,10 +119,10 @@ class ChampionshipResource extends Resource
                             ->required()
                             ->live()
                             ->afterStateUpdated(function (callable $set, $state) {
-                        	$set('max_playes', null);
+                        	    $set('max_players', null);
                     	    })
                             ->label('Formato do campeonato'),
-                        Select::make('max_playes')
+                        Select::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::CUP->value)
                             ->options([
                                 '8' => '8',
@@ -130,7 +131,7 @@ class ChampionshipResource extends Resource
                                 '64' => '64',
                             ])
                             ->label('Número máximo de jogadores')->required(),
-                        Select::make('max_playes')
+                        Select::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
                             ->options([
                                 '16' => '16',
@@ -139,9 +140,9 @@ class ChampionshipResource extends Resource
                                 '2' => '2',
                             ])
                             ->label('Número máximo de jogadores')
-                            ->helperText('Oitavas, quartas, semifinal, ou final')
+                            ->helperText('Oitavas, quartas, semifinal ou final')
                             ->required(),
-                        TextInput::make('max_playes')
+                        TextInput::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
                             ->label('Número máximo de jogadores')
                             ->numeric()
@@ -167,35 +168,45 @@ class ChampionshipResource extends Resource
                             Hidden::make('championship_id')
                                     ->default(fn (callable $get) => $get('id'))
                                     ->disabled(),
+                            Grid::make(['default' => 1, 'lg' => 3])->schema([
+                                Cep::make('postal_code')
+                                    ->required()
+                                    ->label('CEP')
+                                    ->mask('99999-999')
+                                    ->helperText('Digite um CEP válido e clique sobre a lupa')
+                                    ->viaCep(
+                                        mode: 'suffix',
+                                        errorMessage: 'CEP inválido.',
+                                        setFields: [
+                                            'state'         => 'uf',
+                                            'city'          => 'localidade',
+                                        ]
+                                    ),
+                                Select::make('state')
+                                    ->required()
+                                    ->label('UF')
+                                    ->options(UF::all()->pluck('state', 'acronym'))
+                                    ->rules('exists:ufs,acronym'),
+                                TextInput::make('city')
+                                    ->required()
+                                    ->label('Cidade'),
+                            ]),
                             Grid::make(['default' => 1, 'lg' => 2])->schema([
+                                TextInput::make('neighborhood')
+                                    ->label('Bairro')
+                                    ->required(),
                                 TextInput::make('street')
                                     ->label('Rua')
                                     ->required(),
+                            ]),
+                            Grid::make(['default' => 1, 'lg' => 2])->schema([
                                 TextInput::make('number')
                                     ->label('Número')
                                     ->required()
                                     ->integer()
                                     ->mask('9999'),
-                            ]),
-                            Grid::make(['default' => 1, 'lg' => 2])->schema([
                                 TextInput::make('complement')
                                     ->label('Complemento'),
-                                TextInput::make('neighborhood')
-                                    ->label('Bairro')
-                                    ->required(),
-                            ]),
-                            Grid::make(['default' => 1, 'lg' => 2])->schema([
-                                TextInput::make('city')
-                                    ->label('Cidade')
-                                    ->required(),
-                                TextInput::make('state')
-                                    ->label('Estado')
-                                    ->required(),
-                            ]),
-                            Grid::make(['default' => 1, 'lg' => 2])->schema([
-                                TextInput::make('country')
-                                    ->label('País')
-                                    ->required(),
                             ]),
                         ]),
                     ]),
@@ -233,7 +244,9 @@ class ChampionshipResource extends Resource
                     ->sortable(),
                 SelectColumn::make('status')
                     ->options(ChampionshipStatusEnum::class)
-                    ->label('Status')->rules(['required']),
+                    ->label('Status')
+                    ->rules(['required'])
+                    ->selectablePlaceholder(false),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
