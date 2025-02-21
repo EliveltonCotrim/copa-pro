@@ -59,14 +59,14 @@ class ChampionshipResource extends Resource
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             RichEditor::make('description')
                                 ->label('Descrição'),
-                            Textarea::make('information')
+                            RichEditor::make('information')
                                 ->label('Informação'),
                         ]),
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             DatePicker::make('start_date')
                                 ->label('Data de início')
                                 ->live()
-                                ->minDate(fn ($record) => $record ? $record->start_date : now()->format('Y-m-d'))
+                                ->minDate(fn($record) => $record ? $record->start_date : now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
                                     'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
@@ -75,7 +75,7 @@ class ChampionshipResource extends Resource
                                 ->required(),
                             DatePicker::make('end_date')
                                 ->label('Data de término')
-                                ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
+                                ->minDate(fn(callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
                                 ->required()
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
@@ -119,8 +119,8 @@ class ChampionshipResource extends Resource
                             ->required()
                             ->live()
                             ->afterStateUpdated(function (callable $set, $state) {
-                        	    $set('max_players', null);
-                    	    })
+                                $set('max_players', null);
+                            })
                             ->label('Formato do campeonato'),
                         Select::make('max_players')
                             ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::CUP->value)
@@ -166,11 +166,12 @@ class ChampionshipResource extends Resource
                     ->schema([
                         Group::make()->relationship('address')->schema([
                             Hidden::make('championship_id')
-                                    ->default(fn (callable $get) => $get('id'))
-                                    ->disabled(),
+                                ->default(fn(callable $get) => $get('id'))
+                                ->disabled(),
                             Grid::make(['default' => 1, 'lg' => 3])->schema([
                                 Cep::make('postal_code')
                                     ->required()
+                                    ->live()
                                     ->label('CEP')
                                     ->mask('99999-999')
                                     ->helperText('Digite um CEP válido e clique sobre a lupa')
@@ -178,8 +179,10 @@ class ChampionshipResource extends Resource
                                         mode: 'suffix',
                                         errorMessage: 'CEP inválido.',
                                         setFields: [
-                                            'state'         => 'uf',
-                                            'city'          => 'localidade',
+                                            'state' => 'uf',
+                                            'city' => 'localidade',
+                                            'neighborhood' => 'bairro',
+                                            'street' => 'logradouro',
                                         ]
                                     ),
                                 Select::make('state')
