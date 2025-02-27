@@ -14,27 +14,32 @@ class Payment extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'registration_player_id',
         'transaction_id',
-        'player_id',
         'value',
-        'netValue',
-        'method',
-        'status',
+        'net_value',
+        'billing_type',
+        'description',
+        'player_id',
         'installments',
-        'approved_at',
+        'date_created',
+        'due_date',
+        'payment_Date',
+        'confirmed_date',
+        'status',
         'qr_code_64',
         'qr_code',
         'ticket_url',
-        'expiration_date',
+        'transaction_receipt_url',
     ];
 
     protected $casts = [
-        "method" => PaymentMethodEnum::class,
+        "billing_type" => PaymentMethodEnum::class,
         "status" => PaymentStatusEnum::class
     ];
 
-    public function player(): BelongsTo
+    public function registrationPlayer(): BelongsTo
     {
-        return $this->belongsTo(RegistrationPlayer::class, 'player_id');
+        return $this->belongsTo(RegistrationPlayer::class, 'registration_player_id');
     }
 }

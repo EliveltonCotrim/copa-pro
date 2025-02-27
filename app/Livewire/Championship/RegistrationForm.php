@@ -31,6 +31,7 @@ use Livewire\Component;
 use Str;
 use TallStackUi\Traits\Interactions;
 
+
 class RegistrationForm extends Component
 {
     use Interactions;
@@ -63,6 +64,7 @@ class RegistrationForm extends Component
 
     public function mount()
     {
+        // token: uVAYSf8MKiKDWKUYn1w4LGoHcj5gj2b8ZyqssJ4HBdn1RpUn5UP5s3BeJNj5
         $this->genders = PlayerSexEnum::optionsArrayWithLabelAndValues();
         $this->gammingPlatforms = PlayerPlatformGameEnum::optionsArrayWithLabelAndValues();
         $this->experienceLevels = PlayerExperienceLevelEnum::optionsArrayWithLabelAndValues();
@@ -78,7 +80,6 @@ class RegistrationForm extends Component
 
     public function searchPlayer()
     {
-
         $this->validate([
             'registrationForm.nickname' => 'required_without:registrationForm.email|string',
             'registrationForm.email' => 'required_without:registrationForm.nickname|email:rfc,dns',
@@ -92,10 +93,10 @@ class RegistrationForm extends Component
                 ->where('championship_id', $this->championship->id)
                 ->first();
 
-            // if ($existingRegistrationPlayer) {
-            //     $this->toast()->warning('Você já está inscrito neste campeonato.')->send();
-            //     return;
-            // }
+            if ($existingRegistrationPlayer) {
+                $this->toast()->warning('Você já está inscrito neste campeonato.')->send();
+                return;
+            }
 
             $verificationCode = rand(10000, 99999);
 
@@ -212,10 +213,13 @@ class RegistrationForm extends Component
 
         $this->playerCharge = $registrationPlayer->payments()->create([
             'transaction_id' => $payment['id'],
-            'value' => $this->championship->registration_fee,
-            'netValue' => $payment['netValue'],
-            'method' => PaymentMethodEnum::PIX->value,
-            'status' => PaymentStatusEnum::PENDING->value,
+            'value' => $payment['value'],
+            'description' => $payment['description'],
+            'net_value' => $payment['netValue'],
+            'due_date' => $payment['dueDate'],
+            'date_created' => $payment['dateCreated'],
+            'billing_type' => PaymentMethodEnum::PIX->value,
+            'status' => PaymentStatusEnum::parse($payment['status']),
             'qr_code_64' => $paymentQrcode['encodedImage'],
             'qr_code' => $paymentQrcode['payload'],
         ]);
@@ -240,14 +244,19 @@ class RegistrationForm extends Component
     public function checkPayment()
     {
         $this->playerCharge->refresh();
+        if ($this->playerCharge->status === PaymentStatusEnum::RECEIVED) {
 
-        if ($this->playerCharge->status === PaymentStatusEnum::PAID) {
+            $this->playerCharge->registrationPlayer->status = RegistrationPlayerStatusEnum::APPROVED;
+            $this->playerCharge->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
+            $this->playerCharge->registrationPlayer->save();
+
             $this->toast()->success('Inscrição realizada com sucesso.')
                 ->flash()
                 ->send();
 
             // TODO Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
             // TODO Redirecionar para a página de detalhes do campeonato
+
 
             return $this->redirectRoute('championship.register', $this->championship);
         }

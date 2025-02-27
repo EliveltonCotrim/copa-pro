@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
             $table->string('championship_team_name');
             $table->enum('status', RegistrationPlayerStatusEnum::values())->default(RegistrationPlayerStatusEnum::REGISTERED->value);
-            $table->enum('payment_status', PaymentStatusEnum::values())->default(PaymentStatusEnum::IN_PROCESS);
+            $table->enum('payment_status', PaymentStatusEnum::values())->default(PaymentStatusEnum::PAYMENT_CREATED);
             $table->timestamps();
             $table->softDeletes();
         });
