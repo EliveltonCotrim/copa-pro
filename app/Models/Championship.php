@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum};
+use App\Enum\PlayerPlatformGameEnum;
 use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
 use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
@@ -78,6 +79,7 @@ class Championship extends Model implements HasMedia
         'championship_format' => ChampionshipFormatEnum::class,
         'status' => ChampionshipStatusEnum::class,
         'game' => ChampionshipGamesEnum::class,
+        'game_platform' => PlayerPlatformGameEnum::class,
     ];
 
     // public function getRouteKey()

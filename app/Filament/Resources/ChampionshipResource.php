@@ -12,17 +12,18 @@ use Closure;
 use Filament\Forms;
 use Filament\Forms\{Form, Get, Set};
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Infolists\Components\{Section, Tabs, ImageEntry, TextEntry};
+use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\{SelectColumn, TextColumn, SpatieMediaLibraryImageColumn};
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
-use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Textarea, FileUpload, Grid, RichEditor};
+use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Textarea, FileUpload, Grid, RichEditor, Wizard};
 use Leandrocfe\FilamentPtbrFormFields\{Money, Cep};
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\Wizard;
 
 class ChampionshipResource extends Resource
 {
@@ -124,7 +125,9 @@ class ChampionshipResource extends Resource
                             })
                             ->label('Formato do campeonato'),
                         Select::make('max_players')
-                            ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::CUP->value)
+                            ->visible(function (Get $get): bool {
+                                return (int) $get('championship_format') === ChampionshipFormatEnum::CUP->value;
+                            })
                             ->options([
                                 '8' => '8',
                                 '16' => '16',
@@ -133,7 +136,7 @@ class ChampionshipResource extends Resource
                             ])
                             ->label('Número máximo de jogadores')->required(),
                         Select::make('max_players')
-                            ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
+                            ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
                             ->options([
                                 '16' => '16',
                                 '8' => '8',
@@ -144,7 +147,7 @@ class ChampionshipResource extends Resource
                             ->helperText('Oitavas, quartas, semifinal ou final')
                             ->required(),
                         TextInput::make('max_players')
-                            ->visible(fn(Get $get) => $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
+                            ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
                             ->label('Número máximo de jogadores')
                             ->numeric()
                             ->maxValue(32)
@@ -172,7 +175,7 @@ class ChampionshipResource extends Resource
                             Grid::make(['default' => 1, 'lg' => 3])->schema([
                                 Cep::make('postal_code')
                                     ->required()
-                                    ->live()
+                                    ->live(onBlur: true)
                                     ->label('CEP')
                                     ->mask('99999-999')
                                     ->helperText('Digite um CEP válido e clique sobre a lupa')
@@ -184,8 +187,10 @@ class ChampionshipResource extends Resource
                                             'city' => 'localidade',
                                             'neighborhood' => 'bairro',
                                             'street' => 'logradouro',
-                                        ]
-                                    ),
+                                            'complement' => 'complemento',
+                                            'number' => null
+                                            ]
+                                        ),
                                 Select::make('state')
                                     ->required()
                                     ->label('UF')
@@ -290,6 +295,101 @@ class ChampionshipResource extends Resource
                     ->collapsible(),
             ])
             ->defaultSort('start_date');
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Tabs::make('Tabs')
+                    ->tabs(
+                        [
+                            Tab::make('Descrição')
+                                ->schema([
+                                    Section::make()
+                                        ->schema([
+                                            \Filament\Infolists\Components\Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
+
+                                                // ImageEntry::make('banner_path')
+                                                //     ->defaultImageUrl(fn($record) => $record->getFirstMediaUrl() ?? '')
+                                                //     ->hiddenLabel()
+                                                //     ->height(150)
+                                                //     ->width(150)
+                                                //     ->columnSpan(1),
+                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+
+                                                    TextEntry::make('name')->label('Nome'),
+                                                    TextEntry::make('registration_fee')
+                                                        ->label('Taxa de inscrição')
+                                                        ->money(currency: 'BRL'),
+
+                                                ]),
+                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                    TextEntry::make('start_date')
+                                                        ->label("Data de Início")
+                                                        ->color(color: 'primary')
+                                                        ->date('d/m/Y'),
+                                                    TextEntry::make('end_date')
+                                                        ->label("Data de Termino")
+                                                        ->color(color: 'danger')
+                                                        ->date('d/m/Y'),
+                                                ]),
+                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                    TextEntry::make('game_platform')
+                                                        ->label("Plataforma"),
+                                                    TextEntry::make('game')
+                                                        ->label("Jogo"),
+                                                ]),
+                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                    TextEntry::make('championship_format')
+                                                        ->label("Formato"),
+                                                    TextEntry::make('max_players')
+                                                        ->label("Máximo de jogadores"),
+                                                ]),
+                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                    TextEntry::make('wpp_group_link')
+                                                        ->copyable()
+                                                        ->label("Link do grupo de WhatsApp"),
+                                                    TextEntry::make('status')
+                                                        ->badge()
+                                                        ->label("Status"),
+                                                ]),
+                                            ]),
+                                        ]),
+                                    Section::make()
+                                        ->schema([
+                                            \Filament\Infolists\Components\Grid::make(['default' => 1, 'lg' => 1])->schema([
+                                                TextEntry::make('description')
+                                                    ->label('Descrição')
+                                                    ->html(),
+                                                TextEntry::make('information')
+                                                    ->label('Informação')
+                                                    ->html(),
+                                            ]),
+                                        ])
+                                ]),
+
+                            Tab::make('Endereço')
+                                ->schema([
+                                    Section::make()->schema([
+                                        \Filament\Infolists\Components\Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
+                                            \Filament\Infolists\Components\Group::make()->schema([
+                                                TextEntry::make('address.postal_code')
+                                                    ->label("CEP"),
+                                                TextEntry::make('address.state')->label("UF"),
+                                                TextEntry::make('address.city')->label('Cidade'),
+                                            ]),
+                                            \Filament\Infolists\Components\Group::make()->schema([
+                                                TextEntry::make('address.neighborhood')->label('Bairro'),
+                                                TextEntry::make('address.street')->label('Rua'),
+                                                TextEntry::make('address.number')->label('Número'),
+                                            ]),
+                                        ])
+                                    ])
+                                ]),
+                        ]
+                    )->columnSpanFull(),
+            ]);
     }
 
     public static function getRelations(): array
