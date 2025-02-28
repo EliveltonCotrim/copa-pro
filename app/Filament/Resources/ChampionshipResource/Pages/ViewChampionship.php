@@ -14,14 +14,13 @@ class ViewChampionship extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-
             Action::make('view')
                 ->label('Voltar')
                 ->color('gray')
                 ->icon('heroicon-o-arrow-uturn-left')
                 ->url(fn($record) => route('filament.admin.resources.championships.index')),
             Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
+            //Actions\DeleteAction::make(),
         ];
     }
 
