@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\ChampionshipResource\RelationManagers;
 
+use App\Enum\PaymentMethodEnum;
 use App\Enum\PaymentStatusEnum;
 use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
+use App\Models\Payment;
 use App\Models\Player;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -35,16 +37,22 @@ class RegistrationPlayersRelationManager extends RelationManager
                     ->label('Nome do Time do Campeonato')
                     ->required()
                     ->maxLength(255),
+                Select::make('payment_method')
+                    ->options(PaymentMethodEnum::class)
+                    ->searchable()
+                    ->required(fn(string $context): bool => $context === 'create')
+                    ->label('Metodo de pagamento'),
+                Select::make('payment_status')
+                    ->options(PaymentStatusEnum::class)
+                    ->visible(fn(string $context): bool => $context === 'create')
+                    ->searchable()
+                    ->required()
+                    ->label('Status do Pagamento'),
                 Select::make('status')
                     ->options(RegistrationPlayerStatusEnum::class)
                     ->searchable()
                     ->required()
                     ->label('Status'),
-                Select::make('payment_status')
-                    ->options(PaymentStatusEnum::class)
-                    ->searchable()
-                    ->required()
-                    ->label('Status do Pagamento'),
                 Select::make('player_id')
                     ->options(Player::with('user')->get()->pluck('user.name', 'id'))
                     ->unique('registration_players', 'player_id', ignoreRecord: true, modifyRuleUsing: function ($rule, $get, $livewire) {
@@ -53,6 +61,7 @@ class RegistrationPlayersRelationManager extends RelationManager
                     ->searchable()
                     ->required()
                     ->label('Jogador'),
+
             ]);
     }
 
@@ -63,8 +72,10 @@ class RegistrationPlayersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('player.user.name')->searchable()->label('Nome'),
                 Tables\Columns\TextColumn::make('player.user.email')->label('E-mail'),
-                Tables\Columns\TextColumn::make('phone')->label('WhatsApp'),
+                Tables\Columns\TextColumn::make('player.phone')->label('WhatsApp'),
                 Tables\Columns\TextColumn::make('championship_team_name')->searchable()->label('Time do Campeonato'),
+                Tables\Columns\TextColumn::make('status')->label('Status')
+                    ->toggleable()->badge(),
                 Tables\Columns\TextColumn::make('payment_status')->label('Status do Pagamento')
                     ->toggleable()->badge(),
 
@@ -73,7 +84,18 @@ class RegistrationPlayersRelationManager extends RelationManager
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('Cadastrar Jogador'),
+                Tables\Actions\CreateAction::make()
+                    ->successRedirectUrl(function (Model $record, array $data) {
+                        $record = $record->load('payments', 'championship');
+                        Payment::create([
+                            'value' => $record?->championship?->registration_fee ?? '00.00',
+                            'billing_type' => $data['payment_method'],
+                            'registration_player_id' => $record->id,
+                            'date_created' => now()->format('Y-m-d'),
+                            'status' => $data['payment_status'],
+                        ]);
+                    })
+                    ->label('Cadastrar Jogador'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -14,6 +14,7 @@ use Filament\Forms\{Form, Get, Set};
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\{SelectColumn, TextColumn, SpatieMediaLibraryImageColumn};
 use Filament\Tables\Table;
@@ -255,23 +256,25 @@ class ChampionshipResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()->visible(fn($record) => !$record->trashed()),
-                Tables\Actions\DeleteAction::make()
-                    ->successNotification(function ($record) {
-                        return Notification::make()
-                            ->warning()
-                            ->title("Campeonato desativado")
-                            ->body("<strong>{$record->name}</strong> está na lixeira.");
-                    }),
-                Tables\Actions\RestoreAction::make()
-                    ->successNotification(function ($record) {
-                        return Notification::make()
-                            ->success()
-                            ->title("Campeonato restaurado")
-                            ->body("<strong>{$record->name}</strong> está restaurado.");
-                    })
-                    ->visible(fn($record) => $record->trashed()),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()->visible(fn($record) => !$record->trashed()),
+                    Tables\Actions\DeleteAction::make()
+                        ->successNotification(function ($record) {
+                            return Notification::make()
+                                ->warning()
+                                ->title("Campeonato desativado")
+                                ->body("<strong>{$record->name}</strong> está na lixeira.");
+                        }),
+                    Tables\Actions\RestoreAction::make()
+                        ->successNotification(function ($record) {
+                            return Notification::make()
+                                ->success()
+                                ->title("Campeonato restaurado")
+                                ->body("<strong>{$record->name}</strong> está restaurado.");
+                        })
+                        ->visible(fn($record) => $record->trashed()),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
