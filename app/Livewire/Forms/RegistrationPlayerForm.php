@@ -24,7 +24,7 @@ class RegistrationPlayerForm extends Form
     public string $nickname = '';
     public string $heart_team_name = '';
     public string $birth_dt = '';
-    public int $sex;
+    public ?int $sex;
     public string $phone = '';
     public int $game_platform;
     public int $level_experience;
@@ -70,7 +70,7 @@ class RegistrationPlayerForm extends Form
     public function setForm(Player $player)
     {
         $this->nickname = $player->nickname;
-        $this->sex = $player->sex->value;
+        $this->sex = $player->sex->value ?? null;
         $this->phone = '(77) 99151-3661';
         // $this->phone = $player->phone;
         $this->game_platform = $player->game_platform->value;
