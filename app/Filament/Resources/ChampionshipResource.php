@@ -123,8 +123,8 @@ class ChampionshipResource extends Resource
                                 ->live()
                                 ->default(ChampionshipFormatEnum::LEAGUE->value)
                                 ->afterStateUpdated(fn(callable $set) => $set('max_players', null))
-                                ->label('Formato do campeonato'),
-                            // Campo max_players correspondente à escolha do championship_format
+                                ->label('Formato do campeonato')
+                                ->selectablePlaceholder(false),
                             Select::make('max_players')
                                 ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::CUP->value)
                                 ->options([
@@ -179,6 +179,7 @@ class ChampionshipResource extends Resource
                                     ->live(onBlur: true)
                                     ->label('CEP')
                                     ->mask('99999-999')
+                                    ->helperText('Digite um CEP válido e clique sobre a lupa')
                                     ->viaCep(
                                         mode: 'suffix',
                                         errorMessage: 'CEP inválido.',
