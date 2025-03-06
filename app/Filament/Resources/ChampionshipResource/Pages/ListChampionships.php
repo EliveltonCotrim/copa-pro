@@ -33,6 +33,7 @@ class ListChampionships extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('status', ChampionshipStatusEnum::REGISTRATION_OPEN->value))
                 ->badge($this->statusCount(ChampionshipStatusEnum::REGISTRATION_OPEN->value))
                 ->badgeColor(ChampionshipStatusEnum::REGISTRATION_OPEN->getColor()),
+
             "Inativo" => Tab::make('Inativo')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('status', ChampionshipStatusEnum::INACTIVE->value))
                 ->badge($this->statusCount(ChampionshipStatusEnum::INACTIVE->value))
