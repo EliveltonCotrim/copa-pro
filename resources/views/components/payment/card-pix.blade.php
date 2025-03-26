@@ -79,17 +79,3 @@
         </p>
     </div>
 </div>
-
-@push('scripts')
-    <script>
-        function copyQRCode() {
-            const qrInput = document.getElementById('qrCodeInput');
-
-            qrInput.select();
-            qrInput.setSelectionRange(0, 99999); /* For mobile devices */
-            navigator.clipboard.writeText(qrInput.value);
-
-            alert('Código copiado!');
-        }
-    </script>
-@endpush
