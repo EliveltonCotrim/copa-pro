@@ -8,12 +8,10 @@ use App\Enum\PlayerSexEnum;
 use App\Models\Player;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Facades\Hash;
-use Livewire\Attributes\Validate;
-use Livewire\Form;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB as DBTransaction;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Livewire\Form;
 
 class RegistrationPlayerForm extends Form
 {
@@ -22,21 +20,32 @@ class RegistrationPlayerForm extends Form
 
     // player table
     public string $nickname = '';
+
     public string $heart_team_name = '';
+
     public string $birth_dt = '';
+
     public ?int $sex;
+
     public string $phone = '';
+
     public int $game_platform;
+
     public int $level_experience;
-    public string $cpf_cnpj = '05493282542';
+
+    public string $cpf_cnpj = '';
 
     // user table
     public $name = '';
+
     public $email = '';
 
     public $user_id;
+
     public $player_id;
+
     public ?string $customer_id = null;
+
     public ?string $verification_code = null;
 
     public function rules()
@@ -86,11 +95,7 @@ class RegistrationPlayerForm extends Form
         $this->customer_id = $player->customer_id;
     }
 
-    public function saveSubscription()
-    {
-
-
-    }
+    public function saveSubscription() {}
 
     public function updatePlayer(Player $player): Player
     {
@@ -103,7 +108,7 @@ class RegistrationPlayerForm extends Form
 
             $player->user
                 ->update([
-                    $this->only(['name', 'email'])
+                    $this->only(['name', 'email']),
                 ]);
 
             return $player;
@@ -125,7 +130,7 @@ class RegistrationPlayerForm extends Form
                 'name' => $this->name,
                 'email' => $this->email,
                 'password' => Hash::make('12345678'),
-                'userable_type' => Player::class
+                'userable_type' => Player::class,
             ]);
 
             return $player;
@@ -148,4 +153,21 @@ class RegistrationPlayerForm extends Form
         ]);
     }
 
+    public function setArrayForm(array $form)
+    {
+        $this->nickname = $form['nickname'] ?? null;
+        $this->heart_team_name = $form['heart_team_name'] ?? null;
+        $this->birth_dt = $form['birth_dt'] ?? null;
+        $this->sex = $form['sex'] ?? null;
+        $this->phone = $form['phone'];
+        $this->game_platform = $form['game_platform'];
+        $this->level_experience = $form['level_experience'];
+        $this->cpf_cnpj = $form['cpf_cnpj'];
+        $this->name = $form['name'];
+        $this->email = $form['email'];
+        $this->user_id = $form['user_id'];
+        $this->player_id = $form['player_id'];
+        $this->customer_id = $form['customer_id'];
+        $this->championship_team_name = $form['championship_team_name'];
+    }
 }

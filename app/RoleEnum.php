@@ -10,8 +10,9 @@ enum RoleEnum: string implements HasLabel
     case ORGANIZATION = 'organização';
     case PLAYER = 'jogador';
 
-    public function getLabel(): string|null{
-        return match($this){
+    public function getLabel(): ?string
+    {
+        return match ($this) {
             self::ADMIN => 'Administrador',
             self::ORGANIZATION => 'Organização',
             self::PLAYER => 'Jogador',

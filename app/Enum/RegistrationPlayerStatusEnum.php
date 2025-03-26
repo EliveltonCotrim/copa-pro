@@ -2,12 +2,11 @@
 
 namespace App\Enum;
 
-use App\Models\RegistrationPlayer;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum RegistrationPlayerStatusEnum: int implements HasLabel, HasColor, HasIcon
+enum RegistrationPlayerStatusEnum: int implements HasColor, HasIcon, HasLabel
 {
     case REGISTERED = 1;
     case PENDING = 2;
@@ -43,7 +42,6 @@ enum RegistrationPlayerStatusEnum: int implements HasLabel, HasColor, HasIcon
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, RegistrationPlayerStatusEnum::cases());
+        return array_map(fn ($case) => $case->value, RegistrationPlayerStatusEnum::cases());
     }
-
 }

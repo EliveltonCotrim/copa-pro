@@ -3,7 +3,6 @@
 namespace App\Services\PaymentGateway\Connectors\Asaas\Concerns;
 
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Http\JsonResponse;
 
 trait HandleHttpError
 {

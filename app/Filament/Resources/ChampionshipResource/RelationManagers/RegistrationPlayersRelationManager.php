@@ -4,14 +4,9 @@ namespace App\Filament\Resources\ChampionshipResource\RelationManagers;
 
 use App\Enum\PaymentMethodEnum;
 use App\Enum\PaymentStatusEnum;
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
 use App\Models\Payment;
 use App\Models\Player;
-use Filament\Forms;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -21,12 +16,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Validation\Rule;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class RegistrationPlayersRelationManager extends RelationManager
 {
     protected static string $relationship = 'RegistrationPlayers';
+
     protected static ?string $title = 'Inscrições';
 
     public function form(Form $form): Form
@@ -40,11 +34,11 @@ class RegistrationPlayersRelationManager extends RelationManager
                 Select::make('payment_method')
                     ->options(PaymentMethodEnum::class)
                     ->searchable()
-                    ->required(fn(string $context): bool => $context === 'create')
+                    ->required(fn (string $context): bool => $context === 'create')
                     ->label('Metodo de pagamento'),
                 Select::make('payment_status')
                     ->options(PaymentStatusEnum::class)
-                    ->visible(fn(string $context): bool => $context === 'create')
+                    ->visible(fn (string $context): bool => $context === 'create')
                     ->searchable()
                     ->required()
                     ->label('Status do Pagamento'),
@@ -81,7 +75,7 @@ class RegistrationPlayersRelationManager extends RelationManager
 
             ])->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\TrashedFilter::make()
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -110,7 +104,7 @@ class RegistrationPlayersRelationManager extends RelationManager
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
     }

@@ -14,7 +14,7 @@ class ManagePermissions extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label("Criar permissão"),
+            Actions\CreateAction::make()->label('Criar permissão'),
         ];
     }
 
@@ -27,6 +27,4 @@ class ManagePermissions extends ManageRecords
             ->title('Permissão criada')
             ->body("<strong>{$permission->name}</strong> foi criada.");
     }
-
-
 }

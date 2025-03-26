@@ -8,7 +8,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -16,7 +17,7 @@ return new class extends Migration {
     {
         Schema::create('players', function (Blueprint $table) {
             $table->id();
-            $table->string('nickname', 50)->nullable();
+            $table->string('nickname', 50)->unique()->nullable();
             $table->string('heart_team_name')->nullable();
             $table->date('birth_dt')->nullable();
             $table->enum('sex', PlayerSexEnum::values())->nullable();

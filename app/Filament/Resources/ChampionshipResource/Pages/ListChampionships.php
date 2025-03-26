@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\ChampionshipResource\Pages;
 
-use App\Filament\Resources\ChampionshipResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Components\Tab;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\Championship;
 use App\Enum\ChampionshipStatusEnum;
+use App\Filament\Resources\ChampionshipResource;
+use App\Models\Championship;
+use Filament\Actions;
+use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListChampionships extends ListRecords
 {
@@ -25,26 +25,26 @@ class ListChampionships extends ListRecords
     {
         return [
 
-            "Todos" => Tab::make('Todos')
+            'Todos' => Tab::make('Todos')
                 ->badge($this->statusCount(null))
                 ->badgeColor('info'),
 
-            "Ativo" => Tab::make('Inscrições abertas')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', ChampionshipStatusEnum::REGISTRATION_OPEN->value))
+            'Ativo' => Tab::make('Inscrições abertas')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', ChampionshipStatusEnum::REGISTRATION_OPEN->value))
                 ->badge($this->statusCount(ChampionshipStatusEnum::REGISTRATION_OPEN->value))
                 ->badgeColor(ChampionshipStatusEnum::REGISTRATION_OPEN->getColor()),
-            "Inativo" => Tab::make('Inativo')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', ChampionshipStatusEnum::INACTIVE->value))
+            'Inativo' => Tab::make('Inativo')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', ChampionshipStatusEnum::INACTIVE->value))
                 ->badge($this->statusCount(ChampionshipStatusEnum::INACTIVE->value))
                 ->badgeColor(ChampionshipStatusEnum::INACTIVE->getColor()),
 
-            "Finalizado" => Tab::make('Finalizado')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', ChampionshipStatusEnum::FINISHED->value))
+            'Finalizado' => Tab::make('Finalizado')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', ChampionshipStatusEnum::FINISHED->value))
                 ->badge($this->statusCount(ChampionshipStatusEnum::FINISHED->value))
                 ->badgeColor(ChampionshipStatusEnum::FINISHED->getColor()),
 
-            "Em andamento" => Tab::make('Em andamento')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', ChampionshipStatusEnum::IN_PROGRESS->value))
+            'Em andamento' => Tab::make('Em andamento')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', ChampionshipStatusEnum::IN_PROGRESS->value))
                 ->badge($this->statusCount(ChampionshipStatusEnum::IN_PROGRESS->value))
                 ->badgeColor(ChampionshipStatusEnum::IN_PROGRESS->getColor()),
         ];
@@ -60,5 +60,4 @@ class ListChampionships extends ListRecords
 
         return $query->count();
     }
-
 }

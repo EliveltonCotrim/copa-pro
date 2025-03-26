@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
-use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum};
+use App\Enum\ChampionshipFormatEnum;
+use App\Enum\ChampionshipGamesEnum;
+use App\Enum\ChampionshipStatusEnum;
 use App\Enum\PlayerPlatformGameEnum;
-use Illuminate\Database\Eloquent\{Model, SoftDeletes};
-use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
-use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Championship extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
-
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
         'uuid',
@@ -92,7 +96,7 @@ class Championship extends Model implements HasMedia
         parent::boot();
 
         static::creating(function ($championship) {
-            if (!$championship->uuid) {
+            if (! $championship->uuid) {
                 $championship->uuid = str::uuid();
             }
         });

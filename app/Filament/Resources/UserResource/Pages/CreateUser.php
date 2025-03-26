@@ -5,11 +5,10 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Models\Organizer;
 use App\RoleEnum;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
 
 class CreateUser extends CreateRecord
 {
@@ -17,7 +16,6 @@ class CreateUser extends CreateRecord
 
     // protected function mutateFormDataBeforeCreate(array $data): array
     // {
-
 
     //     if ($data['roles'] !== RoleEnum::ADMIN->value) {
     //         $data['userable_type'] = 'App\Models\Organizer';
@@ -56,7 +54,6 @@ class CreateUser extends CreateRecord
 
     //     return $user;
     // }
-
 
     public function getRedirectUrl(): string
     {

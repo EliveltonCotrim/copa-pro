@@ -22,6 +22,6 @@ enum ChampionshipFormatEnum: int implements HasLabel
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, ChampionshipFormatEnum::cases());
+        return array_map(fn ($case) => $case->value, ChampionshipFormatEnum::cases());
     }
 }

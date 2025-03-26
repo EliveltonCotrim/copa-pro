@@ -2,25 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\{PaymentStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
+use App\Enum\PlayerExperienceLevelEnum;
+use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\PlayerSexEnum;
+use App\Enum\PlayerStatusEnum;
 use App\Filament\Resources\PlayerResource\Pages;
-use App\Filament\Resources\PlayerResource\RelationManagers;
 use App\Models\Player;
-use Filament\Actions\DeleteAction;
-use Filament\Forms;
-use Filament\Forms\Components\{DatePicker, Group, Select, Textarea, TextInput, Grid};
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
-use PhpParser\Node\Stmt\Label;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class PlayerResource extends Resource
@@ -58,9 +60,9 @@ class PlayerResource extends Resource
                             ->revealable()
                             ->password()
                             ->label('Senha')
-                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                            ->dehydrated(fn($state) => filled($state))
-                            ->required(fn(string $context): bool => $context === 'create')
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $context): bool => $context === 'create')
                             ->minLength(6)
                             ->maxLength(255),
                     ]),
@@ -109,7 +111,7 @@ class PlayerResource extends Resource
                 TextColumn::make('nickname')
                     ->label('Nickname')
                     ->searchable()
-                    ->placeholder("Sem nickname"),
+                    ->placeholder('Sem nickname'),
                 TextColumn::make('birth_dt')
                     ->label('Data de nascimento')
                     ->dateTime('d/m/Y')
@@ -150,7 +152,7 @@ class PlayerResource extends Resource
                         // Impede a exclusão e exibe um erro
                         Notification::make()
                             ->warning()
-                            ->title("Atenção!")
+                            ->title('Atenção!')
                             ->body("<strong>{$record->user->name}</strong> está inscrito(a) em campeonatos ativos ou em andamento e não pode ser excluído(a).")
                             ->send();
 
@@ -161,15 +163,15 @@ class PlayerResource extends Resource
                     ->successNotification(function ($record) {
                         return Notification::make()
                             ->success()
-                            ->title("Player restaurado(a)")
+                            ->title('Player restaurado(a)')
                             ->body("<strong>{$record->user->name}</strong> está restaurado(a).");
                     })
-                    ->visible(fn($record) => $record->trashed()),
+                    ->visible(fn ($record) => $record->trashed()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    //Tables\Actions\ForceDeleteBulkAction::make(),
+                    // Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);

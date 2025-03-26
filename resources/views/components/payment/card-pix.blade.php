@@ -4,7 +4,7 @@
     <!-- QR Code + Valor + Data de Validade -->
     <div class="px-6 py-2 flex flex-col items-center text-center space-y-3">
         <img src="data:image/jpeg;base64,{{ $qrCode64 ?? '' }}"
-            class="border border-2 rounded-lg p-2 border-primary-300 w-[140px] shadow-lg">
+            class="border border-2 rounded-lg p-1 border-primary-300 w-[140px] shadow-lg">
         <div class="flex items-center justify-center divide-x">
             <div class="p-1">
                 <p class="text-gray-600 text-sm">Valor do Pix</p>

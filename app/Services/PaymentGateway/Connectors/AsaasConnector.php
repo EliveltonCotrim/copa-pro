@@ -7,9 +7,7 @@ namespace App\Services\PaymentGateway\Connectors;
 use App\Services\PaymentGateway\Connectors\Asaas\Concerns\AsaasConfig;
 use App\Services\PaymentGateway\Connectors\Asaas\Concerns\HandleHttpError;
 use App\Services\PaymentGateway\Contracts\AdapterInterface;
-use Http;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Http\JsonResponse;
 
 class AsaasConnector implements AdapterInterface
 {
@@ -67,5 +65,4 @@ class AsaasConnector implements AdapterInterface
             return $this->handle($exception);
         }
     }
-
 }

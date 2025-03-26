@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
-use App\Enum\{ChampionshipStatusEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum, PlayerExperienceLevelEnum};
-use Illuminate\Database\Eloquent\{Builder, SoftDeletes, Model};
-use Illuminate\Database\Eloquent\Relations\{HasMany, MorphOne};
-
+use App\Enum\ChampionshipStatusEnum;
+use App\Enum\PlayerExperienceLevelEnum;
+use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\PlayerSexEnum;
+use App\Enum\PlayerStatusEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\RoleEnum;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Player extends Model
 {

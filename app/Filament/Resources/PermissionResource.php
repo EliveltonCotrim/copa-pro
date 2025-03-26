@@ -3,27 +3,31 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
-use App\Filament\Resources\PermissionResource\RelationManagers;
 use App\Models\Permission;
-use Filament\Forms;
-use Filament\Forms\Components\{TextInput,Select};
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-key';
+
     protected static ?string $navigationLabel = 'Permissões';
+
     protected static ?string $label = 'Permissão';
+
     protected static ?string $pluralLabel = 'Permissões';
+
     protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?int $navigationSort = 4;
+
     protected static ?string $navigationGroup = 'Controle de acesso';
 
     public static function form(Form $form): Form
@@ -37,7 +41,7 @@ class PermissionResource extends Resource
                 Select::make('roles')
                     ->multiple()
                     ->relationship(titleAttribute: 'name')
-                    ->preload()
+                    ->preload(),
             ]);
     }
 

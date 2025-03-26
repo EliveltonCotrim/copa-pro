@@ -14,7 +14,6 @@ use Blade;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Vite;
 
 class AppServiceProvider extends ServiceProvider
 {

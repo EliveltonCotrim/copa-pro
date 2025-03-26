@@ -4,14 +4,13 @@ namespace App\Enum;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum PaymentMethodEnum: string  implements HasLabel
+enum PaymentMethodEnum: string implements HasLabel
 {
     case UNDEFINED = 'UNDEFINED';
     case BOLETO = 'BOLETO';
     case CREDIT_CARD = 'CREDIT_CARD';
     case PIX = 'PIX';
     case IN_CASH = 'IN_CASH';
-
 
     public function getLabel(): ?string
     {
@@ -39,6 +38,6 @@ enum PaymentMethodEnum: string  implements HasLabel
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, PaymentMethodEnum::cases());
+        return array_map(fn ($case) => $case->value, PaymentMethodEnum::cases());
     }
 }

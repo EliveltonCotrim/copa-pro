@@ -34,8 +34,8 @@ class Payment extends Model
     ];
 
     protected $casts = [
-        "billing_type" => PaymentMethodEnum::class,
-        "status" => PaymentStatusEnum::class
+        'billing_type' => PaymentMethodEnum::class,
+        'status' => PaymentStatusEnum::class,
     ];
 
     public function registrationPlayer(): BelongsTo
