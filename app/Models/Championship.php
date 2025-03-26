@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Enum\ChampionshipFormatEnum;
-use App\Enum\ChampionshipGamesEnum;
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
+use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
+use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,7 +18,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Championship extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, SoftDeletes;
+    use HasFactory, SoftDeletes, InteractsWithMedia;
 
     protected $fillable = [
         'uuid',
@@ -85,11 +85,6 @@ class Championship extends Model implements HasMedia
         'game' => ChampionshipGamesEnum::class,
         'game_platform' => PlayerPlatformGameEnum::class,
     ];
-
-    // public function getRouteKey()
-    // {
-    //     return 'uuid';
-    // }
 
     protected static function boot()
     {
