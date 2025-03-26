@@ -115,44 +115,45 @@ class ChampionshipResource extends Resource
                                 ->required()
                                 ->label('Jogo'),
                         ]),
-                        Select::make('championship_format')
-                            ->options(ChampionshipFormatEnum::class)
-                            ->searchable()
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(function (callable $set, $state) {
-                                $set('max_players', null);
-                            })
-                            ->label('Formato do campeonato'),
-                        Select::make('max_players')
-                            ->visible(function (Get $get): bool {
-                                return (int) $get('championship_format') === ChampionshipFormatEnum::CUP->value;
-                            })
-                            ->options([
-                                '8' => '8',
-                                '16' => '16',
-                                '32' => '32',
-                                '64' => '64',
-                            ])
-                            ->label('Número máximo de jogadores')->required(),
-                        Select::make('max_players')
-                            ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
-                            ->options([
-                                '16' => '16',
-                                '8' => '8',
-                                '4' => '4',
-                                '2' => '2',
-                            ])
-                            ->label('Número máximo de jogadores')
-                            ->helperText('Oitavas, quartas, semifinal ou final')
-                            ->required(),
-                        TextInput::make('max_players')
-                            ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
-                            ->label('Número máximo de jogadores')
-                            ->numeric()
-                            ->maxValue(32)
-                            ->minValue(2)
-                            ->required(),
+                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                            Select::make('championship_format')
+                                ->options(ChampionshipFormatEnum::class)
+                                ->searchable()
+                                ->required()
+                                ->live()
+                                ->default(ChampionshipFormatEnum::LEAGUE->value)
+                                ->afterStateUpdated(fn(callable $set) => $set('max_players', null))
+                                ->label('Formato do campeonato')
+                                ->selectablePlaceholder(false),
+                            Select::make('max_players')
+                                ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::CUP->value)
+                                ->options([
+                                    '8' => '8',
+                                    '16' => '16',
+                                    '32' => '32',
+                                    '64' => '64',
+                                ])
+                                ->label('Número máximo de jogadores')
+                                ->required(),
+                            Select::make('max_players')
+                                ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
+                                ->options([
+                                    '16' => '16',
+                                    '8' => '8',
+                                    '4' => '4',
+                                    '2' => '2',
+                                ])
+                                ->label('Número máximo de jogadores')
+                                ->helperText('Oitavas, quartas, semifinal ou final')
+                                ->required(),
+                            TextInput::make('max_players')
+                                ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
+                                ->label('Número máximo de jogadores')
+                                ->numeric()
+                                ->maxValue(32)
+                                ->minValue(2)
+                                ->required(),
+                        ]),
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             TextInput::make('wpp_group_link')
                                 ->label('Link do grupo de WhatsApp')
