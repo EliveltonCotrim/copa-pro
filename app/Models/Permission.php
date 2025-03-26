@@ -10,6 +10,7 @@ class Permission extends ModelsPermission
     use HasFactory;
 
     protected $table = 'permissions';
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -25,5 +26,4 @@ class Permission extends ModelsPermission
             }
         });
     }
-
 }

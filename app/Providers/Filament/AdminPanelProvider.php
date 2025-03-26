@@ -7,11 +7,9 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -32,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->profile(isSimple: false)
             ->favicon('favicon.ico')
             ->brandLogo(asset('images/logo-futpro-primary.png'))
-            ->brandLogoHeight(fn() => auth()->check() ? '1.6rem' : '3rem')
+            ->brandLogoHeight(fn () => auth()->check() ? '1.6rem' : '3rem')
             ->default()
             ->id('admin')
             ->path('admin')
@@ -69,19 +67,19 @@ class AdminPanelProvider extends PanelProvider
             ])->brandName('Copa Pro')
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label(fn() => auth()->user()->name)
+                    ->label(fn () => auth()->user()->name)
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle'),
             ])
             ->plugins([
                 FilamentEditProfilePlugin::make()
-                ->shouldShowAvatarForm(
-                    value: true,
-                    directory: 'avatars', // image will be stored in 'storage/app/public/avatars
-                    rules: 'mimes:jpeg,png|max:1024' //only accept jpeg and png files with a maximum size of 1MB
-                )
-                ->shouldShowDeleteAccountForm(false)
-                ->shouldRegisterNavigation(false)
+                    ->shouldShowAvatarForm(
+                        value: true,
+                        directory: 'avatars', // image will be stored in 'storage/app/public/avatars
+                        rules: 'mimes:jpeg,png|max:1024' // only accept jpeg and png files with a maximum size of 1MB
+                    )
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldRegisterNavigation(false),
             ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enum;
+
 use Filament\Support\Contracts\HasLabel;
 
 enum PlayerExperienceLevelEnum: int implements HasLabel
@@ -29,18 +30,18 @@ enum PlayerExperienceLevelEnum: int implements HasLabel
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, PlayerExperienceLevelEnum::cases());
+        return array_map(fn ($case) => $case->value, PlayerExperienceLevelEnum::cases());
     }
 
     public static function options()
     {
         return collect(PlayerExperienceLevelEnum::cases())
-            ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]);
+            ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()]);
     }
 
     public static function optionsArrayWithLabelAndValues(): array
     {
         return collect(PlayerExperienceLevelEnum::cases())
-            ->map(fn($cass) => ['value' => $cass->value, 'label' => $cass->getLabel()])->toArray();
+            ->map(fn ($cass) => ['value' => $cass->value, 'label' => $cass->getLabel()])->toArray();
     }
 }

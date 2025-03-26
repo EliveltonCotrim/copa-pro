@@ -2,28 +2,44 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
+use App\Enum\ChampionshipFormatEnum;
+use App\Enum\ChampionshipGamesEnum;
+use App\Enum\ChampionshipStatusEnum;
+use App\Enum\PlayerPlatformGameEnum;
 use App\Filament\Resources\ChampionshipResource\Pages;
-use App\Filament\Resources\ChampionshipResource\RelationManagers;
-use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayerRelationManager;
 use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayersRelationManager;
-use App\Models\{Championship, UF};
-use Closure;
-use Filament\Forms;
-use Filament\Forms\{Form, Get, Set};
+use App\Models\Championship;
+use App\Models\UF;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Infolists\Components\{Section, Tabs, ImageEntry, TextEntry};
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\{SelectColumn, TextColumn, SpatieMediaLibraryImageColumn};
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
-use Filament\Forms\Components\{Select, Group, Hidden, TextInput, DatePicker, Textarea, FileUpload, Grid, RichEditor, Wizard};
-use Leandrocfe\FilamentPtbrFormFields\{Money, Cep};
-use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Leandrocfe\FilamentPtbrFormFields\Cep;
+use Leandrocfe\FilamentPtbrFormFields\Money;
 
 class ChampionshipResource extends Resource
 {
@@ -68,7 +84,7 @@ class ChampionshipResource extends Resource
                             DatePicker::make('start_date')
                                 ->label('Data de início')
                                 ->live()
-                                ->minDate(fn($record) => $record ? $record->start_date : now()->format('Y-m-d'))
+                                ->minDate(fn ($record) => $record ? $record->start_date : now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
                                     'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
@@ -77,7 +93,7 @@ class ChampionshipResource extends Resource
                                 ->required(),
                             DatePicker::make('end_date')
                                 ->label('Data de término')
-                                ->minDate(fn(callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
+                                ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
                                 ->required()
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
@@ -171,7 +187,7 @@ class ChampionshipResource extends Resource
                     ->schema([
                         Group::make()->relationship('address')->schema([
                             Hidden::make('championship_id')
-                                ->default(fn(callable $get) => $get('id'))
+                                ->default(fn (callable $get) => $get('id'))
                                 ->disabled(),
                             Grid::make(['default' => 1, 'lg' => 3])->schema([
                                 Cep::make('postal_code')
@@ -189,9 +205,9 @@ class ChampionshipResource extends Resource
                                             'neighborhood' => 'bairro',
                                             'street' => 'logradouro',
                                             'complement' => 'complemento',
-                                            'number' => null
-                                            ]
-                                        ),
+                                            'number' => null,
+                                        ]
+                                    ),
                                 Select::make('state')
                                     ->required()
                                     ->label('UF')
@@ -231,7 +247,7 @@ class ChampionshipResource extends Resource
                 SpatieMediaLibraryImageColumn::make('banner_path')
                     ->label('Banner')
                     ->size('55px')
-                    ->placeholder("Sem banner"),
+                    ->placeholder('Sem banner'),
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
@@ -264,28 +280,28 @@ class ChampionshipResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()->visible(fn($record) => !$record->trashed()),
+                    Tables\Actions\EditAction::make()->visible(fn ($record) => ! $record->trashed()),
                     Tables\Actions\DeleteAction::make()
                         ->successNotification(function ($record) {
                             return Notification::make()
                                 ->warning()
-                                ->title("Campeonato desativado")
+                                ->title('Campeonato desativado')
                                 ->body("<strong>{$record->name}</strong> está na lixeira.");
                         }),
                     Tables\Actions\RestoreAction::make()
                         ->successNotification(function ($record) {
                             return Notification::make()
                                 ->success()
-                                ->title("Campeonato restaurado")
+                                ->title('Campeonato restaurado')
                                 ->body("<strong>{$record->name}</strong> está restaurado.");
                         })
-                        ->visible(fn($record) => $record->trashed()),
-                ])
+                        ->visible(fn ($record) => $record->trashed()),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    //Tables\Actions\ForceDeleteBulkAction::make(),
+                    // Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
@@ -327,33 +343,33 @@ class ChampionshipResource extends Resource
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('start_date')
-                                                        ->label("Data de Início")
+                                                        ->label('Data de Início')
                                                         ->color(color: 'primary')
                                                         ->date('d/m/Y'),
                                                     TextEntry::make('end_date')
-                                                        ->label("Data de Termino")
+                                                        ->label('Data de Termino')
                                                         ->color(color: 'danger')
                                                         ->date('d/m/Y'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('game_platform')
-                                                        ->label("Plataforma"),
+                                                        ->label('Plataforma'),
                                                     TextEntry::make('game')
-                                                        ->label("Jogo"),
+                                                        ->label('Jogo'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('championship_format')
-                                                        ->label("Formato"),
+                                                        ->label('Formato'),
                                                     TextEntry::make('max_players')
-                                                        ->label("Máximo de jogadores"),
+                                                        ->label('Máximo de jogadores'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('wpp_group_link')
                                                         ->copyable()
-                                                        ->label("Link do grupo de WhatsApp"),
+                                                        ->label('Link do grupo de WhatsApp'),
                                                     TextEntry::make('status')
                                                         ->badge()
-                                                        ->label("Status"),
+                                                        ->label('Status'),
                                                 ]),
                                             ]),
                                         ]),
@@ -367,7 +383,7 @@ class ChampionshipResource extends Resource
                                                     ->label('Informação')
                                                     ->html(),
                                             ]),
-                                        ])
+                                        ]),
                                 ]),
 
                             Tab::make('Endereço')
@@ -376,8 +392,8 @@ class ChampionshipResource extends Resource
                                         \Filament\Infolists\Components\Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
                                             \Filament\Infolists\Components\Group::make()->schema([
                                                 TextEntry::make('address.postal_code')
-                                                    ->label("CEP"),
-                                                TextEntry::make('address.state')->label("UF"),
+                                                    ->label('CEP'),
+                                                TextEntry::make('address.state')->label('UF'),
                                                 TextEntry::make('address.city')->label('Cidade'),
                                             ]),
                                             \Filament\Infolists\Components\Group::make()->schema([
@@ -385,8 +401,8 @@ class ChampionshipResource extends Resource
                                                 TextEntry::make('address.street')->label('Rua'),
                                                 TextEntry::make('address.number')->label('Número'),
                                             ]),
-                                        ])
-                                    ])
+                                        ]),
+                                    ]),
                                 ]),
                         ]
                     )->columnSpanFull(),

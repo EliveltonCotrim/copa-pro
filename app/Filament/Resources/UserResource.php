@@ -3,22 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\Organizer;
 use App\Models\User;
 use App\RoleEnum;
-use Filament\Forms;
-use Filament\Forms\Components\{Select, TextInput};
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,13 +22,21 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
+
     protected static ?string $navigationLabel = 'Usuários';
+
     protected static ?string $label = 'Usuário';
+
     protected static ?string $pluralLabel = 'Usuários';
+
     protected static ?string $navigationBadgeTooltip = 'Número de usuários';
+
     protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationGroup = 'Controle de acesso';
 
     public static function form(Form $form): Form
@@ -56,9 +59,9 @@ class UserResource extends Resource
                     ->minLength(8)
                     ->password()
                     ->revealable()
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create')
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $context): bool => $context === 'create')
                     ->maxLength(255),
                 Select::make('roles')
                     ->options(RoleEnum::class)
@@ -77,12 +80,12 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->whereNot('id', auth()->id()))
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('id', auth()->id()))
             ->columns([
                 ImageColumn::make('avatar_url')
                     ->rounded()
                     ->label('Foto')
-                    ->placeholder("Sem avatar"),
+                    ->placeholder('Sem avatar'),
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),
@@ -119,10 +122,10 @@ class UserResource extends Resource
                     ->successNotification(function ($record) {
                         return Notification::make()
                             ->success()
-                            ->title("Restaurado com Sucesso")
+                            ->title('Restaurado com Sucesso')
                             ->body("O usuário <strong>{$record->name}</strong> foi restaurado com sucesso");
                     })
-                    ->visible(fn($record) => $record->trashed()),
+                    ->visible(fn ($record) => $record->trashed()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

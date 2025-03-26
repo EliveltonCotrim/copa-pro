@@ -28,19 +28,18 @@ enum PlayerPlatformGameEnum: int implements HasLabel
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, PlayerPlatformGameEnum::cases());
+        return array_map(fn ($case) => $case->value, PlayerPlatformGameEnum::cases());
     }
-
 
     public static function options()
     {
         return collect(PlayerPlatformGameEnum::cases())
-            ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]);
+            ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()]);
     }
 
     public static function optionsArrayWithLabelAndValues(): array
     {
         return collect(PlayerPlatformGameEnum::cases())
-            ->map(fn($cass) => ['value' => $cass->value, 'label' => $cass->getLabel()])->toArray();
+            ->map(fn ($cass) => ['value' => $cass->value, 'label' => $cass->getLabel()])->toArray();
     }
 }

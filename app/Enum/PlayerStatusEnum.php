@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enum;
+
 use Filament\Support\Contracts\HasLabel;
 
 enum PlayerStatusEnum: int implements HasLabel
@@ -21,6 +22,6 @@ enum PlayerStatusEnum: int implements HasLabel
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, PlayerSexEnum::cases());
+        return array_map(fn ($case) => $case->value, PlayerSexEnum::cases());
     }
 }

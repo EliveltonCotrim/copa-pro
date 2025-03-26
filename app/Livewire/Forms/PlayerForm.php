@@ -6,17 +6,22 @@ use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use Illuminate\Validation\Rule;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class PlayerForm extends Form
 {
     public $nickname = '';
+
     public $heart_team_name = '';
+
     public $birth_dt = '';
+
     public $sex = '';
+
     public $phone = '';
+
     public $game_platform = '';
+
     public $level_experience = '';
 
     public function rules()

@@ -12,12 +12,11 @@ class Payment implements PaymentInterface
 
     public function __construct(
         public AdapterInterface $http,
-    ) {
+    ) {}
 
-    }
     public function list(array $filters = []): array
     {
-        return $this->http->get((string) '/payments/' . $this->filter($filters));
+        return $this->http->get((string) '/payments/'.$this->filter($filters));
     }
 
     public function get(int|string $id): array
@@ -29,6 +28,7 @@ class Payment implements PaymentInterface
     {
         return $this->http->post('/payments', $data);
     }
+
     public function update(int|string $id, array $data): array
     {
         return $this->http->put("/payments/{$id}", $data);
@@ -48,5 +48,4 @@ class Payment implements PaymentInterface
     {
         return $this->http->delete("/payments/{$id}");
     }
-
 }

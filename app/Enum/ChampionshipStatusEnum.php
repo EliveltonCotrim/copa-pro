@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum ChampionshipStatusEnum: int implements HasLabel, HasColor, HasIcon
+enum ChampionshipStatusEnum: int implements HasColor, HasIcon, HasLabel
 {
     case REGISTRATION_OPEN = 1;   // Inscrições abertas
     case REGISTRATION_CLOSED = 2; // Inscrições encerradas
@@ -60,6 +60,6 @@ enum ChampionshipStatusEnum: int implements HasLabel, HasColor, HasIcon
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, ChampionshipStatusEnum::cases());
+        return array_map(fn ($case) => $case->value, ChampionshipStatusEnum::cases());
     }
 }

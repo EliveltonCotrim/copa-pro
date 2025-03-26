@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enum;
+
 use Filament\Support\Contracts\HasLabel;
 
 enum PlayerSexEnum: int implements HasLabel
@@ -21,18 +22,18 @@ enum PlayerSexEnum: int implements HasLabel
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, PlayerSexEnum::cases());
+        return array_map(fn ($case) => $case->value, PlayerSexEnum::cases());
     }
 
     public static function options()
     {
         return collect(PlayerSexEnum::cases())
-            ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]);
+            ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()]);
     }
 
     public static function optionsArrayWithLabelAndValues(): array
     {
         return collect(PlayerSexEnum::cases())
-            ->map(fn($case) => ['value' => $case->value, 'label' => $case->getLabel()])->toArray();
+            ->map(fn ($case) => ['value' => $case->value, 'label' => $case->getLabel()])->toArray();
     }
 }

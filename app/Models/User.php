@@ -12,15 +12,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes, HasRoles, InteractsWithMedia, Notifiable;
+    use HasFactory, HasRoles, InteractsWithMedia, Notifiable, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -43,6 +43,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
     public function getFilamentAvatarUrl(): ?string
     {
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
+
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
 
@@ -50,7 +51,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
     {
         return $this->hasRole(RoleEnum::cases());
     }
-
 
     /**
      * The attributes that should be hidden for serialization.

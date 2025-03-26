@@ -10,8 +10,7 @@ class Gateway
 {
     public function __construct(
         public AdapterInterface $adapter,
-    ) {
-    }
+    ) {}
 
     public function customer(): Customer
     {

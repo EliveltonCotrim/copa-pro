@@ -3,9 +3,6 @@
 namespace App\Models;
 
 use App\Enum\PaymentStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\Enum\PlayerStatusEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

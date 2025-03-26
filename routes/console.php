@@ -1,15 +1,13 @@
 <?php
 
 use App\Services\AsaasPhp\Customer\CustomerCreate;
-use App\Services\AsaasPhp\Customer\CustomerList;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('play', function () {
 
-    $adapter = new AsaasConnector();
+    $adapter = new AsaasConnector;
 
     $gateway = new Gateway($adapter);
 

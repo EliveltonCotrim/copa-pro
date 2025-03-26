@@ -1,9 +1,6 @@
 <?php
 
-use App\Enum\ChampionshipGamesEnum;
 use App\Enum\PaymentStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

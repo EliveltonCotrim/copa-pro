@@ -18,7 +18,7 @@ class ViewChampionship extends ViewRecord
                 ->label('Voltar')
                 ->color('gray')
                 ->icon('heroicon-o-arrow-uturn-left')
-                ->url(fn($record) => route('filament.admin.resources.championships.index')),
+                ->url(fn ($record) => route('filament.admin.resources.championships.index')),
             Actions\EditAction::make(),
             //Actions\DeleteAction::make(),
         ];

@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -25,7 +26,7 @@ return new class extends Migration {
             $table->date('due_date')->nullable();
             $table->date('payment_Date')->nullable();
             $table->date('confirmed_date')->nullable();
-            $table->enum('status', PaymentStatusEnum::values()); //ENUM
+            $table->enum('status', PaymentStatusEnum::values()); // ENUM
             $table->text('qr_code_64')->nullable();
             $table->text('qr_code')->nullable();
             $table->text('ticket_url')->nullable();

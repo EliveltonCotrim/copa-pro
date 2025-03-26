@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
-use App\Models\{Organizer, Player, Role, User};
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enum\PlayerExperienceLevelEnum;
+use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\PlayerSexEnum;
+use App\Enum\PlayerStatusEnum;
+use App\Models\Organizer;
+use App\Models\Player;
+use App\Models\User;
 use App\RoleEnum;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;

@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\ChampionshipResource\Pages;
 
 use App\Filament\Resources\ChampionshipResource;
-use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateChampionship extends CreateRecord
 {
@@ -25,7 +24,7 @@ class CreateChampionship extends CreateRecord
             ->title('Campeonato criado')
             ->body("<strong>{$campeonato->name}</strong> foi criado.");
     }
-  
+
     public function getTitle(): string
     {
         return 'Criar Campeonato';

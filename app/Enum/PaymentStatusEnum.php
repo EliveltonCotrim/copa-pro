@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum PaymentStatusEnum: int implements HasLabel, HasColor, HasIcon
+enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
 {
     case PENDING = 1;
     case RECEIVED = 2;
@@ -130,7 +130,6 @@ enum PaymentStatusEnum: int implements HasLabel, HasColor, HasIcon
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, PaymentStatusEnum::cases());
+        return array_map(fn ($case) => $case->value, PaymentStatusEnum::cases());
     }
-
 }
