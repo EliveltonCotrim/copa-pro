@@ -3,7 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Enum\ChampionshipStatusEnum;
+use App\Enum\PaymentStatusEnum;
+use App\Enum\RegistrationPlayerStatusEnum;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,6 +20,14 @@ class CheckChampionshipStatus
     public function handle(Request $request, Closure $next): Response
     {
         $championship = $request->route('championship');
+
+        $totalPlayersApproved = $championship->registrationPlayers()->where('status', RegistrationPlayerStatusEnum::APPROVED)->whereHas('payments', function (Builder $query) {
+            $query->where('status', PaymentStatusEnum::RECEIVED);
+        })->count();
+
+        if ($totalPlayersApproved === $championship->max_players && $championship->status === ChampionshipStatusEnum::REGISTRATION_OPEN) {
+            abort(403, 'Inscrições encerradas, limite de jogadores atingido.');
+        }
 
         if ($championship->status === ChampionshipStatusEnum::REGISTRATION_OPEN) {
             return $next($request);
