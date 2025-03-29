@@ -9,6 +9,7 @@ use App\Livewire\Championship\RegistrationForm;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\Championship;
 use App\Models\Player;
+use App\Models\User;
 use App\Notifications\RegistrationVerificationCode;
 use Cache;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +50,7 @@ class DadosGeraisForm extends Component
 
         $params = ['step' => $step, 'registrationForm' => $this->registrationForm];
 
-        if (! is_null($this->player)) {
+        if (!is_null($this->player)) {
             $params['player_id'] = $this->player->id;
         }
 
@@ -59,14 +60,13 @@ class DadosGeraisForm extends Component
     public function searchPlayer()
     {
         $this->validate([
-            'registrationForm.nickname' => 'required_without:registrationForm.email|string',
-            'registrationForm.email' => 'required_without:registrationForm.nickname|email:rfc,dns',
+            'registrationForm.email' => 'required|email:rfc,dns',
         ]);
 
-        $this->player = $this->findPlayerByNicknameOrEmail();
+        $this->user = $this->findUserByEmail();
 
-        if ($this->player) {
-            $existingRegistrationPlayer = $this->player->registrationsChampionships()
+        if ($this->user?->userable->exists()) {
+            $existingRegistrationPlayer = $this->user->userable->registrationsChampionships()
                 ->where('championship_id', $this->championship->id)
                 ->first();
 
@@ -78,13 +78,13 @@ class DadosGeraisForm extends Component
 
             $verificationCode = rand(10000, 99999);
 
-            $this->player->user->notify(new RegistrationVerificationCode($verificationCode));
+            $this->user->notify(new RegistrationVerificationCode($verificationCode));
 
-            Cache::put('verification_code_'.$this->player->id, $verificationCode, now()->addMinutes(10));
+            Cache::put('verification_code_' . $this->user->userable->id, $verificationCode, now()->addMinutes(10));
 
             // Mail::to($this->player->user->email)->send(new VerificationCodeMail($verificationCode));
 
-            $this->handleExistingPlayer($this->player);
+            $this->handleExistingPlayer($this->user->userable);
 
             $this->toast()->success('Código de verificação enviado para o e-mail cadastrado.')->send();
 
@@ -105,7 +105,7 @@ class DadosGeraisForm extends Component
             'registrationForm.verification_code' => 'required|numeric|digits:5',
         ]);
 
-        $code = (string) Cache::get('verification_code_'.$this->registrationForm->player_id);
+        $code = (string) Cache::get('verification_code_' . $this->registrationForm->player_id);
 
         if (empty($code)) {
             $this->toast()->error('Código expirou. Por favor, tente novamente.')->send();
@@ -127,15 +127,11 @@ class DadosGeraisForm extends Component
         }
     }
 
-    private function findPlayerByNicknameOrEmail(): ?Player
+    private function findUserByEmail(): ?User
     {
-        return Player::when(! empty($this->registrationForm->nickname), function (Builder $query) {
-            $query->where('nickname', $this->registrationForm->nickname);
-        })->when(! empty($this->registrationForm->email), function (Builder $query) {
-            $query->whereHas('user', function (Builder $subquery) {
-                $subquery->where('email', $this->registrationForm->email)->where('userable_type', Player::class);
-            });
-        })->first();
+        return User::where('email', $this->registrationForm->email)
+            ->where('userable_type', Player::class)
+            ->first();
     }
 
     private function handleExistingPlayer(Player $player): void

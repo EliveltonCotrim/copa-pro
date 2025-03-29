@@ -7,19 +7,17 @@
     <div x-show="showSearchPlayerForm" x-transition>
         <div class="mb-3">
             <x-alert
-                text="Use o mesmo nickname ou e-mail das inscrições anteriores. Se for a primeira vez, cadastre um novo."
+                text="Use o mesmo e-mail das inscrições anteriores.
+                Caso seja sua primeira vez, basta informar um e-mail e clicar em 'Prosseguir'"
                 light />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-            <div class="mb-3">
-                <x-input label="NickName" wire:model="registrationForm.nickname" />
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-x-4">
             <div class="mb-3">
                 <x-input label="E-mail" wire:model="registrationForm.email" />
             </div>
         </div>
         <div class="mt-2 grid grid-cols-1">
-            <x-button sm icon="magnifying-glass" text="Pesquisar" wire:click="searchPlayer" />
+            <x-button sm icon="chevron-double-right" text="Prosseguir" wire:click="searchPlayer" />
         </div>
     </div>
     <div x-show="showVerificationForm" x-transition>
