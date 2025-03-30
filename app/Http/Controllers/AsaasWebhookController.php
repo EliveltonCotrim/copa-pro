@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enum\PaymentStatusEnum;
+use App\Enum\RegistrationPlayerStatusEnum;
 use App\Http\Requests\AsaasWebHookRequest;
 use App\Models\Payment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -30,6 +31,8 @@ class AsaasWebhookController extends Controller
                         'transaction_receipt_url' => $data['payment']['transactionReceiptUrl'],
                     ]
                 );
+
+                $payment->registrationPlayer->update(['status' => RegistrationPlayerStatusEnum::APPROVED]);
             }
 
             DB::commit();
