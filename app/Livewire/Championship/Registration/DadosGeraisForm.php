@@ -32,7 +32,7 @@ class DadosGeraisForm extends Component
 
     public array $experienceLevels = [];
 
-    public ?Player $player = null;
+    public ?User $user = null;
 
     public Championship $championship;
 
@@ -50,8 +50,8 @@ class DadosGeraisForm extends Component
 
         $params = ['step' => $step, 'registrationForm' => $this->registrationForm];
 
-        if (!is_null($this->player)) {
-            $params['player_id'] = $this->player->id;
+        if (!is_null($this->user->userable)) {
+            $params['player_id'] = $this->user->userable->id;
         }
 
         $this->dispatch('nextStep', ...$params)->to(RegistrationForm::class);
@@ -82,7 +82,7 @@ class DadosGeraisForm extends Component
 
             Cache::put('verification_code_' . $this->user->userable->id, $verificationCode, now()->addMinutes(10));
 
-            // Mail::to($this->player->user->email)->send(new VerificationCodeMail($verificationCode));
+            // Mail::to($this->user->email)->send(new VerificationCodeMail($verificationCode));
 
             $this->handleExistingPlayer($this->user->userable);
 
