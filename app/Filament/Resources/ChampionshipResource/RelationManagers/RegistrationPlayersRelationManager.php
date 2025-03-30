@@ -70,7 +70,7 @@ class RegistrationPlayersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('championship_team_name')->searchable()->label('Time do Campeonato'),
                 Tables\Columns\TextColumn::make('status')->label('Status')
                     ->toggleable()->badge(),
-                Tables\Columns\TextColumn::make('payment_status')->label('Status do Pagamento')
+                Tables\Columns\TextColumn::make('payments.status')->label('Status do Pagamento')
                     ->toggleable()->badge(),
 
             ])->defaultSort('created_at', 'desc')
