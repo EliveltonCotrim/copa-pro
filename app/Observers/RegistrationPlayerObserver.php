@@ -24,14 +24,14 @@ class RegistrationPlayerObserver implements ShouldHandleEventsAfterCommit
      */
     public function updated(RegistrationPlayer $registrationPlayer): void
     {
-        if(!$registrationPlayer->wasChanged('status') && $registrationPlayer->status !== RegistrationPlayerStatusEnum::APPROVED) {
+        if (!$registrationPlayer->wasChanged('status') && $registrationPlayer->status !== RegistrationPlayerStatusEnum::APPROVED) {
             return;
         }
 
         $registrationPlayer->load('championship');
         $championship = $registrationPlayer->championship;
 
-        if(!$championship){
+        if (!$championship) {
             return;
         }
 
@@ -39,14 +39,13 @@ class RegistrationPlayerObserver implements ShouldHandleEventsAfterCommit
             ->where('championship_id', $championship->id)
             ->whereHas('payments', function (Builder $query) {
                 $query->where('status', PaymentStatusEnum::RECEIVED);
-        })->count();
+            })->count();
 
-        if($totalPlayersApproved >= $championship->max_players) {
+        if ($totalPlayersApproved >= $championship->max_players) {
             $championship->update([
                 'status' => ChampionshipStatusEnum::REGISTRATION_CLOSED,
             ]);
         }
-
     }
 
     /**
@@ -54,7 +53,24 @@ class RegistrationPlayerObserver implements ShouldHandleEventsAfterCommit
      */
     public function deleted(RegistrationPlayer $registrationPlayer): void
     {
-        //
+        $registrationPlayer->load('championship');
+        $championship = $registrationPlayer->championship;
+
+        if (!$championship) {
+            return;
+        }
+
+        $totalPlayersApproved = RegistrationPlayer::where('status', RegistrationPlayerStatusEnum::APPROVED)
+            ->where('championship_id', $championship->id)
+            ->whereHas('payments', function (Builder $query) {
+                $query->where('status', PaymentStatusEnum::RECEIVED);
+            })->count();
+
+        if ($totalPlayersApproved < $championship->max_players) {
+            $championship->update([
+                'status' => ChampionshipStatusEnum::REGISTRATION_OPEN,
+            ]);
+        }
     }
 
     /**

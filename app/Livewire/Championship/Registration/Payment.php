@@ -13,9 +13,12 @@ use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Component;
+use TallStackUi\Traits\Interactions;
 
 class Payment extends Component
 {
+    use Interactions;
+
     public bool $isCpfFormVisible = true;
 
     public RegistrationPlayerForm $form;
