@@ -49,9 +49,9 @@ class AppServiceProvider extends ServiceProvider
 
         ResetPassword::toMailUsing(function($notifiable, $url) {
             $expires = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');
-            $primeiro_nome = explode(' ', trim($notifiable->name))[0];
+            $first_name = explode(' ', trim($notifiable->name))[0];
             return (new MailMessage)
-                ->greeting("Olá, $primeiro_nome!")
+                ->greeting("Olá, $first_name!")
                 ->subject('Notificação para resetar senha')
                 ->line('Se você está recebendo esse e-mail, é por que recebemos um pedido de redefinição de senha para sua conta.')
                 ->action('Resetar senha', $url)

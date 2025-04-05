@@ -325,23 +325,21 @@ class ChampionshipResource extends Resource
                                 ->schema([
                                     Section::make()
                                         ->schema([
-                                            \Filament\Infolists\Components\Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
-
+                                            Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
                                                 // ImageEntry::make('banner_path')
                                                 //     ->defaultImageUrl(fn($record) => $record->getFirstMediaUrl() ?? '')
                                                 //     ->hiddenLabel()
                                                 //     ->height(150)
                                                 //     ->width(150)
                                                 //     ->columnSpan(1),
-                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
-
-                                                    TextEntry::make('name')->label('Nome'),
+                                                Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                    TextEntry::make('name')
+                                                        ->label('Nome'),
                                                     TextEntry::make('registration_fee')
                                                         ->label('Taxa de inscrição')
                                                         ->money(currency: 'BRL'),
-
                                                 ]),
-                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('start_date')
                                                         ->label('Data de Início')
                                                         ->color(color: 'primary')
@@ -351,19 +349,19 @@ class ChampionshipResource extends Resource
                                                         ->color(color: 'danger')
                                                         ->date('d/m/Y'),
                                                 ]),
-                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('game_platform')
                                                         ->label('Plataforma'),
                                                     TextEntry::make('game')
                                                         ->label('Jogo'),
                                                 ]),
-                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('championship_format')
                                                         ->label('Formato'),
                                                     TextEntry::make('max_players')
                                                         ->label('Máximo de jogadores'),
                                                 ]),
-                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('wpp_group_link')
                                                         ->copyable()
                                                         ->label('Link do grupo de WhatsApp'),
@@ -375,7 +373,7 @@ class ChampionshipResource extends Resource
                                         ]),
                                     Section::make()
                                         ->schema([
-                                            \Filament\Infolists\Components\Grid::make(['default' => 1, 'lg' => 1])->schema([
+                                            Grid::make(['default' => 1, 'lg' => 1])->schema([
                                                 TextEntry::make('description')
                                                     ->label('Descrição')
                                                     ->html(),
@@ -389,17 +387,22 @@ class ChampionshipResource extends Resource
                             Tab::make('Endereço')
                                 ->schema([
                                     Section::make()->schema([
-                                        \Filament\Infolists\Components\Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
-                                            \Filament\Infolists\Components\Group::make()->schema([
+                                        Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
+                                            Group::make()->schema([
                                                 TextEntry::make('address.postal_code')
                                                     ->label('CEP'),
-                                                TextEntry::make('address.state')->label('UF'),
-                                                TextEntry::make('address.city')->label('Cidade'),
+                                                TextEntry::make('address.state')
+                                                    ->label('UF'),
+                                                TextEntry::make('address.city')
+                                                    ->label('Cidade'),
                                             ]),
-                                            \Filament\Infolists\Components\Group::make()->schema([
-                                                TextEntry::make('address.neighborhood')->label('Bairro'),
-                                                TextEntry::make('address.street')->label('Rua'),
-                                                TextEntry::make('address.number')->label('Número'),
+                                            Group::make()->schema([
+                                                TextEntry::make('address.neighborhood')
+                                                    ->label('Bairro'),
+                                                TextEntry::make('address.street')
+                                                    ->label('Rua'),
+                                                TextEntry::make('address.number')
+                                                    ->label('Número'),
                                             ]),
                                         ]),
                                     ]),
