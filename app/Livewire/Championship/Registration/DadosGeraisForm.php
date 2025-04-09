@@ -12,7 +12,6 @@ use App\Models\Player;
 use App\Models\User;
 use App\Notifications\RegistrationVerificationCode;
 use Cache;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
 
@@ -33,6 +32,7 @@ class DadosGeraisForm extends Component
     public array $experienceLevels = [];
 
     public ?User $user = null;
+    public ?Player $player = null;
 
     public Championship $championship;
 
@@ -50,8 +50,8 @@ class DadosGeraisForm extends Component
 
         $params = ['step' => $step, 'registrationForm' => $this->registrationForm];
 
-        if (!is_null($this->user->userable)) {
-            $params['player_id'] = $this->user->userable->id;
+        if ($this->player) {
+            $params['player_id'] = $this->player->id;
         }
 
         $this->dispatch('nextStep', ...$params)->to(RegistrationForm::class);
@@ -64,8 +64,9 @@ class DadosGeraisForm extends Component
         ]);
 
         $this->user = $this->findUserByEmail();
+        $this->player = $this->user?->userable;
 
-        if ($this->user?->userable->exists()) {
+        if ($this->player) {
             $existingRegistrationPlayer = $this->user->userable->registrationsChampionships()
                 ->where('championship_id', $this->championship->id)
                 ->first();
@@ -84,7 +85,7 @@ class DadosGeraisForm extends Component
 
             // Mail::to($this->user->email)->send(new VerificationCodeMail($verificationCode));
 
-            $this->handleExistingPlayer($this->user->userable);
+            $this->registrationForm->setForm($this->user);
 
             $this->toast()->success('Código de verificação enviado para o e-mail cadastrado.')->send();
 
@@ -120,23 +121,24 @@ class DadosGeraisForm extends Component
             $this->showVerificationForm = false;
             $this->showInitForm = false;
             $this->showForm = true;
-        } else {
-            $this->toast()->error('Código de verificação inválido.')->send();
-
             return;
         }
+
+        $this->toast()->error('Código de verificação inválido.')->send();
+
     }
 
     private function findUserByEmail(): ?User
     {
         return User::where('email', $this->registrationForm->email)
+            ->with([
+                'userable' => function ($userable) {
+                    $userable->withTrashed();
+                }
+            ])
             ->where('userable_type', Player::class)
+            ->withTrashed()
             ->first();
-    }
-
-    private function handleExistingPlayer(Player $player): void
-    {
-        $this->registrationForm->setForm($player);
     }
 
     public function render()

@@ -29,7 +29,7 @@ class RegistrationForm extends Component
 
         if ($step === 2) {
             $this->registrationForm = $registrationForm;
-            $this->player = $player_id ? Player::findOrFail($player_id) : null;
+            $this->player = $player_id ? Player::withTrashed()->where('id',$player_id)->first() : null;
             $this->showFormGeral = false;
         }
     }
