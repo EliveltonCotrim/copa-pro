@@ -25,7 +25,7 @@ class Payment extends Component
 
     public Championship $championship;
 
-    public ?Player $player;
+    public ?Player $player = null;
 
     protected Gateway $gateway;
 
@@ -51,7 +51,7 @@ class Payment extends Component
             'form.cpf_cnpj' => ['required', 'string', 'max:18', 'cpf_ou_cnpj'],
         ]);
 
-        if (! empty($this->form->customer_id)) {
+        if (!empty($this->form->customer_id)) {
 
             $asaasCustomer = $this->gateway->customer()->show($this->form->customer_id);
 
@@ -67,7 +67,12 @@ class Payment extends Component
 
         $this->form->customer_id = $asaasCustomer['id'] ?? null;
 
-        if (! empty($this->player)) {
+        if ($this->player) {
+            if ($this->player->trashed()) {
+                $this->player->restore();
+                $this->player->user->restore();
+            }
+
             $this->player = $this->form->updatePlayer($this->player);
         } else {
             $this->player = $this->form->createPlayer();
@@ -84,7 +89,7 @@ class Payment extends Component
             'customer' => $this->form->customer_id,
             'cpfCnpj' => $this->form->cpf_cnpj,
             'value' => $this->championship->registration_fee,
-            'description' => 'Inscrição no campeonato: '.$this->championship->name,
+            'description' => 'Inscrição no campeonato: ' . $this->championship->name,
             'dueDate' => now()->addDays(1)->format('Y-m-d'),
         ];
 
@@ -123,8 +128,8 @@ class Payment extends Component
                 ->flash()
                 ->send();
 
-            // TODO Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
-            // TODO Redirecionar para a página de detalhes do campeonato
+            // TODO - Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
+            // TODO - Redirecionar para a página de detalhes do campeonato
 
             return $this->redirectRoute('championship.register', $this->championship);
         }

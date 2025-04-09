@@ -6,6 +6,7 @@ use App\Enum\PlayerExperienceLevelEnum;
 use App\Enum\PlayerPlatformGameEnum;
 use App\Enum\PlayerSexEnum;
 use App\Models\Player;
+use App\Models\User;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Illuminate\Support\Facades\DB as DBTransaction;
@@ -64,38 +65,40 @@ class RegistrationPlayerForm extends Form
         ];
     }
 
-    public function messages()
-    {
-        return [
-            'nickname.unique' => 'Este apelido já está em uso.',
-            'phone.celular_com_ddd' => 'O campo telefone não é um número de telefone válido.',
-            'game_platform.required' => 'O campo plataforma de jogo é obrigatório.',
-            'level_experience.required' => 'O campo nível de experiência é obrigatório.',
-            'name.regex' => 'O campo nome deve conter pelo menos um sobrenome.',
-            'email.unique' => 'Este e-mail já está em uso.',
-        ];
-    }
+    // public function messages()
+    // {
+    //     return [
+    //         'nickname.unique' => 'Este apelido já está em uso.',
+    //         'phone.celular_com_ddd' => 'O campo telefone não é um número de telefone válido.',
+    //         'game_platform.required' => 'O campo plataforma de jogo é obrigatório.',
+    //         'level_experience.required' => 'O campo nível de experiência é obrigatório.',
+    //         'name.regex' => 'O campo nome deve conter pelo menos um sobrenome.',
+    //         'email.unique' => 'Este e-mail já está em uso.',
+    //     ];
+    // }
 
-    public function setForm(Player $player)
+    public function setForm(User $user)
     {
-        $this->nickname = $player->nickname;
-        $this->sex = $player->sex->value ?? null;
+        $this->nickname = $user->userable->nickname;
+        $this->sex = $user->userable->sex->value ?? null;
         $this->phone = '(77) 99151-3661';
-        // $this->phone = $player->phone;
-        $this->game_platform = $player->game_platform->value;
-        $this->level_experience = $player->level_experience->value;
-        $this->heart_team_name = $player->heart_team_name;
-        $this->birth_dt = $player->birth_dt;
+        // $this->phone = $user->userable->phone;
+        $this->game_platform = $user->userable->game_platform->value;
+        $this->level_experience = $user->userable->level_experience->value;
+        $this->heart_team_name = $user->userable->heart_team_name;
+        $this->birth_dt = $user->userable->birth_dt;
 
-        $this->email = $player->user->email;
-        $this->name = $player->user->name;
+        $this->email = $user->email;
+        $this->name = $user->name;
 
-        $this->user_id = $player->user->id;
-        $this->player_id = $player->id;
-        $this->customer_id = $player->customer_id;
+        $this->user_id = $user->id;
+        $this->player_id = $user->userable->id;
+        $this->customer_id = $user->userable->customer_id;
     }
 
-    public function saveSubscription() {}
+    public function saveSubscription()
+    {
+    }
 
     public function updatePlayer(Player $player): Player
     {
