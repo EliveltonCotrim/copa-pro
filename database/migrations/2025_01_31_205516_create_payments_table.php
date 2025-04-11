@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('net_value', 10, 2)->nullable();
             $table->enum('billing_type', PaymentMethodEnum::values())->nullable();
             $table->string('description')->nullable();
-            $table->foreignId('registration_player_id')->constrained('registration_players');
+            $table->foreignId('registration_player_id')->constrained('registration_players')->cascadeOnDelete();
             $table->integer('installments')->nullable();
             $table->date('date_created');
             $table->date('due_date')->nullable();
