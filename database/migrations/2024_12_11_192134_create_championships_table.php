@@ -1,14 +1,11 @@
 <?php
 
-use App\Enum\ChampionshipFormatEnum;
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\{ChampionshipFormatEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
+            $table->datetime('start_date');
+            $table->datetime('end_date')->nullable();
             $table->decimal('registration_fee', 10, 2)->default(0);
             $table->string('banner_path')->nullable();
             $table->string('regulation_path')->nullable();

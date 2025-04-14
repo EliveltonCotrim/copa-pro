@@ -2,44 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\ChampionshipFormatEnum;
-use App\Enum\ChampionshipGamesEnum;
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PlayerPlatformGameEnum;
+use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
 use App\Filament\Resources\ChampionshipResource\Pages;
 use App\Filament\Resources\ChampionshipResource\RelationManagers\RegistrationPlayersRelationManager;
-use App\Models\Championship;
-use App\Models\UF;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Tabs;
+use App\Models\{Championship, UF};
+use Filament\Forms\Components\{DateTimePicker, FileUpload, Grid, Group, Hidden, RichEditor, Select, SpatieMediaLibraryFileUpload, TextInput, Wizard};
+use Filament\Forms\{Form, Get};
 use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\{ImageEntry, Section, Tabs, TextEntry};
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\{SelectColumn, SpatieMediaLibraryImageColumn, TextColumn};
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Leandrocfe\FilamentPtbrFormFields\Cep;
-use Leandrocfe\FilamentPtbrFormFields\Money;
+use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
+use Leandrocfe\FilamentPtbrFormFields\{Cep, Money};
 
 class ChampionshipResource extends Resource
 {
@@ -81,17 +60,17 @@ class ChampionshipResource extends Resource
                                 ->label('Informação'),
                         ]),
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
-                            DatePicker::make('start_date')
+                            DateTimePicker::make('start_date')
                                 ->label('Data de início')
                                 ->live()
                                 ->minDate(fn ($record) => $record ? $record->start_date : now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
-                                    'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
+                                    'min_date'        => 'A data de início deve ser igual ou posterior à data atual.',
                                     'before_or_equal' => 'A data de início deve ser igual ou anterior à data de término.',
                                 ])
                                 ->required(),
-                            DatePicker::make('end_date')
+                            DateTimePicker::make('end_date')
                                 ->label('Data de término')
                                 ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
                                 ->required()
@@ -138,13 +117,13 @@ class ChampionshipResource extends Resource
                                 ->required()
                                 ->live()
                                 ->default(ChampionshipFormatEnum::LEAGUE->value)
-                                ->afterStateUpdated(fn(callable $set) => $set('max_players', null))
+                                ->afterStateUpdated(fn (callable $set) => $set('max_players', null))
                                 ->label('Formato do campeonato')
                                 ->selectablePlaceholder(false),
                             Select::make('max_players')
-                                ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::CUP->value)
+                                ->visible(fn (Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::CUP->value)
                                 ->options([
-                                    '8' => '8',
+                                    '8'  => '8',
                                     '16' => '16',
                                     '32' => '32',
                                     '64' => '64',
@@ -152,18 +131,18 @@ class ChampionshipResource extends Resource
                                 ->label('Número máximo de jogadores')
                                 ->required(),
                             Select::make('max_players')
-                                ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
+                                ->visible(fn (Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::KNOCKOUT->value)
                                 ->options([
                                     '16' => '16',
-                                    '8' => '8',
-                                    '4' => '4',
-                                    '2' => '2',
+                                    '8'  => '8',
+                                    '4'  => '4',
+                                    '2'  => '2',
                                 ])
                                 ->label('Número máximo de jogadores')
                                 ->helperText('Oitavas, quartas, semifinal ou final')
                                 ->required(),
                             TextInput::make('max_players')
-                                ->visible(fn(Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
+                                ->visible(fn (Get $get) => (int) $get('championship_format') === ChampionshipFormatEnum::LEAGUE->value)
                                 ->label('Número máximo de jogadores')
                                 ->numeric()
                                 ->maxValue(32)
@@ -195,17 +174,16 @@ class ChampionshipResource extends Resource
                                     ->live(onBlur: true)
                                     ->label('CEP')
                                     ->mask('99999-999')
-                                    ->helperText('Digite um CEP válido e clique sobre a lupa')
                                     ->viaCep(
                                         mode: 'suffix',
                                         errorMessage: 'CEP inválido.',
                                         setFields: [
-                                            'state' => 'uf',
-                                            'city' => 'localidade',
+                                            'state'        => 'uf',
+                                            'city'         => 'localidade',
                                             'neighborhood' => 'bairro',
-                                            'street' => 'logradouro',
-                                            'complement' => 'complemento',
-                                            'number' => null,
+                                            'street'       => 'logradouro',
+                                            'complement'   => 'complemento',
+                                            'number'       => null,
                                         ]
                                     ),
                                 Select::make('state')
@@ -253,13 +231,11 @@ class ChampionshipResource extends Resource
                     ->searchable(),
                 TextColumn::make('start_date')
                     ->label('Data de início')
-                    ->dateTime('d/m/Y')
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
                 TextColumn::make('end_date')
                     ->label('Data de término')
-                    ->dateTime('d/m/Y')
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
@@ -280,7 +256,7 @@ class ChampionshipResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()->visible(fn ($record) => ! $record->trashed()),
+                    Tables\Actions\EditAction::make()->visible(fn ($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make()
                         ->successNotification(function ($record) {
                             return Notification::make()
@@ -326,7 +302,6 @@ class ChampionshipResource extends Resource
                                     Section::make()
                                         ->schema([
                                             \Filament\Infolists\Components\Grid::make(['default' => 1, 'sm' => 2, 'md' => 3, 'lg' => 5])->schema([
-
                                                 // ImageEntry::make('banner_path')
                                                 //     ->defaultImageUrl(fn($record) => $record->getFirstMediaUrl() ?? '')
                                                 //     ->hiddenLabel()
@@ -342,14 +317,12 @@ class ChampionshipResource extends Resource
 
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
-                                                    TextEntry::make('start_date')
+                                                    TextEntry::make('start_date_formated')
                                                         ->label('Data de Início')
-                                                        ->color(color: 'primary')
-                                                        ->date('d/m/Y'),
-                                                    TextEntry::make('end_date')
+                                                        ->color(color: 'primary'),
+                                                    TextEntry::make('end_date_formated')
                                                         ->label('Data de Termino')
-                                                        ->color(color: 'danger')
-                                                        ->date('d/m/Y'),
+                                                        ->color(color: 'danger'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('game_platform')
@@ -370,6 +343,16 @@ class ChampionshipResource extends Resource
                                                     TextEntry::make('status')
                                                         ->badge()
                                                         ->label('Status'),
+                                                ]),
+                                                \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
+                                                    TextEntry::make('regulation_path')
+                                                        ->label('Regulamento')
+                                                        ->formatStateUsing(fn () => 'Baixar')
+                                                        ->url(fn ($record) => $record->regulation_path)
+                                                        ->openUrlInNewTab()
+                                                        ->badge()
+                                                        ->icon('heroicon-o-document-text')
+                                                        ->visible(fn ($record) => $record->regulation_path ? true : false),
                                                 ]),
                                             ]),
                                         ]),
@@ -419,10 +402,10 @@ class ChampionshipResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListChampionships::route('/'),
+            'index'  => Pages\ListChampionships::route('/'),
             'create' => Pages\CreateChampionship::route('/create'),
-            'view' => Pages\ViewChampionship::route('/{record}'),
-            'edit' => Pages\EditChampionship::route('/{record:uuid}/edit'),
+            'view'   => Pages\ViewChampionship::route('/{record}'),
+            'edit'   => Pages\EditChampionship::route('/{record:uuid}/edit'),
         ];
     }
 

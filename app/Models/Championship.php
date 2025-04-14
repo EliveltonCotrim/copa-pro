@@ -3,16 +3,20 @@
 namespace App\Models;
 
 use App\Enum\{ChampionshipFormatEnum, ChampionshipGamesEnum, ChampionshipStatusEnum, PlayerPlatformGameEnum};
-use Illuminate\Database\Eloquent\{Model, SoftDeletes};
-use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
-use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
+use Cknow\Money\Money;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
 
 class Championship extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+    use HasFactory;
+    use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $fillable = [
         'uuid',
@@ -53,7 +57,7 @@ class Championship extends Model implements HasMedia
 
         static::updating(function (Championship $championship) {
 
-            $bannerPath = $championship->getOriginal('banner_path');
+            $bannerPath     = $championship->getOriginal('banner_path');
             $regulationPath = $championship->getOriginal('regulation_path');
 
             if ($championship->banner_path !== $bannerPath && $bannerPath) {
@@ -75,9 +79,15 @@ class Championship extends Model implements HasMedia
 
     protected $casts = [
         'championship_format' => ChampionshipFormatEnum::class,
-        'status' => ChampionshipStatusEnum::class,
-        'game' => ChampionshipGamesEnum::class,
-        'game_platform' => PlayerPlatformGameEnum::class,
+        'status'              => ChampionshipStatusEnum::class,
+        'game'                => ChampionshipGamesEnum::class,
+        'game_platform'       => PlayerPlatformGameEnum::class,
+    ];
+
+    protected $appends = [
+        'link_inscription',
+        'start_date_formated',
+        'end_date_formated',
     ];
 
     protected static function boot()
@@ -85,7 +95,7 @@ class Championship extends Model implements HasMedia
         parent::boot();
 
         static::creating(function ($championship) {
-            if (! $championship->uuid) {
+            if (!$championship->uuid) {
                 $championship->uuid = str::uuid();
             }
         });
@@ -109,5 +119,38 @@ class Championship extends Model implements HasMedia
     public function organizers(): BelongsToMany
     {
         return $this->belongsToMany(Organizer::class)->using(ChampionshipOrganization::class);
+    }
+
+    public function getFeeFormatedAttribute()
+    {
+        return Money::BRL($this->registration_fee);
+    }
+
+    public function startDateFormated(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => now()->parse($value)->format('d/m/Y H:i'),
+        );
+    }
+
+    public function endDateFormated(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => now()->parse($value)->format('d/m/Y H:i'),
+        );
+    }
+
+    public function linkInscription(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value): string => route('championship.register', $this->slug),
+        );
+    }
+
+    public function regulationPath(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $path): ?string => $path ? (str_contains($path, 'http')) ? $path : Storage::url($path) : '',
+        );
     }
 }
