@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('play', function () {
 
-    $adapter = new AsaasConnector;
+    $adapter = new AsaasConnector();
 
     $gateway = new Gateway($adapter);
 

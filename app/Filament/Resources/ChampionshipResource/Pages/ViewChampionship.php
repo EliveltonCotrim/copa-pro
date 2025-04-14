@@ -20,7 +20,7 @@ class ViewChampionship extends ViewRecord
                 ->icon('heroicon-o-arrow-uturn-left')
                 ->url(fn ($record) => route('filament.admin.resources.championships.index')),
             Actions\EditAction::make(),
-            //Actions\DeleteAction::make(),
+            // Actions\DeleteAction::make(),
         ];
     }
 

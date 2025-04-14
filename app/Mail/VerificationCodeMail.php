@@ -4,13 +4,13 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\{Content, Envelope};
 use Illuminate\Queue\SerializesModels;
 
 class VerificationCodeMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
@@ -18,7 +18,8 @@ class VerificationCodeMail extends Mailable
     public function __construct(
         public string $verificationCode,
         public string $name,
-    ) {}
+    ) {
+    }
 
     /**
      * Get the message envelope.

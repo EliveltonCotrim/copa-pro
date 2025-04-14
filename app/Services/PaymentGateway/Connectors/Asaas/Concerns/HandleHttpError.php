@@ -9,9 +9,9 @@ trait HandleHttpError
     protected function handle(RequestException $requestException): array
     {
         return [
-            'error' => true,
-            'status' => $requestException->getCode(),
-            'message' => $requestException->getMessage(),
+            'error'    => true,
+            'status'   => $requestException->getCode(),
+            'message'  => $requestException->getMessage(),
             'response' => $requestException?->response?->reason() ?? null,
         ];
     }

@@ -1,17 +1,17 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Services\PaymentGateway\Connectors;
 
-use App\Services\PaymentGateway\Connectors\Asaas\Concerns\AsaasConfig;
-use App\Services\PaymentGateway\Connectors\Asaas\Concerns\HandleHttpError;
+use App\Services\PaymentGateway\Connectors\Asaas\Concerns\{AsaasConfig, HandleHttpError};
 use App\Services\PaymentGateway\Contracts\AdapterInterface;
 use Illuminate\Http\Client\RequestException;
 
 class AsaasConnector implements AdapterInterface
 {
-    use AsaasConfig, HandleHttpError;
+    use AsaasConfig;
+    use HandleHttpError;
 
     public function get(string $url): array
     {

@@ -7,8 +7,7 @@ use App\Models\Organizer;
 use App\RoleEnum;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\{DB, Hash};
 
 class CreateUser extends CreateRecord
 {

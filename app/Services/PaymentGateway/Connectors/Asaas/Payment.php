@@ -3,8 +3,7 @@
 namespace App\Services\PaymentGateway\Connectors\Asaas;
 
 use App\Services\PaymentGateway\Connectors\Asaas\Concerns\HasFilter;
-use App\Services\PaymentGateway\Contracts\AdapterInterface;
-use App\Services\PaymentGateway\Contracts\PaymentInterface;
+use App\Services\PaymentGateway\Contracts\{AdapterInterface, PaymentInterface};
 
 class Payment implements PaymentInterface
 {
@@ -12,11 +11,12 @@ class Payment implements PaymentInterface
 
     public function __construct(
         public AdapterInterface $http,
-    ) {}
+    ) {
+    }
 
     public function list(array $filters = []): array
     {
-        return $this->http->get((string) '/payments/'.$this->filter($filters));
+        return $this->http->get((string) '/payments/' . $this->filter($filters));
     }
 
     public function get(int|string $id): array

@@ -2,9 +2,7 @@
 
 namespace App\Observers;
 
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PaymentStatusEnum;
-use App\Enum\RegistrationPlayerStatusEnum;
+use App\Enum\{ChampionshipStatusEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
 use App\Models\RegistrationPlayer;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Database\Eloquent\Builder;

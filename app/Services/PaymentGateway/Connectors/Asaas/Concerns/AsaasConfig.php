@@ -11,8 +11,8 @@ trait AsaasConfig
         protected ?PendingRequest $http = null,
     ) {
         $enviroment = app()->isLocal() ? 'sandbox' : 'production';
-        $token = config("asaas.{$enviroment}.token");
-        $baseUrl = config("asaas.{$enviroment}.url");
+        $token      = config("asaas.{$enviroment}.token");
+        $baseUrl    = config("asaas.{$enviroment}.url");
 
         $this->http = Http::withHeader('access_token', $token)->baseUrl($baseUrl);
     }

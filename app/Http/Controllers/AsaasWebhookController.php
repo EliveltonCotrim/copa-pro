@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\PaymentStatusEnum;
-use App\Enum\RegistrationPlayerStatusEnum;
+use App\Enum\{PaymentStatusEnum, RegistrationPlayerStatusEnum};
 use App\Http\Requests\AsaasWebHookRequest;
 use App\Models\Payment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\{DB, Log};
 
 class AsaasWebhookController extends Controller
 {
@@ -25,9 +23,9 @@ class AsaasWebhookController extends Controller
 
                 $payment->update(
                     [
-                        'status' => PaymentStatusEnum::parse($data['payment']['status']),
-                        'payment_Date' => $data['payment']['paymentDate'],
-                        'confirmed_date' => $data['payment']['confirmedDate'],
+                        'status'                  => PaymentStatusEnum::parse($data['payment']['status']),
+                        'payment_Date'            => $data['payment']['paymentDate'],
+                        'confirmed_date'          => $data['payment']['confirmedDate'],
                         'transaction_receipt_url' => $data['payment']['transactionReceiptUrl'],
                     ]
                 );
@@ -42,13 +40,13 @@ class AsaasWebhookController extends Controller
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
 
-            Log::error('Payment not found:'.$e->getMessage(), ['transaction_id' => $data['payment']['id']]);
+            Log::error('Payment not found:' . $e->getMessage(), ['transaction_id' => $data['payment']['id']]);
 
             return response('Payment not found', JsonResponse::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Unexpected error:'.$e->getMessage(), ['trace' => $e->getTraceAsString(), 'data' => $data]);
+            Log::error('Unexpected error:' . $e->getMessage(), ['trace' => $e->getTraceAsString(), 'data' => $data]);
 
             return response('Internal server error', JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }

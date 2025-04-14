@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
-use App\Models\Role;
+use App\Models\{Permission, Role};
 use App\RoleEnum;
 use Illuminate\Database\Seeder;
 

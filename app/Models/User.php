@@ -4,8 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\RoleEnum;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\{FilamentUser, HasAvatar};
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -13,14 +12,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, InteractsWithMedia, Notifiable, Notifiable, SoftDeletes;
+    use HasFactory;
+    use HasRoles;
+    use InteractsWithMedia;
+    use Notifiable;
+    use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -71,7 +74,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 

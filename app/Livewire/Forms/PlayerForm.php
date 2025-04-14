@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
+use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum};
 use Illuminate\Validation\Rule;
 use Livewire\Form;
 
@@ -27,12 +25,12 @@ class PlayerForm extends Form
     public function rules()
     {
         return [
-            'nickname' => 'nullable|string|min:3|max:50',
-            'heart_team_name' => 'nullable|string|max:255',
-            'birth_dt' => 'nullable|date|before_or_equal:today',
-            'sex' => ['nullable', Rule::enum(PlayerSexEnum::class)],
-            'phone' => 'required|string|celular_com_ddd|max:20',
-            'game_platform' => ['required', Rule::enum(PlayerPlatformGameEnum::class)],
+            'nickname'         => 'nullable|string|min:3|max:50',
+            'heart_team_name'  => 'nullable|string|max:255',
+            'birth_dt'         => 'nullable|date|before_or_equal:today',
+            'sex'              => ['nullable', Rule::enum(PlayerSexEnum::class)],
+            'phone'            => 'required|string|celular_com_ddd|max:20',
+            'game_platform'    => ['required', Rule::enum(PlayerPlatformGameEnum::class)],
             'level_experience' => ['required', Rule::enum(PlayerExperienceLevelEnum::class)],
         ];
 

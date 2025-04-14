@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-use App\Enum\PaymentStatusEnum;
-use App\Enum\RegistrationPlayerStatusEnum;
+use App\Enum\{PaymentStatusEnum, RegistrationPlayerStatusEnum};
 use App\Observers\RegistrationPlayerObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 
 #[ObservedBy([RegistrationPlayerObserver::class])]
 class RegistrationPlayer extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'championship_id',
@@ -26,7 +24,7 @@ class RegistrationPlayer extends Model
     ];
 
     protected $casts = [
-        'status' => RegistrationPlayerStatusEnum::class,
+        'status'         => RegistrationPlayerStatusEnum::class,
         'payment_status' => PaymentStatusEnum::class,
     ];
 

@@ -2,21 +2,15 @@
 
 namespace App\Models;
 
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\Enum\PlayerStatusEnum;
-use Illuminate\Database\Eloquent\Builder;
+use App\Enum\{ChampionshipStatusEnum, PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\{HasMany, MorphOne};
+use Illuminate\Database\Eloquent\{Builder, Model, SoftDeletes};
 
 class Player extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'nickname',
@@ -33,9 +27,9 @@ class Player extends Model
     ];
 
     protected $casts = [
-        'sex' => PlayerSexEnum::class,
-        'status' => PlayerStatusEnum::class,
-        'game_platform' => PlayerPlatformGameEnum::class,
+        'sex'              => PlayerSexEnum::class,
+        'status'           => PlayerStatusEnum::class,
+        'game_platform'    => PlayerPlatformGameEnum::class,
         'level_experience' => PlayerExperienceLevelEnum::class,
     ];
 

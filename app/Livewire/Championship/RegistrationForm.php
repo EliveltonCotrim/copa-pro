@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Championship;
 
-use App\Models\Championship;
-use App\Models\Player;
+use App\Models\{Championship, Player};
 use Livewire\Attributes\On;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
@@ -29,8 +28,8 @@ class RegistrationForm extends Component
 
         if ($step === 2) {
             $this->registrationForm = $registrationForm;
-            $this->player = $player_id ? Player::withTrashed()->where('id',$player_id)->first() : null;
-            $this->showFormGeral = false;
+            $this->player           = $player_id ? Player::withTrashed()->where('id', $player_id)->first() : null;
+            $this->showFormGeral    = false;
         }
     }
 

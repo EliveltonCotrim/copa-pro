@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use App\Enum\PaymentMethodEnum;
-use App\Enum\PaymentStatusEnum;
+use App\Enum\{PaymentMethodEnum, PaymentStatusEnum};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 
 class Payment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'registration_player_id',
@@ -35,7 +34,7 @@ class Payment extends Model
 
     protected $casts = [
         'billing_type' => PaymentMethodEnum::class,
-        'status' => PaymentStatusEnum::class,
+        'status'       => PaymentStatusEnum::class,
     ];
 
     public function registrationPlayer(): BelongsTo

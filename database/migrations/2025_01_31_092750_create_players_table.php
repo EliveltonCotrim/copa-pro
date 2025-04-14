@@ -1,15 +1,11 @@
 <?php
 
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\Enum\PlayerStatusEnum;
+use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */

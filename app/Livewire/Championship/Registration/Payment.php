@@ -2,13 +2,9 @@
 
 namespace App\Livewire\Championship\Registration;
 
-use App\Enum\PaymentMethodEnum;
-use App\Enum\PaymentStatusEnum;
-use App\Enum\RegistrationPlayerStatusEnum;
+use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
 use App\Livewire\Forms\RegistrationPlayerForm;
-use App\Models\Championship;
-use App\Models\Player;
-use App\Models\RegistrationPlayer;
+use App\Models\{Championship, Player, RegistrationPlayer};
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Illuminate\Http\RedirectResponse;
@@ -35,7 +31,7 @@ class Payment extends Component
 
     public function boot()
     {
-        $adapter = app(AsaasConnector::class);
+        $adapter       = app(AsaasConnector::class);
         $this->gateway = new Gateway($adapter);
     }
 
@@ -79,18 +75,18 @@ class Payment extends Component
         }
 
         $registrationPlayer = RegistrationPlayer::create([
-            'championship_id' => $this->championship->id,
+            'championship_id'        => $this->championship->id,
             'championship_team_name' => $this->form->championship_team_name,
-            'player_id' => $this->player->id,
+            'player_id'              => $this->player->id,
         ]);
 
         $paymentData = [
             'billingType' => PaymentMethodEnum::PIX->value,
-            'customer' => $this->form->customer_id,
-            'cpfCnpj' => $this->form->cpf_cnpj,
-            'value' => $this->championship->registration_fee,
+            'customer'    => $this->form->customer_id,
+            'cpfCnpj'     => $this->form->cpf_cnpj,
+            'value'       => $this->championship->registration_fee,
             'description' => 'Inscrição no campeonato: ' . $this->championship->name,
-            'dueDate' => now()->addDays(1)->format('Y-m-d'),
+            'dueDate'     => now()->addDays(1)->format('Y-m-d'),
         ];
 
         $payment = $this->gateway->payment()->create($paymentData);
@@ -101,15 +97,15 @@ class Payment extends Component
 
         $this->playerCharge = $registrationPlayer->payments()->create([
             'transaction_id' => $payment['id'],
-            'value' => $payment['value'],
-            'description' => $payment['description'],
-            'net_value' => $payment['netValue'],
-            'due_date' => $payment['dueDate'],
-            'date_created' => $payment['dateCreated'],
-            'billing_type' => PaymentMethodEnum::PIX->value,
-            'status' => PaymentStatusEnum::parse($payment['status']),
-            'qr_code_64' => $paymentQrcode['encodedImage'],
-            'qr_code' => $paymentQrcode['payload'],
+            'value'          => $payment['value'],
+            'description'    => $payment['description'],
+            'net_value'      => $payment['netValue'],
+            'due_date'       => $payment['dueDate'],
+            'date_created'   => $payment['dateCreated'],
+            'billing_type'   => PaymentMethodEnum::PIX->value,
+            'status'         => PaymentStatusEnum::parse($payment['status']),
+            'qr_code_64'     => $paymentQrcode['encodedImage'],
+            'qr_code'        => $paymentQrcode['payload'],
         ]);
 
         $this->isCpfFormVisible = false;
@@ -118,9 +114,10 @@ class Payment extends Component
     public function checkPayment()
     {
         $this->playerCharge->refresh();
+
         if ($this->playerCharge->status === PaymentStatusEnum::RECEIVED) {
 
-            $this->playerCharge->registrationPlayer->status = RegistrationPlayerStatusEnum::APPROVED;
+            $this->playerCharge->registrationPlayer->status         = RegistrationPlayerStatusEnum::APPROVED;
             $this->playerCharge->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
             $this->playerCharge->registrationPlayer->save();
 

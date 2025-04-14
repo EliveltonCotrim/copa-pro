@@ -2,14 +2,10 @@
 
 namespace App\Livewire\Championship\Registration;
 
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
+use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum};
 use App\Livewire\Championship\RegistrationForm;
 use App\Livewire\Forms\RegistrationPlayerForm;
-use App\Models\Championship;
-use App\Models\Player;
-use App\Models\User;
+use App\Models\{Championship, Player, User};
 use App\Notifications\RegistrationVerificationCode;
 use Cache;
 use Livewire\Component;
@@ -32,6 +28,7 @@ class DadosGeraisForm extends Component
     public array $experienceLevels = [];
 
     public ?User $user = null;
+
     public ?Player $player = null;
 
     public Championship $championship;
@@ -39,7 +36,7 @@ class DadosGeraisForm extends Component
     public function mount(Championship $championship)
     {
         // token: uVAYSf8MKiKDWKUYn1w4LGoHcj5gj2b8ZyqssJ4HBdn1RpUn5UP5s3BeJNj5
-        $this->genders = PlayerSexEnum::optionsArrayWithLabelAndValues();
+        $this->genders          = PlayerSexEnum::optionsArrayWithLabelAndValues();
         $this->gammingPlatforms = PlayerPlatformGameEnum::optionsArrayWithLabelAndValues();
         $this->experienceLevels = PlayerExperienceLevelEnum::optionsArrayWithLabelAndValues();
     }
@@ -63,7 +60,7 @@ class DadosGeraisForm extends Component
             'registrationForm.email' => 'required|email:rfc,dns',
         ]);
 
-        $this->user = $this->findUserByEmail();
+        $this->user   = $this->findUserByEmail();
         $this->player = $this->user?->userable;
 
         if ($this->player) {
@@ -110,8 +107,8 @@ class DadosGeraisForm extends Component
 
         if (empty($code)) {
             $this->toast()->error('Código expirou. Por favor, tente novamente.')->send();
-            $this->showVerificationForm = false;
-            $this->showInitForm = true;
+            $this->showVerificationForm                = false;
+            $this->showInitForm                        = true;
             $this->registrationForm->verification_code = null;
 
             return;
@@ -119,8 +116,9 @@ class DadosGeraisForm extends Component
 
         if ($code == $this->registrationForm->verification_code) {
             $this->showVerificationForm = false;
-            $this->showInitForm = false;
-            $this->showForm = true;
+            $this->showInitForm         = false;
+            $this->showForm             = true;
+
             return;
         }
 
@@ -134,7 +132,7 @@ class DadosGeraisForm extends Component
             ->with([
                 'userable' => function ($userable) {
                     $userable->withTrashed();
-                }
+                },
             ])
             ->where('userable_type', Player::class)
             ->withTrashed()

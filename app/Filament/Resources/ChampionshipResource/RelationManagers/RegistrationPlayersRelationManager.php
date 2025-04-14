@@ -2,20 +2,14 @@
 
 namespace App\Filament\Resources\ChampionshipResource\RelationManagers;
 
-use App\Enum\PaymentMethodEnum;
-use App\Enum\PaymentStatusEnum;
-use App\Enum\RegistrationPlayerStatusEnum;
-use App\Models\Payment;
-use App\Models\Player;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
+use App\Models\{Payment, Player};
+use Filament\Forms\Components\{Select, TextInput};
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\{Builder, Model, SoftDeletingScope};
 
 class RegistrationPlayersRelationManager extends RelationManager
 {
@@ -82,11 +76,11 @@ class RegistrationPlayersRelationManager extends RelationManager
                     ->successRedirectUrl(function (Model $record, array $data) {
                         $record = $record->load('payments', 'championship');
                         Payment::create([
-                            'value' => $record?->championship?->registration_fee ?? '00.00',
-                            'billing_type' => $data['payment_method'],
+                            'value'                  => $record?->championship?->registration_fee ?? '00.00',
+                            'billing_type'           => $data['payment_method'],
                             'registration_player_id' => $record->id,
-                            'date_created' => now()->format('Y-m-d'),
-                            'status' => $data['payment_status'],
+                            'date_created'           => now()->format('Y-m-d'),
+                            'status'                 => $data['payment_status'],
                         ]);
                     })
                     ->label('Cadastrar Jogador'),

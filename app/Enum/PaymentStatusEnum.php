@@ -2,47 +2,45 @@
 
 namespace App\Enum;
 
-use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasIcon;
-use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Contracts\{HasColor, HasIcon, HasLabel};
 
 enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
 {
-    case PENDING = 1;
-    case RECEIVED = 2;
-    case CONFIRMED = 3;
-    case OVERDUE = 4;
-    case REFUNDED = 5;
-    case RECEIVED_IN_CASH = 6;
-    case REFUND_REQUESTED = 7;
-    case REFUND_IN_PROGRESS = 8;
-    case CHARGEBACK_REQUESTED = 9;
-    case CHARGEBACK_DISPUTE = 10;
+    case PENDING                      = 1;
+    case RECEIVED                     = 2;
+    case CONFIRMED                    = 3;
+    case OVERDUE                      = 4;
+    case REFUNDED                     = 5;
+    case RECEIVED_IN_CASH             = 6;
+    case REFUND_REQUESTED             = 7;
+    case REFUND_IN_PROGRESS           = 8;
+    case CHARGEBACK_REQUESTED         = 9;
+    case CHARGEBACK_DISPUTE           = 10;
     case AWAITING_CHARGEBACK_REVERSAL = 11;
-    case DUNNING_REQUESTED = 12;
-    case DUNNING_RECEIVED = 13;
-    case AWAITING_RISK_ANALYSIS = 14;
-    case PAYMENT_CREATED = 15;
+    case DUNNING_REQUESTED            = 12;
+    case DUNNING_RECEIVED             = 13;
+    case AWAITING_RISK_ANALYSIS       = 14;
+    case PAYMENT_CREATED              = 15;
 
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::PENDING => 'Pendente',
-            self::RECEIVED => 'Recebido',
-            self::CONFIRMED => 'Confirmado',
-            self::OVERDUE => 'Vencido',
-            self::REFUNDED => 'Reembolsado',
-            self::RECEIVED_IN_CASH => 'Recebido em dinheiro',
-            self::REFUND_REQUESTED => 'Reembolso solicitado',
-            self::REFUND_IN_PROGRESS => 'Reembolso em andamento',
-            self::CHARGEBACK_REQUESTED => 'Reembolso solicitado',
-            self::CHARGEBACK_DISPUTE => 'Reembolso em disputa',
+            self::PENDING                      => 'Pendente',
+            self::RECEIVED                     => 'Recebido',
+            self::CONFIRMED                    => 'Confirmado',
+            self::OVERDUE                      => 'Vencido',
+            self::REFUNDED                     => 'Reembolsado',
+            self::RECEIVED_IN_CASH             => 'Recebido em dinheiro',
+            self::REFUND_REQUESTED             => 'Reembolso solicitado',
+            self::REFUND_IN_PROGRESS           => 'Reembolso em andamento',
+            self::CHARGEBACK_REQUESTED         => 'Reembolso solicitado',
+            self::CHARGEBACK_DISPUTE           => 'Reembolso em disputa',
             self::AWAITING_CHARGEBACK_REVERSAL => 'Aguardando reversão de reembolso',
-            self::DUNNING_REQUESTED => 'Dunning solicitado',
-            self::DUNNING_RECEIVED => 'Dunning recebido',
-            self::AWAITING_RISK_ANALYSIS => 'Aguardando análise de risco',
-            self::PAYMENT_CREATED => 'Cobrança criada',
-            default => 'Status não encontrado'
+            self::DUNNING_REQUESTED            => 'Dunning solicitado',
+            self::DUNNING_RECEIVED             => 'Dunning recebido',
+            self::AWAITING_RISK_ANALYSIS       => 'Aguardando análise de risco',
+            self::PAYMENT_CREATED              => 'Cobrança criada',
+            default                            => 'Status não encontrado'
         };
     }
 
@@ -87,44 +85,44 @@ enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::PENDING => 'warning',
-            self::RECEIVED => 'success',
-            self::CONFIRMED => 'success',
-            self::OVERDUE => 'danger',
-            self::REFUNDED => 'success',
-            self::RECEIVED_IN_CASH => 'success',
-            self::REFUND_REQUESTED => 'warning',
-            self::REFUND_IN_PROGRESS => 'warning',
-            self::CHARGEBACK_REQUESTED => 'warning',
-            self::CHARGEBACK_DISPUTE => 'warning',
+            self::PENDING                      => 'warning',
+            self::RECEIVED                     => 'success',
+            self::CONFIRMED                    => 'success',
+            self::OVERDUE                      => 'danger',
+            self::REFUNDED                     => 'success',
+            self::RECEIVED_IN_CASH             => 'success',
+            self::REFUND_REQUESTED             => 'warning',
+            self::REFUND_IN_PROGRESS           => 'warning',
+            self::CHARGEBACK_REQUESTED         => 'warning',
+            self::CHARGEBACK_DISPUTE           => 'warning',
             self::AWAITING_CHARGEBACK_REVERSAL => 'warning',
-            self::DUNNING_REQUESTED => 'warning',
-            self::DUNNING_RECEIVED => 'warning',
-            self::AWAITING_RISK_ANALYSIS => 'warning',
-            self::PAYMENT_CREATED => 'warning',
-            default => 'Color não encontrado'
+            self::DUNNING_REQUESTED            => 'warning',
+            self::DUNNING_RECEIVED             => 'warning',
+            self::AWAITING_RISK_ANALYSIS       => 'warning',
+            self::PAYMENT_CREATED              => 'warning',
+            default                            => 'Color não encontrado'
         };
     }
 
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::PENDING => 'heroicon-m-clock',
-            self::RECEIVED => 'heroicon-m-check',
-            self::CONFIRMED => 'heroicon-m-check',
-            self::OVERDUE => 'heroicon-m-x-mark',
-            self::REFUNDED => 'heroicon-m-check',
-            self::RECEIVED_IN_CASH => 'heroicon-m-check',
-            self::REFUND_REQUESTED => 'heroicon-m-clock',
-            self::REFUND_IN_PROGRESS => 'heroicon-m-clock',
-            self::CHARGEBACK_REQUESTED => 'heroicon-m-clock',
-            self::CHARGEBACK_DISPUTE => 'heroicon-m-clock',
+            self::PENDING                      => 'heroicon-m-clock',
+            self::RECEIVED                     => 'heroicon-m-check',
+            self::CONFIRMED                    => 'heroicon-m-check',
+            self::OVERDUE                      => 'heroicon-m-x-mark',
+            self::REFUNDED                     => 'heroicon-m-check',
+            self::RECEIVED_IN_CASH             => 'heroicon-m-check',
+            self::REFUND_REQUESTED             => 'heroicon-m-clock',
+            self::REFUND_IN_PROGRESS           => 'heroicon-m-clock',
+            self::CHARGEBACK_REQUESTED         => 'heroicon-m-clock',
+            self::CHARGEBACK_DISPUTE           => 'heroicon-m-clock',
             self::AWAITING_CHARGEBACK_REVERSAL => 'heroicon-m-clock',
-            self::DUNNING_REQUESTED => 'heroicon-m-check',
-            self::DUNNING_RECEIVED => 'heroicon-m-check',
-            self::AWAITING_RISK_ANALYSIS => 'heroicon-m-clock',
-            self::PAYMENT_CREATED => 'heroicon-m-check',
-            default => 'Icon não encontrado'
+            self::DUNNING_REQUESTED            => 'heroicon-m-check',
+            self::DUNNING_RECEIVED             => 'heroicon-m-check',
+            self::AWAITING_RISK_ANALYSIS       => 'heroicon-m-clock',
+            self::PAYMENT_CREATED              => 'heroicon-m-check',
+            default                            => 'Icon não encontrado'
         };
     }
 

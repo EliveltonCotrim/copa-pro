@@ -2,9 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Enum\ChampionshipStatusEnum;
-use App\Enum\PaymentStatusEnum;
-use App\Enum\RegistrationPlayerStatusEnum;
+use App\Enum\{ChampionshipStatusEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

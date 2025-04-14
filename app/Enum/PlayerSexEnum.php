@@ -6,17 +6,17 @@ use Filament\Support\Contracts\HasLabel;
 
 enum PlayerSexEnum: int implements HasLabel
 {
-    case MALE = 1;
+    case MALE   = 1;
     case FEMALE = 2;
-    case OTHER = 3;
+    case OTHER  = 3;
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::MALE => 'Masculino',
+            self::MALE   => 'Masculino',
             self::FEMALE => 'Feminino',
-            self::OTHER => 'Outro',
-            default => 'Gênero não encontrado',
+            self::OTHER  => 'Outro',
+            default      => 'Gênero não encontrado',
         };
     }
 

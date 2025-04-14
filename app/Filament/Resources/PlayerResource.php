@@ -2,26 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Enum\PlayerExperienceLevelEnum;
-use App\Enum\PlayerPlatformGameEnum;
-use App\Enum\PlayerSexEnum;
-use App\Enum\PlayerStatusEnum;
+use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, PlayerStatusEnum};
 use App\Filament\Resources\PlayerResource\Pages;
 use App\Models\Player;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\{DatePicker, Grid, Group, Select, TextInput, Textarea};
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\{Builder, SoftDeletingScope};
 use Illuminate\Support\Facades\Hash;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -187,9 +178,9 @@ class PlayerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPlayers::route('/'),
+            'index'  => Pages\ListPlayers::route('/'),
             'create' => Pages\CreatePlayer::route('/create'),
-            'edit' => Pages\EditPlayer::route('/{record}/edit'),
+            'edit'   => Pages\EditPlayer::route('/{record}/edit'),
         ];
     }
 

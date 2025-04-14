@@ -22,18 +22,18 @@ class AsaasWebHookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|string',
-            'event' => 'required|string',
-            'dateCreated' => 'required|string',
-            'payment' => 'required|array',
-            'payment.id' => 'required|string',
-            'payment.status' => 'required|string',
-            'payment.customer' => 'required|string',
-            'payment.value' => 'required|numeric',
-            'payment.netValue' => 'required|numeric',
-            'payment.confirmedDate' => 'required|string',
-            'payment.paymentDate' => 'required|string',
-            'payment.billingType' => 'required|string',
+            'id'                            => 'required|string',
+            'event'                         => 'required|string',
+            'dateCreated'                   => 'required|string',
+            'payment'                       => 'required|array',
+            'payment.id'                    => 'required|string',
+            'payment.status'                => 'required|string',
+            'payment.customer'              => 'required|string',
+            'payment.value'                 => 'required|numeric',
+            'payment.netValue'              => 'required|numeric',
+            'payment.confirmedDate'         => 'required|string',
+            'payment.paymentDate'           => 'required|string',
+            'payment.billingType'           => 'required|string',
             'payment.transactionReceiptUrl' => 'required|string',
         ];
     }
