@@ -76,7 +76,7 @@ class RegistrationPlayersRelationManager extends RelationManager
                     ->successRedirectUrl(function (Model $record, array $data) {
                         $record = $record->load('payments', 'championship');
                         Payment::create([
-                            'value'                  => $record?->championship?->registration_fee ?? '00.00',
+                            'value'                  => $record?->championship?->registration_fee ?? '0',
                             'billing_type'           => $data['payment_method'],
                             'registration_player_id' => $record->id,
                             'date_created'           => now()->format('Y-m-d'),

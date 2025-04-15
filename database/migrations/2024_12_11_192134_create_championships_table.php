@@ -17,7 +17,7 @@ return new class () extends Migration {
             $table->text('description')->nullable();
             $table->datetime('start_date');
             $table->datetime('end_date')->nullable();
-            $table->decimal('registration_fee', 10, 2)->default(0);
+            $table->integer('registration_fee')->default(0);
             $table->string('banner_path')->nullable();
             $table->string('regulation_path')->nullable();
             $table->enum('game_platform', PlayerPlatformGameEnum::values())->nullable();

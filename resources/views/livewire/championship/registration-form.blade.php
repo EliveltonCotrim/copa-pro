@@ -1,91 +1,102 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-    <div class="wrapper w-full md:max-w-3xl mx-auto">
-        <!-- Main Card -->
-        <div class="bg-white rounded-xl overflow-hidden shadow-lg">
-            <!-- Championship Header Section -->
-            <div class="relative">
-                <!-- Banner Image with overlay -->
-                <div class="w-full h-32 overflow-hidden">
-                    <img src="{{ $championship->getFirstMediaUrl() }}" alt="Championship Image"
-                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
-            </div>
+<div
+    class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-start">
+    <div class="max-w-7xl mx-auto my-auto">
+        <div class="rounded-xl shadow-lg overflow-hidden">
+            <!-- Borda superior em gradiente -->
+            <div class="h-2 bg-gradient-to-r from-primary-400 to-primary/60"></div>
+            <!-- Main Content -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white rounded-b-xl overflow-hidden shadow-lg p-5">
+                <!-- Left Column: Banner and Championship Info -->
 
-            <!-- Championship Info Section -->
-            <div class="p-6 border-b border-gray-100">
-                <div class="flex items-center justify-center mb-4">
-                    <h3 class="text-xl font-semibold text-gray-800">{{ $championship->name }}</h3>
-                </div>
+                <div class="space-y-8">
+                    <!-- Championship Header Section -->
+                    <div class="relative rounded-2xl overflow-hidden shadow-sm">
+                        <!-- Banner Image with overlay -->
+                        <div class="w-full h-48 overflow-hidden">
+                            <img src="{{ $championship->getFirstMediaUrl() }}" alt="Championship Image"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        </div>
 
-                <div class="space-y-5">
-                    <!-- Description -->
-                    <div class="flex items-start group">
-                        <div class="text-base text-gray-700 leading-relaxed">{!! $championship->description !!}</div>
+                        <!-- Championship Title Overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 p-6">
+                            <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $championship->name }}</h1>
+                        </div>
                     </div>
 
-                    <!-- Championship Details - Compact Layout -->
-                    <div class="p-3">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <!-- Championship Date -->
-                            <div class="flex items-center">
-                                <i data-lucide="calendar" class="h-4 w-4 text-gray-500 mr-2"></i>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Date</p>
-                                    <p class="text-sm text-gray-700">{{ $championship->start_date }}</p>
-                                </div>
-                            </div>
+                    <!-- Championship Info Section -->
+                    <div class="space-y-6">
+                        <!-- Description -->
+                        <div class="prose prose-gray max-w-none">
+                            <div class="text-base text-gray-700 leading-relaxed">{!! $championship->description !!}</div>
+                        </div>
 
-                            <!-- Entry Fee -->
-                            <div class="flex items-center">
-                                <i data-lucide="credit-card" class="h-4 w-4 text-gray-500 mr-2"></i>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Taxa</p>
-                                    <p class="text-sm text-gray-700">{{ $championship->getFeeFormatedAttribute() }}</p>
+                        <!-- Championship Details - Improved horizontal layout -->
+                        <div class="bg-white/70 backdrop-blur-sm rounded-xl p-6">
+                            <div
+                                class="flex flex-col justify-center sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+                                <!-- Championship Date -->
+                                <div class="flex items-center py-3 sm:py-0 sm:px-4 sm:first:pl-0 sm:last:pr-0">
+                                    <i data-lucide="calendar" class="h-5 w-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500">Data</p>
+                                        <p class="text-sm font-medium text-gray-800">{{ $championship->start_date }}</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Rules Link -->
-                            <div class="flex items-center">
-                                <i data-lucide="file-text" class="h-4 w-4 text-gray-500 mr-2"></i>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Regulation</p>
-                                    <a href="/championships/{{ $championship->id }}/regulations"
-                                        class="text-sm text-teal-600 hover:text-teal-800 font-medium hover:underline transition-colors">
-                                        View Regulations
-                                    </a>
+                                <!-- Entry Fee -->
+                                <div class="flex items-center py-3 sm:py-0 sm:px-4">
+                                    <i data-lucide="credit-card" class="h-5 w-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500">Taxa</p>
+                                        <p class="text-sm font-medium text-gray-800">
+                                            {{ $championship->getFeeFormatedAttribute() }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Rules Link -->
+                                <div class="flex items-center py-3 sm:py-0 sm:px-4">
+                                    <i data-lucide="file-text" class="h-5 w-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500">Regulamento</p>
+                                        <a href="{{ $championship->regulation_path }}" target="_blank"
+                                            class="text-sm font-medium text-teal-600 hover:text-teal-800 hover:underline transition-colors">
+                                            Ver Regulamento
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Registration Steps Section -->
-            <div class="p-6">
-                <div class="my-2">
-                    <x-step wire:model.live="step" panels>
-                        <x-step.items step="1" title="Inscrição" description="Informe os dados abaixo">
-                            <div class="mt-2 px-3 space-y-3">
+                <!-- Right Column: Registration Steps Section - More modern, less card-like -->
+                <div class="md:border-l border-gray-200 md:pl-8">
+                    <!-- Registration Steps - Keeping the user's component -->
+                    <div class="my-2">
+                        <x-step wire:model.live="step" panels>
+                            <x-step.items step="1" title="Dados" description="Informe os dados abaixo">
                                 @if ($showFormGeral)
                                     <livewire:championship.registration.dados-gerais-form :$championship>
                                 @endif
-                            </div>
-                        </x-step.items>
-                        <x-step.items step="2" title="Pagamento" description="Escolha a forma de pagamento">
-                            @if ($step === 2)
-                                <livewire:championship.registration.payment :$championship :$registrationForm :$player>
-                            @endif
-                        </x-step.items>
-                    </x-step>
+                            </x-step.items>
+                            <x-step.items step="2" title="Pagamento" description="Escolha a forma de pagamento">
+                                @if ($step === 2)
+                                    <livewire:championship.registration.payment :$championship :$registrationForm
+                                        :$player>
+                                @endif
+                            </x-step.items>
+                        </x-step>
+                    </div>
                 </div>
             </div>
         </div>
-
         <!-- Footer -->
-        <p class="text-center text-xs text-gray-500 pt-4">
-            © 2025 Championship Organization. All rights reserved.
-        </p>
+        <div class="pt-4 text-center">
+            <p class="text-sm text-gray-500">
+                © 2025 Championship Organization. All rights reserved.
+            </p>
+        </div>
     </div>
 </div>
 

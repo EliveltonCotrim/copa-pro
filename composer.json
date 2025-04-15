@@ -23,6 +23,7 @@
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^6.10",
         "tallstackui/tallstackui": "^1.37",
+        "tuxones/filament-js-money-field": "^0.1.5",
         "ysfkaya/filament-phone-input": "^3.1"
     },
     "require-dev": {

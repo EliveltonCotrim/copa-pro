@@ -7,7 +7,9 @@ use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, RegistrationPlayer};
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
+use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
 
@@ -47,68 +49,90 @@ class Payment extends Component
             'form.cpf_cnpj' => ['required', 'string', 'max:18', 'cpf_ou_cnpj'],
         ]);
 
-        if (!empty($this->form->customer_id)) {
+        DB::beginTransaction();
 
-            $asaasCustomer = $this->gateway->customer()->show($this->form->customer_id);
+        try {
+            if (!empty($this->form->customer_id)) {
 
-            $this->hasError($asaasCustomer);
+                $asaasCustomer = $this->gateway->customer()->show($this->form->customer_id);
 
-            if ($asaasCustomer['deleted'] == true) {
+                $this->hasError($asaasCustomer);
+
+                if ($asaasCustomer['deleted']) {
+                    $asaasCustomer = $this->form->createCustomerAsaas();
+                }
+
+            } else {
                 $asaasCustomer = $this->form->createCustomerAsaas();
             }
 
-        } else {
-            $asaasCustomer = $this->form->createCustomerAsaas();
-        }
+            $this->form->customer_id = $asaasCustomer['id'] ?? null;
 
-        $this->form->customer_id = $asaasCustomer['id'] ?? null;
+            if ($this->player) {
+                if ($this->player->trashed()) {
+                    $this->player->restore();
+                    $this->player->user->restore();
+                }
 
-        if ($this->player) {
-            if ($this->player->trashed()) {
-                $this->player->restore();
-                $this->player->user->restore();
+                $this->player = $this->form->updatePlayer($this->player);
+            } else {
+                $this->player = $this->form->createPlayer();
             }
 
-            $this->player = $this->form->updatePlayer($this->player);
-        } else {
-            $this->player = $this->form->createPlayer();
+            $registrationPlayer = RegistrationPlayer::create([
+                'championship_id'        => $this->championship->id,
+                'championship_team_name' => $this->form->championship_team_name,
+                'player_id'              => $this->player->id,
+            ]);
+
+            $paymentData = [
+                'billingType' => PaymentMethodEnum::PIX->value,
+                'customer'    => $this->form->customer_id,
+                'cpfCnpj'     => $this->form->cpf_cnpj,
+                'value'       => $this->championship->getFeeFormatedAttribute(false),
+                'description' => 'Inscrição no campeonato: ' . $this->championship->name,
+                'dueDate'     => now()->addDays(1)->format('Y-m-d'),
+            ];
+
+            $payment = $this->gateway->payment()->create($paymentData);
+
+            $this->hasError($payment);
+
+            $paymentQrcode = $this->gateway->payment()->getPixQrCode($payment['id']);
+
+            $this->playerCharge = $registrationPlayer->payments()->create([
+                'transaction_id' => $payment['id'],
+                'value'          => $payment['value'],
+                'description'    => $payment['description'],
+                'net_value'      => $payment['netValue'],
+                'due_date'       => $payment['dueDate'],
+                'date_created'   => $payment['dateCreated'],
+                'billing_type'   => PaymentMethodEnum::PIX->value,
+                'status'         => PaymentStatusEnum::parse($payment['status']),
+                'qr_code_64'     => $paymentQrcode['encodedImage'],
+                'qr_code'        => $paymentQrcode['payload'],
+            ]);
+
+            $this->isCpfFormVisible = false;
+
+            DB::commit();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            if (isset($payment['id'])) {
+                $this->gateway->payment()->delete($payment['id']);
+            }
+
+            $this->toast()
+                ->error('Houve um erro inesperado. Por favor, tente novamente em alguns instantes.')
+                ->flash()
+                ->send();
+
+            return $this->redirectRoute('championship.register', $this->championship);
+
         }
 
-        $registrationPlayer = RegistrationPlayer::create([
-            'championship_id'        => $this->championship->id,
-            'championship_team_name' => $this->form->championship_team_name,
-            'player_id'              => $this->player->id,
-        ]);
-
-        $paymentData = [
-            'billingType' => PaymentMethodEnum::PIX->value,
-            'customer'    => $this->form->customer_id,
-            'cpfCnpj'     => $this->form->cpf_cnpj,
-            'value'       => $this->championship->registration_fee,
-            'description' => 'Inscrição no campeonato: ' . $this->championship->name,
-            'dueDate'     => now()->addDays(1)->format('Y-m-d'),
-        ];
-
-        $payment = $this->gateway->payment()->create($paymentData);
-
-        $this->hasError($payment);
-
-        $paymentQrcode = $this->gateway->payment()->getPixQrCode($payment['id']);
-
-        $this->playerCharge = $registrationPlayer->payments()->create([
-            'transaction_id' => $payment['id'],
-            'value'          => $payment['value'],
-            'description'    => $payment['description'],
-            'net_value'      => $payment['netValue'],
-            'due_date'       => $payment['dueDate'],
-            'date_created'   => $payment['dateCreated'],
-            'billing_type'   => PaymentMethodEnum::PIX->value,
-            'status'         => PaymentStatusEnum::parse($payment['status']),
-            'qr_code_64'     => $paymentQrcode['encodedImage'],
-            'qr_code'        => $paymentQrcode['payload'],
-        ]);
-
-        $this->isCpfFormVisible = false;
     }
 
     public function checkPayment()
@@ -126,9 +150,8 @@ class Payment extends Component
                 ->send();
 
             // TODO - Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
-            // TODO - Redirecionar para a página de detalhes do campeonato
 
-            return $this->redirectRoute('championship.register', $this->championship);
+            return $this->redirectRoute('championship.register-success', $this->championship);
         }
     }
 

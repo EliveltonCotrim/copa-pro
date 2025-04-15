@@ -15,7 +15,7 @@
     <div x-show="!isCpfFormVisible" x-transition>
         @if (!$isCpfFormVisible)
             <div wire:poll.4000ms="checkPayment"></div>
-            <x-payment.card-pix :qrCode64="$playerCharge->qr_code_64" :qrCode="$playerCharge->qr_code" :price="$championship->registration_fee" />
+            <x-payment.card-pix :qrCode64="$playerCharge->qr_code_64" :qrCode="$playerCharge->qr_code" :price="$championship->getFeeFormatedAttribute()" />
         @endif
     </div>
 </div>

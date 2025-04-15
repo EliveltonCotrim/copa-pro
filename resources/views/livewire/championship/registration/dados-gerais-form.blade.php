@@ -1,7 +1,7 @@
 <div x-data="{
     showVerificationForm: @entangle('showVerificationForm'),
     showSearchPlayerForm: @entangle('showSearchPlayerForm'),
-}">
+}" class="mt-2 space-y-3">
     <x-loading loading="verifyCode, searchPlayer" />
 
     <div x-show="showSearchPlayerForm" x-transition>
@@ -13,7 +13,12 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-x-4">
             <div class="mb-3">
-                <x-input label="E-mail" wire:model="registrationForm.email" />
+                {{-- <x-tooltip
+                text="Use o mesmo e-mail das inscrições anteriores.
+            Caso seja sua primeira vez, basta informar um e-mail e clicar em 'Prosseguir'" /> --}}
+                <x-input label="E-mail *" wire:model="registrationForm.email">
+
+                </x-input>
             </div>
         </div>
         <div class="mt-2 grid grid-cols-1">

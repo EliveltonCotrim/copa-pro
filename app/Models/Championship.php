@@ -121,9 +121,13 @@ class Championship extends Model implements HasMedia
         return $this->belongsToMany(Organizer::class)->using(ChampionshipOrganization::class);
     }
 
-    public function getFeeFormatedAttribute()
+    public function getFeeFormatedAttribute(bool $symbol = true)
     {
-        return Money::BRL($this->registration_fee);
+        if ($symbol) {
+            return Money::BRL($this->registration_fee);
+        }
+
+        return Money::BRL($this->registration_fee)->formatByIntl(null, null, \NumberFormatter::DECIMAL);
     }
 
     public function startDateFormated(): Attribute
