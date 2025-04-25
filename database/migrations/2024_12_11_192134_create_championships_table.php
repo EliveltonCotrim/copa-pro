@@ -15,6 +15,7 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->boolean('is_in_person')->default(false);
             $table->datetime('start_date');
             $table->datetime('end_date')->nullable();
             $table->integer('registration_fee')->default(0);
