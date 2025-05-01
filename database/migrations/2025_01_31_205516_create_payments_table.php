@@ -14,8 +14,8 @@ return new class () extends Migration {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('transaction_id')->nullable();
-            $table->decimal('value', 10, 2);
-            $table->decimal('net_value', 10, 2)->nullable();
+            $table->integer('value');
+            $table->integer('net_value')->nullable();
             $table->enum('billing_type', PaymentMethodEnum::values())->nullable();
             $table->string('description')->nullable();
             $table->foreignId('registration_player_id')->constrained('registration_players')->cascadeOnDelete();
