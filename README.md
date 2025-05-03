@@ -24,7 +24,6 @@ docker-compose exec laravel.test php artisan key:generate
 
 5 - No arquivo ```.env```, cole o seguinte trecho de código para conectar a aplicação ao banco de dados do Docker:
 ```
-# MySQL
 DB_CONNECTION=mysql
 DB_HOST=mysql
 DB_PORT=3306
@@ -48,17 +47,18 @@ docker-compose exec laravel.test php artisan db:seed
 docker-compose exec laravel.test npm install
 ```
 
-11 - Executar comando abaixo para compilar e otimizar ativos de aplicativos para produção:
+11 - Executar comando abaixo para compilar e otimizar componentes para produção:
 ```
 docker-compose exec laravel.test npm run build
 ```
 
-12 - Lembre-se de desativar containers do Docker antes de fechar a aplicação (Isso evita conflitos de containers em outros projetos que usam o Docker):
+12 - Lembre-se de desativar os containers do Docker antes de fechar a aplicação (Isso evita conflitos de containers em uso em outros projetos que usam o Docker):
 ```
 docker-compose down
 ```
 
 ### Painel para ambiente Docker
+- copa-pro (Aplicação web): http://localhost:8000
 - phpMyAdmin: http://localhost:8081
 
 
