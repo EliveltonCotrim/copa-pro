@@ -2,27 +2,27 @@
 
 ## Ambiente Docker
 
-1 - Ativar containers do Docker:
+1 - Ative os containers do Docker:
 ```
 docker-compose up -d
 ```
 
-2 - Executar o comando abaixo para criar a pasta ```vendor```:
+2 - Instale as dependências PHP e crie a pasta ```vendor```:
 ```
 docker-compose exec laravel.test composer install
 ```
 
-3 - Executar o comando abaixo para criar o arquivo ```.env```:
+3 - Copie o arquivo de exemplo ```.env.example``` para ```.env```:
 ```
 docker-compose exec laravel.test cp .env.example .env  
 ```
 
-4 - Comando para gerar valor de chave criptográfica para o trecho ```APP_KEY=``` do arquivo ```.env```:
+4 - Gere a chave de criptografia da aplicação (preenche ```APP_KEY=``` no arquivo ```.env```):
 ```
 docker-compose exec laravel.test php artisan key:generate
 ```
 
-5 - No arquivo ```.env```, cole o seguinte trecho de código para conectar a aplicação ao banco de dados do Docker:
+5 - Configure a conexão com o banco de dados no arquivo ```.env``` adicionando o seguinte trecho:
 ```
 DB_CONNECTION=mysql
 DB_HOST=mysql
@@ -32,22 +32,22 @@ DB_USERNAME=sail
 DB_PASSWORD=password
 ```
 
-8 - Execute o comando abaixo para a criação das ```migrations``` do banco de dados:
+8 - Rode as ```migrations``` para criar as tabelas do banco de dados:
 ```
 docker-compose exec laravel.test php artisan migrate
 ```
 
-9 - Executar o comando abaixo para a criação das ```Seeders``` do banco de dados:
+9 - Popule o banco de dados com registros iniciais utilizando os ```seeders```:
 ```
 docker-compose exec laravel.test php artisan db:seed
 ```
 
-10 - Executar comando abaixo para instalar dependências JavaScript:
+10 - Instale as dependências JavaScript com o ```npm```:
 ```
 docker-compose exec laravel.test npm install
 ```
 
-11 - Executar comando abaixo para compilar e otimizar componentes para produção:
+11 - Compile e otimize os arquivos JavaScript para produção:
 ```
 docker-compose exec laravel.test npm run build
 ```
@@ -57,8 +57,9 @@ docker-compose exec laravel.test npm run build
 docker-compose down
 ```
 
-### Painel para ambiente Docker
+### Endereços de ambiente Docker
 - copa-pro (Aplicação web): http://localhost:8000
 - phpMyAdmin: http://localhost:8081
+- Mailpit: http://localhost:8025/ 
 
 
