@@ -77,11 +77,13 @@ class ChampionshipResource extends Resource
                                     'min_date'        => 'A data de início deve ser igual ou posterior à data atual.',
                                     'before_or_equal' => 'A data de início deve ser igual ou anterior à data de término.',
                                 ])
+                                ->seconds(false)
                                 ->required(),
                             DateTimePicker::make('end_date')
                                 ->label('Data de término')
                                 ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
                                 ->required()
+                                ->seconds(false)
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
                                     'after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
@@ -246,11 +248,13 @@ class ChampionshipResource extends Resource
                     ->label('Data de início')
                     ->searchable()
                     ->toggleable()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 TextColumn::make('end_date')
                     ->label('Data de término')
                     ->searchable()
                     ->toggleable()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 JSMoneyColumn::make('registration_fee')
                     ->label('Taxa de inscrição')
@@ -329,11 +333,13 @@ class ChampionshipResource extends Resource
                                                         ->locale('pt-BR'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
-                                                    TextEntry::make('start_date_formated')
-                                                        ->label('Data de Início')
+                                                    TextEntry::make('start_date')
+                                                        ->label('Data de início')
+                                                        ->dateTime('d/m/Y H:i')
                                                         ->color(color: 'primary'),
-                                                    TextEntry::make('end_date_formated')
-                                                        ->label('Data de Termino')
+                                                    TextEntry::make('end_date')
+                                                        ->label('Data de término')
+                                                        ->dateTime('d/m/Y H:i')
                                                         ->color(color: 'danger'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
