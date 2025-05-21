@@ -7,7 +7,7 @@
 docker-compose up -d
 ```
 
-2 - Instale as dependências PHP e crie a pasta ```vendor```:
+2 - Instale as dependências PHP para criar a pasta ```vendor```:
 ```
 docker-compose exec laravel.test composer install
 ```
@@ -32,27 +32,27 @@ DB_USERNAME=sail
 DB_PASSWORD=password
 ```
 
-8 - Rode as ```migrations``` para criar as tabelas do banco de dados:
+6 - Rode as ```migrations``` para criar as tabelas do banco de dados:
 ```
 docker-compose exec laravel.test php artisan migrate
 ```
 
-9 - Popule o banco de dados com registros iniciais utilizando os ```seeders```:
+7 - Popule o banco de dados com registros iniciais utilizando os ```seeders```:
 ```
 docker-compose exec laravel.test php artisan db:seed
 ```
 
-10 - Instale as dependências JavaScript com o ```npm```:
+8 - Instale as dependências JavaScript com o ```npm```:
 ```
 docker-compose exec laravel.test npm install
 ```
 
-11 - Compile e otimize os arquivos JavaScript para produção:
+9 - Compile e otimize os arquivos JavaScript para produção:
 ```
 docker-compose exec laravel.test npm run build
 ```
 
-12 - Lembre-se de desativar os containers do Docker antes de fechar a aplicação (Isso evita conflitos de containers em uso em outros projetos que usam o Docker):
+10 - Lembre-se de desativar os containers do Docker antes de fechar a aplicação (Isso evita conflitos de containers em uso em outros projetos que usam o Docker):
 ```
 docker-compose down
 ```
