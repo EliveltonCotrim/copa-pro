@@ -3,11 +3,13 @@
 namespace App\Livewire\Championship\Registration;
 
 use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
+use App\Enum\ChampionshipStatusEnum;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, RegistrationPlayer};
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -33,7 +35,7 @@ class Payment extends Component
 
     public function boot()
     {
-        $adapter       = app(AsaasConnector::class);
+        $adapter = app(AsaasConnector::class);
         $this->gateway = new Gateway($adapter);
     }
 
@@ -52,6 +54,36 @@ class Payment extends Component
         DB::beginTransaction();
 
         try {
+            // Verifica se o campeonato está aberto para inscrições
+            $totalPlayersApproved = $this->championship->registrationPlayers()
+                ->where('status', RegistrationPlayerStatusEnum::APPROVED)
+                ->whereHas('payments', function (Builder $query) {
+                    $query->where('status', PaymentStatusEnum::RECEIVED);
+                })->count();
+
+            $totalPlayersPending  = $this->championship->registrationPlayers()
+                ->whereHas('payments', function (Builder $query) {
+                    $query->where('status', PaymentStatusEnum::PENDING)
+                        ->where('created_at', '>=', now()->subMinutes(30));
+                })->count();
+
+            $totalOccupiedSlots = $totalPlayersApproved + $totalPlayersPending;
+
+            if($totalOccupiedSlots >= $this->championship->max_players) {
+                $this->toast()
+                    ->error('Inscrições encerradas, limite de jogadores atingido.')
+                    ->flash()
+                    ->send();
+
+                return $this->redirectRoute('championship.register', $this->championship);
+            }
+
+            if ($totalPlayersApproved === $this->championship->max_players - 1) {
+                // processar ultima vaga
+            } else {
+                // processar vaga normal
+            }
+
             if (!empty($this->form->customer_id)) {
 
                 $asaasCustomer = $this->gateway->customer()->show($this->form->customer_id);
@@ -80,18 +112,18 @@ class Payment extends Component
             }
 
             $registrationPlayer = RegistrationPlayer::create([
-                'championship_id'        => $this->championship->id,
+                'championship_id' => $this->championship->id,
                 'championship_team_name' => $this->form->championship_team_name,
-                'player_id'              => $this->player->id,
+                'player_id' => $this->player->id,
             ]);
 
             $paymentData = [
                 'billingType' => PaymentMethodEnum::PIX->value,
-                'customer'    => $this->form->customer_id,
-                'cpfCnpj'     => $this->form->cpf_cnpj,
-                'value'       => $this->championship->getFeeFormatedAttribute(false),
+                'customer' => $this->form->customer_id,
+                'cpfCnpj' => $this->form->cpf_cnpj,
+                'value' => $this->championship->getFeeFormatedAttribute(false),
                 'description' => 'Inscrição no campeonato: ' . $this->championship->name,
-                'dueDate'     => now()->addDays(1)->format('Y-m-d'),
+                'dueDate' => now()->format('Y-m-d'),
             ];
 
             $payment = $this->gateway->payment()->create($paymentData);
@@ -102,15 +134,15 @@ class Payment extends Component
 
             $this->playerCharge = $registrationPlayer->payments()->create([
                 'transaction_id' => $payment['id'],
-                'value'          => $payment['value'],
-                'description'    => $payment['description'],
-                'net_value'      => $payment['netValue'],
-                'due_date'       => $payment['dueDate'],
-                'date_created'   => $payment['dateCreated'],
-                'billing_type'   => PaymentMethodEnum::PIX->value,
-                'status'         => PaymentStatusEnum::parse($payment['status']),
-                'qr_code_64'     => $paymentQrcode['encodedImage'],
-                'qr_code'        => $paymentQrcode['payload'],
+                'value' => $payment['value'],
+                'description' => $payment['description'],
+                'net_value' => $payment['netValue'],
+                'due_date' => $payment['dueDate'],
+                'date_created' => $payment['dateCreated'],
+                'billing_type' => PaymentMethodEnum::PIX->value,
+                'status' => PaymentStatusEnum::parse($payment['status']),
+                'qr_code_64' => $paymentQrcode['encodedImage'],
+                'qr_code' => $paymentQrcode['payload'],
             ]);
 
             $this->isCpfFormVisible = false;
@@ -141,7 +173,7 @@ class Payment extends Component
 
         if ($this->playerCharge->status === PaymentStatusEnum::RECEIVED) {
 
-            $this->playerCharge->registrationPlayer->status         = RegistrationPlayerStatusEnum::APPROVED;
+            $this->playerCharge->registrationPlayer->status = RegistrationPlayerStatusEnum::APPROVED;
             $this->playerCharge->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
             $this->playerCharge->registrationPlayer->save();
 
