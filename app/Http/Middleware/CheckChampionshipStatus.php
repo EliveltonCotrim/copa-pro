@@ -19,6 +19,10 @@ class CheckChampionshipStatus
     {
         $championship = $request->route('championship');
 
+        if ($championship->status === ChampionshipStatusEnum::REGISTRATION_CLOSED) {
+            abort(403, 'Inscrições fechadas.');
+        }
+
         $totalPlayersApproved = $championship->registrationPlayers()->where('status', RegistrationPlayerStatusEnum::APPROVED)->whereHas('payments', function (Builder $query) {
             $query->where('status', PaymentStatusEnum::RECEIVED);
         })->count();
