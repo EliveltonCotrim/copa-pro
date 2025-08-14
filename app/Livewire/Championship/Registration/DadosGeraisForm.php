@@ -5,9 +5,11 @@ namespace App\Livewire\Championship\Registration;
 use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum};
 use App\Livewire\Championship\RegistrationForm;
 use App\Livewire\Forms\RegistrationPlayerForm;
+use App\Mail\VerificationCodeMail;
 use App\Models\{Championship, Player, User};
 use App\Notifications\RegistrationVerificationCode;
 use Cache;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
 
@@ -80,7 +82,7 @@ class DadosGeraisForm extends Component
 
             Cache::put('verification_code_' . $this->user->userable->id, $verificationCode, now()->addMinutes(10));
 
-            // Mail::to($this->user->email)->send(new VerificationCodeMail($verificationCode));
+            Mail::to($this->user->email)->send(new VerificationCodeMail($verificationCode, $this->user->name));
 
             $this->registrationForm->setForm($this->user);
 

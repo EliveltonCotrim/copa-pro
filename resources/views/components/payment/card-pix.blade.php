@@ -4,7 +4,7 @@
     <!-- Main Container - Flex Row Layout -->
     <div class="flex flex-col md:flex-row">
         <!-- Left Side - QR Code -->
-        <div class="p-6 flex flex-col items-center justify-center text-center space-y-4 md:w-2/5 bg-gray-50/80">
+        <div class="p-6 flex flex-col items-center justify-center text-center space-y-4 md:w-2/5">
             <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
                 <img src="data:image/jpeg;base64,{{ $qrCode64 ?? '' }}" class="w-[160px] h-[160px]">
             </div>
@@ -89,6 +89,10 @@
             </div>
             <p class="text-xs text-gray-500 mt-5 text-center md:text-left">
                 O Pix tem um limite diário de transferências. Para mais informações, consulte seu banco.
+            </p>
+            <p class="text-xs text-red-500 mt-1 text-center md:text-left font-semibold">
+                Atenção: caso o pagamento não seja efetuado em até 15 minutos, a inscrição será automaticamente
+                cancelada.
             </p>
         </div>
     </div>

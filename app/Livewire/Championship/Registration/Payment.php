@@ -4,6 +4,7 @@ namespace App\Livewire\Championship\Registration;
 
 use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
 use App\Enum\ChampionshipStatusEnum;
+use App\Jobs\CancelUnpaidRegistrationJob;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, RegistrationPlayer};
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
@@ -31,6 +32,8 @@ class Payment extends Component
 
     public \App\Models\Payment $playerCharge;
 
+    public RegistrationPlayer $registrationPlayer;
+
     // registrationForm
 
     public function boot()
@@ -54,6 +57,9 @@ class Payment extends Component
         DB::beginTransaction();
 
         try {
+            // verificar esse lockfoUpdate
+            $this->championship->lockForUpdate();
+
             // Verifica se o campeonato está aberto para inscrições
             $totalPlayersApproved = $this->championship->registrationPlayers()
                 ->where('status', RegistrationPlayerStatusEnum::APPROVED)
@@ -61,15 +67,20 @@ class Payment extends Component
                     $query->where('status', PaymentStatusEnum::RECEIVED);
                 })->count();
 
-            $totalPlayersPending  = $this->championship->registrationPlayers()
+            $registrationPlayersPending = $this->championship->registrationPlayers()
                 ->whereHas('payments', function (Builder $query) {
-                    $query->where('status', PaymentStatusEnum::PENDING)
-                        ->where('created_at', '>=', now()->subMinutes(30));
-                })->count();
+                    $query->where('status', PaymentStatusEnum::PENDING);
+                })->get();
 
-            $totalOccupiedSlots = $totalPlayersApproved + $totalPlayersPending;
+            foreach ($registrationPlayersPending as $key => $registrationPlayerPending) {
+                if ($registrationPlayerPending->created_at->timezone(config('app.timezone'))->addMinutes(15)->isPast()) {
+                    $registrationPlayerPending->delete();
+                }
+            }
 
-            if($totalOccupiedSlots >= $this->championship->max_players) {
+            // $totalOccupiedSlots = $totalPlayersApproved + $totalPlayersPending;
+
+            if ($totalPlayersApproved >= $this->championship->max_players) {
                 $this->toast()
                     ->error('Inscrições encerradas, limite de jogadores atingido.')
                     ->flash()
@@ -80,8 +91,8 @@ class Payment extends Component
 
             if ($totalPlayersApproved === $this->championship->max_players - 1) {
                 // processar ultima vaga
-            } else {
-                // processar vaga normal
+                // dd($totalPlayersApproved, $totalPlayersPending, $totalPlayersApproved === $this->championship->max_players - 1);
+
             }
 
             if (!empty($this->form->customer_id)) {
@@ -111,7 +122,7 @@ class Payment extends Component
                 $this->player = $this->form->createPlayer();
             }
 
-            $registrationPlayer = RegistrationPlayer::create([
+            $this->registrationPlayer = RegistrationPlayer::create([
                 'championship_id' => $this->championship->id,
                 'championship_team_name' => $this->form->championship_team_name,
                 'player_id' => $this->player->id,
@@ -132,7 +143,7 @@ class Payment extends Component
 
             $paymentQrcode = $this->gateway->payment()->getPixQrCode($payment['id']);
 
-            $this->playerCharge = $registrationPlayer->payments()->create([
+            $this->playerCharge = $this->registrationPlayer->payments()->create([
                 'transaction_id' => $payment['id'],
                 'value' => $payment['value'],
                 'description' => $payment['description'],
@@ -146,6 +157,8 @@ class Payment extends Component
             ]);
 
             $this->isCpfFormVisible = false;
+
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(1));
 
             DB::commit();
 
@@ -170,6 +183,17 @@ class Payment extends Component
     public function checkPayment()
     {
         $this->playerCharge->refresh();
+        $this->registrationPlayer->refresh();
+
+        if (!empty($this->registrationPlayer->deleted_at)) {
+            $this->toast()->info('O QR Code da sua inscrição venceu. Tente gerar uma nova inscrição para garantir sua participação no campeonato.')
+                ->timeout(10)
+                ->flash()
+                ->send();
+
+            return $this->redirectRoute('championship.register', ['championship' => $this->championship->slug]);
+        }
+
 
         if ($this->playerCharge->status === PaymentStatusEnum::RECEIVED) {
 
