@@ -102,6 +102,9 @@ class UserResource extends Resource
                     })
                     ->placeholder('Sem papéis'),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->with('roles');
+            })
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])

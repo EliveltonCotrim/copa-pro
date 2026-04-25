@@ -14,9 +14,7 @@ use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia};
 
 class Championship extends Model implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
-    use SoftDeletes;
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
         'uuid',

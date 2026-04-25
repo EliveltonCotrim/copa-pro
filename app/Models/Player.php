@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\{Builder, Model, SoftDeletes};
 
 class Player extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'nickname',

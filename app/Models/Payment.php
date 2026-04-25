@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 
 class Payment extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'registration_player_id',

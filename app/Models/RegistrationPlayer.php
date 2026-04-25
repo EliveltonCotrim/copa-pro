@@ -12,8 +12,7 @@ use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 #[ObservedBy([RegistrationPlayerObserver::class])]
 class RegistrationPlayer extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'championship_id',

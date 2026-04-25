@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Observers\UserObserver;
 use App\RoleEnum;
 use Filament\Models\Contracts\{FilamentUser, HasAvatar};
 use Filament\Panel;
@@ -18,12 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory;
-    use HasRoles;
-    use InteractsWithMedia;
-    use Notifiable;
-    use Notifiable;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes, HasRoles, InteractsWithMedia, Notifiable;
 
     protected $fillable = [
         'name',
@@ -41,13 +38,23 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
                 $user->assignRole(RoleEnum::PLAYER->value);
             }
         });
+
+        static::observe(UserObserver::class);
     }
 
     public function getFilamentAvatarUrl(): ?string
     {
-        $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
+        if (empty($this->avatar_url)) {
+            return null;
+        }
 
-        return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
+        $path = $this->avatar_url;
+
+        if (!str_starts_with($path, 'avatars/')) {
+            $path = 'avatars/' . ltrim($path, '/');
+        }
+
+        return Storage::disk('public')->url($path);
     }
 
     public function canAccessPanel(Panel $panel): bool
