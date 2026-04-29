@@ -37,4 +37,11 @@ class EditChampionship extends EditRecord
 
         return Notification::make()->success()->title('Campeonato atualizado')->body("O campeonato {$championship->name} foi alterado com sucesso.");
     }
+
+    protected function afterSave(): void
+    {
+        if ($this->record->is_in_person === false) {
+            $this->record->address()->forceDelete();
+        }
+    }
 }
