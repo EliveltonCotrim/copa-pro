@@ -34,20 +34,22 @@ class Championship extends Model implements HasMedia
         'registration_link',
         'information',
         'status',
+        'is_in_person',
     ];
 
     protected static function booted()
     {
         static::deleted(function (Championship $championship) {
-            $championship->players()->delete();
+            $championship->registrationPlayers()->delete();
         });
 
         static::restored(function (Championship $championship) {
-            $championship->players()->withTrashed()->restore();
+            $championship->registrationPlayers()->withTrashed()->restore();
         });
 
         static::forceDeleted(function (Championship $championship) {
-            $championship->players()->forceDelete();
+            $championship->registrationPlayers()?->forceDelete();
+            $championship->address()?->forceDelete();
 
             Storage::disk('public')->delete($championship->banner_path);
             Storage::disk('public')->delete($championship->regulation_path);
@@ -55,7 +57,7 @@ class Championship extends Model implements HasMedia
 
         static::updating(function (Championship $championship) {
 
-            $bannerPath     = $championship->getOriginal('banner_path');
+            $bannerPath = $championship->getOriginal('banner_path');
             $regulationPath = $championship->getOriginal('regulation_path');
 
             if ($championship->banner_path !== $bannerPath && $bannerPath) {
@@ -65,21 +67,14 @@ class Championship extends Model implements HasMedia
             if ($championship->regulation_path !== $regulationPath && $regulationPath) {
                 Storage::disk('public')->delete($regulationPath);
             }
-
-            $championship->slug = Str::slug($championship->name);
-
-        });
-
-        static::creating(function (Championship $championship) {
-            $championship->slug = Str::slug($championship->name);
         });
     }
 
     protected $casts = [
         'championship_format' => ChampionshipFormatEnum::class,
-        'status'              => ChampionshipStatusEnum::class,
-        'game'                => ChampionshipGamesEnum::class,
-        'game_platform'       => PlayerPlatformGameEnum::class,
+        'status' => ChampionshipStatusEnum::class,
+        'game' => ChampionshipGamesEnum::class,
+        'game_platform' => PlayerPlatformGameEnum::class,
     ];
 
     protected $appends = [
@@ -131,28 +126,28 @@ class Championship extends Model implements HasMedia
     public function startDateFormated(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => now()->parse($value)->format('d/m/Y H:i'),
+            get: fn($value) => now()->parse($value)->format('d/m/Y H:i'),
         );
     }
 
     public function endDateFormated(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => now()->parse($value)->format('d/m/Y H:i'),
+            get: fn($value) => now()->parse($value)->format('d/m/Y H:i'),
         );
     }
 
     public function linkInscription(): Attribute
     {
         return Attribute::make(
-            get: fn ($value): string => route('championship.register', $this->slug),
+            get: fn($value): string => route('championship.register', $this->slug),
         );
     }
 
     public function regulationPath(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $path): ?string => $path ? (str_contains($path, 'http')) ? $path : Storage::url($path) : '',
+            get: fn(?string $path): ?string => $path ? (str_contains($path, 'http')) ? $path : Storage::url($path) : '',
         );
     }
 }
