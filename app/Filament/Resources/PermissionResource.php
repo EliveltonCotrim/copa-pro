@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
 use App\Models\Permission;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\{Select, TextInput};
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -52,6 +53,9 @@ class PermissionResource extends Resource
                     ->label('Nome')
                     ->searchable(),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->with('permissions');
+            })
             ->filters([
                 //
             ])

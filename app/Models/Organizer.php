@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 
 class Organizer extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',

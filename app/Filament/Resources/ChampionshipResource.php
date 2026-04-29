@@ -77,7 +77,8 @@ class ChampionshipResource extends Resource
                                     'min_date'        => 'A data de início deve ser igual ou posterior à data atual.',
                                     'before_or_equal' => 'A data de início deve ser igual ou anterior à data de término.',
                                 ])
-                                ->required(),
+                                ->required()
+                                ->seconds(false),
                             DateTimePicker::make('end_date')
                                 ->label('Data de término')
                                 ->minDate(fn (callable $get) => $get('start_date') ?: now()->format('Y-m-d'))
@@ -85,7 +86,8 @@ class ChampionshipResource extends Resource
                                 ->afterOrEqual('start_date')
                                 ->validationMessages([
                                     'after_or_equal' => 'A data de término deve ser igual ou posterior à data de início.',
-                                ]),
+                                ])
+                                ->seconds(false),
                         ]),
                         Grid::make(['default' => 1, 'lg' => 2])->schema([
                             SpatieMediaLibraryFileUpload::make('banner_path')
@@ -246,12 +248,14 @@ class ChampionshipResource extends Resource
                     ->label('Data de início')
                     ->searchable()
                     ->toggleable()
-                    ->sortable(),
+                    ->sortable()
+                    ->dateTime('d/m/Y, H:i A'),
                 TextColumn::make('end_date')
                     ->label('Data de término')
                     ->searchable()
                     ->toggleable()
-                    ->sortable(),
+                    ->sortable()
+                    ->dateTime('d/m/Y, H:i A'),
                 JSMoneyColumn::make('registration_fee')
                     ->label('Taxa de inscrição')
                     ->currency('BRL')
@@ -329,12 +333,14 @@ class ChampionshipResource extends Resource
                                                         ->locale('pt-BR'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
-                                                    TextEntry::make('start_date_formated')
-                                                        ->label('Data de Início')
-                                                        ->color(color: 'primary'),
-                                                    TextEntry::make('end_date_formated')
-                                                        ->label('Data de Termino')
-                                                        ->color(color: 'danger'),
+                                                    TextEntry::make('start_date')
+                                                        ->label('Data de início')
+                                                        ->color(color: 'primary')
+                                                        ->dateTime('d/m/Y, H:i A'),
+                                                    TextEntry::make('end_date')
+                                                        ->label('Data de término')
+                                                        ->color(color: 'danger')
+                                                        ->dateTime('d/m/Y, H:i A'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('game_platform')

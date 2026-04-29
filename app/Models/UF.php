@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 
 class UF extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'ufs';
 
