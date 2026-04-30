@@ -145,8 +145,8 @@ class Championship extends Model implements HasMedia
     public function regulationUrl(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $path): ?string => $path
-                ? (str_contains($path, 'http') ? $path : Storage::url($path))
+            get: fn(): ?string => $this->regulation_path
+                ? (str_contains($this->regulation_path, 'http') ? $this->regulation_path : Storage::url($this->regulation_path))
                 : null,
         );
     }

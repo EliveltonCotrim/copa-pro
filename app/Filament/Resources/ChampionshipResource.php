@@ -397,10 +397,10 @@ class ChampionshipResource extends Resource
                                                         ->label('Status'),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
-                                                    TextEntry::make('regulation_path')
+                                                    TextEntry::make('regulation_url')
                                                         ->label('Regulamento')
                                                         ->formatStateUsing(fn() => 'Baixar PDF')
-                                                        ->url(fn($record) => $record->regulation_path)
+                                                        ->url(fn($record) => $record->regulation_url)
                                                         ->openUrlInNewTab()
                                                         ->badge()
                                                         ->icon('heroicon-o-document-text')
