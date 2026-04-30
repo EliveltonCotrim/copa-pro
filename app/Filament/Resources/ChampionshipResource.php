@@ -109,7 +109,6 @@ class ChampionshipResource extends Resource
                                 ->disk('public')
                                 ->label('Regulamento')
                                 ->preserveFilenames()
-                                ->disk('public')
                                 ->downloadable()
                                 ->openable()
                                 ->directory('regulations-championships')
@@ -260,23 +259,25 @@ class ChampionshipResource extends Resource
                     ->searchable()
                     ->toggleable()
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => $state
-                        ? Carbon::parse($state)->translatedFormat(
-                            Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
-                        )
-                        : null
-                    ),
+                    ->formatStateUsing(function ($state) {
+                        if (!$state) return null;
+                        $date = Carbon::parse($state);
+                        return $date->translatedFormat(
+                            $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                        );
+                    }),
                 TextColumn::make('end_date')
                     ->label('Data de término')
                     ->searchable()
                     ->toggleable()
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => $state
-                        ? Carbon::parse($state)->translatedFormat(
-                            Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
-                        )
-                        : null
-                    ),
+                    ->formatStateUsing(function ($state) {
+                        if (!$state) return null;
+                        $date = Carbon::parse($state);
+                        return $date->translatedFormat(
+                            $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                        );
+                    }),
                 JSMoneyColumn::make('registration_fee')
                     ->label('Taxa de inscrição')
                     ->currency('BRL')
@@ -357,21 +358,23 @@ class ChampionshipResource extends Resource
                                                     TextEntry::make('start_date')
                                                         ->label('Data de início')
                                                         ->color(color: 'primary')
-                                                        ->formatStateUsing(fn ($state) => $state
-                                                            ? Carbon::parse($state)->translatedFormat(
-                                                                Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
-                                                            )
-                                                            : null
-                                                        ),
+                                                        ->formatStateUsing(function ($state) {
+                                                            if (!$state) return null;
+                                                            $date = Carbon::parse($state);
+                                                            return $date->translatedFormat(
+                                                                $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                                                            );
+                                                        }),
                                                     TextEntry::make('end_date')
                                                         ->label('Data de término')
                                                         ->color(color: 'danger')
-                                                        ->formatStateUsing(fn ($state) => $state
-                                                            ? Carbon::parse($state)->translatedFormat(
-                                                                Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
-                                                            )
-                                                            : null
-                                                        ),
+                                                        ->formatStateUsing(function ($state) {
+                                                            if (!$state) return null;
+                                                            $date = Carbon::parse($state);
+                                                            return $date->translatedFormat(
+                                                                $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                                                            );
+                                                        }),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('game_platform')
