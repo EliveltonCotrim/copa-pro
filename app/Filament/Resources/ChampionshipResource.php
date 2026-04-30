@@ -15,6 +15,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Carbon\Carbon;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\{SelectColumn, SpatieMediaLibraryImageColumn, TextColumn};
 use Filament\Tables\Table;
@@ -108,6 +109,9 @@ class ChampionshipResource extends Resource
                                 ->disk('public')
                                 ->label('Regulamento')
                                 ->preserveFilenames()
+                                ->disk('public')
+                                ->downloadable()
+                                ->openable()
                                 ->directory('regulations-championships')
                                 ->acceptedFileTypes(['application/pdf']),
                         ]),
@@ -256,13 +260,23 @@ class ChampionshipResource extends Resource
                     ->searchable()
                     ->toggleable()
                     ->sortable()
-                    ->dateTime('d/m/Y, H:i A'),
+                    ->formatStateUsing(fn ($state) => $state
+                        ? Carbon::parse($state)->translatedFormat(
+                            Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                        )
+                        : null
+                    ),
                 TextColumn::make('end_date')
                     ->label('Data de término')
                     ->searchable()
                     ->toggleable()
                     ->sortable()
-                    ->dateTime('d/m/Y, H:i A'),
+                    ->formatStateUsing(fn ($state) => $state
+                        ? Carbon::parse($state)->translatedFormat(
+                            Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                        )
+                        : null
+                    ),
                 JSMoneyColumn::make('registration_fee')
                     ->label('Taxa de inscrição')
                     ->currency('BRL')
@@ -343,11 +357,21 @@ class ChampionshipResource extends Resource
                                                     TextEntry::make('start_date')
                                                         ->label('Data de início')
                                                         ->color(color: 'primary')
-                                                        ->dateTime('d/m/Y, H:i A'),
+                                                        ->formatStateUsing(fn ($state) => $state
+                                                            ? Carbon::parse($state)->translatedFormat(
+                                                                Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                                                            )
+                                                            : null
+                                                        ),
                                                     TextEntry::make('end_date')
                                                         ->label('Data de término')
                                                         ->color(color: 'danger')
-                                                        ->dateTime('d/m/Y, H:i A'),
+                                                        ->formatStateUsing(fn ($state) => $state
+                                                            ? Carbon::parse($state)->translatedFormat(
+                                                                Carbon::parse($state)->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
+                                                            )
+                                                            : null
+                                                        ),
                                                 ]),
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('game_platform')
