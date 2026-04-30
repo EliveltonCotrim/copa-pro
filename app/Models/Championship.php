@@ -56,17 +56,15 @@ class Championship extends Model implements HasMedia
         });
 
         static::updating(function (Championship $championship) {
-
-            $bannerPath = $championship->getOriginal('banner_path');
-            $regulationPath = $championship->getOriginal('regulation_path');
-
-            if ($championship->banner_path !== $bannerPath && $bannerPath) {
-                Storage::disk('public')->delete($bannerPath);
+            if ($championship->isDirty('banner_path') && $originalBannerPath = $championship->getOriginal('banner_path')) {
+                Storage::disk('public')->delete($originalBannerPath);
             }
 
-            if ($championship->regulation_path !== $regulationPath && $regulationPath) {
-                Storage::disk('public')->delete($regulationPath);
+            if ($championship->isDirty('regulation_path') && $originalRegulationPath = $championship->getOriginal('regulation_path')) {
+                Storage::disk('public')->delete($originalRegulationPath);
             }
+
+            $championship->slug = Str::slug($championship->name);
         });
     }
 
@@ -144,10 +142,13 @@ class Championship extends Model implements HasMedia
         );
     }
 
-    public function regulationPath(): Attribute
+    public function regulationUrl(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $path): ?string => $path ? (str_contains($path, 'http')) ? $path : Storage::url($path) : '',
+            get: fn(?string $path): ?string => $path
+                ? (str_contains($path, 'http') ? $path : Storage::url($path))
+                : null,
         );
     }
+
 }
