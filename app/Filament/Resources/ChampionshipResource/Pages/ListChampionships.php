@@ -17,7 +17,7 @@ class ListChampionships extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Criar campeonato teste 2'),
+            Actions\CreateAction::make()->label('Criar campeonato teste 3'),
         ];
     }
 
