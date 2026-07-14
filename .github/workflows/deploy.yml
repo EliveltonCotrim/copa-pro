@@ -11,4 +11,6 @@ jobs:
     steps:
       - name: Chamar Webhook do Coolify
         run: |
-          curl -X GET "https://coolify-webhook.gabiferreiraterapeuta.com.br/api/v1/deploy?uuid=fhksz2vyg4o189o9en6nto0u&force=false"
+          curl -X GET "https://coolify-webhook.gabiferreiraterapeuta.com.br/api/v1/deploy?uuid=fhksz2vyg4o189o9en6nto0u&force=false" \
+          -H "Authorization: Bearer 1|eokZ82530w4NcOs68ngvZp4chPo5JI3rJNRLS9rl07c45906"
+
