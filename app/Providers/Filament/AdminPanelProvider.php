@@ -57,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->brandName('Copa Pro teste')
+            ])->brandName('Copa Pro')
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label(fn () => auth()->user()->name)
