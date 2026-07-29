@@ -2,13 +2,15 @@
 
 namespace App\Providers\Filament;
 
+use Filament\{Pages, Panel, PanelProvider, Widgets};
 use Filament\Http\Middleware\{Authenticate, AuthenticateSession, DisableBladeIconComponents, DispatchServingFilamentEvent};
 use Filament\Navigation\MenuItem;
-use Filament\{Pages, Panel, PanelProvider, Widgets};
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\{AddQueuedCookiesToResponse, EncryptCookies};
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
@@ -24,6 +26,18 @@ class AdminPanelProvider extends PanelProvider
             ->favicon('favicon.ico')
             ->brandLogo(asset('images/logo-futpro-primary.png'))
             ->brandLogoHeight(fn () => auth()->check() ? '1.6rem' : '3rem')
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => Blade::render('@vite(\'resources/css/custom-login.css\')'),
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_AFTER,
+                fn (): string => Blade::render('@vite(\'resources/css/custom-login.css\')'),
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_AFTER,
+                fn (): string => Blade::render('@vite(\'resources/css/custom-login.css\')'),
+            )
             ->default()
             ->id('admin')
             ->path('admin')

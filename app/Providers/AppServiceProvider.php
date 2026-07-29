@@ -4,10 +4,9 @@ namespace App\Providers;
 
 use App\Models\{Championship, Permission, Role, User};
 use App\Policies\{ChampionshipPolicy, PermissionPolicy, RolePolicy, UserPolicy};
-use Filament\Facades\Filament;
 use Illuminate\Auth\Notifications\{ResetPassword, VerifyEmail};
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\{Blade, Gate, URL};
+use Illuminate\Support\Facades\{Gate, URL};
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,11 +32,6 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             URL::forceScheme('https');
         }
-
-        Filament::registerRenderHook(
-            'panels::auth.login.form.after',
-            fn() => Blade::render('@Vite(\'resources/css/custom-login.css\')'),
-        );
 
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
             return (new MailMessage())
