@@ -70,6 +70,11 @@ class PermissionResource extends Resource
             ]);
     }
 
+    public static function canGloballySearch(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [

@@ -48,7 +48,7 @@ class ChampionshipResource extends Resource
             Wizard::make([
                 Wizard\Step::make('Descrição')
                     ->schema([
-                        Grid::make(['default' => 1, 'lg' => 2])->schema([
+                        Grid::make(3)->schema([
                             TextInput::make('name')
                                 ->label('Nome')
                                 ->live(true)
