@@ -7,7 +7,7 @@ use App\Policies\{ChampionshipPolicy, PermissionPolicy, RolePolicy, UserPolicy};
 use Filament\Facades\Filament;
 use Illuminate\Auth\Notifications\{ResetPassword, VerifyEmail};
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\{Blade, Gate};
+use Illuminate\Support\Facades\{Blade, Gate, URL};
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,9 +30,13 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
 
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Filament::registerRenderHook(
             'panels::auth.login.form.after',
-            fn () => Blade::render('@Vite(\'resources/css/custom-login.css\')'),
+            fn() => Blade::render('@Vite(\'resources/css/custom-login.css\')'),
         );
 
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
@@ -45,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         ResetPassword::toMailUsing(function ($notifiable, $url) {
-            $expires       = config('auth.passwords.' . config('auth.defaults.passwords') . '.expire');
+            $expires = config('auth.passwords.' . config('auth.defaults.passwords') . '.expire');
             $primeiro_nome = explode(' ', trim($notifiable->name))[0];
 
             return (new MailMessage())
