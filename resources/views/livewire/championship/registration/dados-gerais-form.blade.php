@@ -39,7 +39,7 @@
     <div x-show="showSearchPlayerForm === false && showVerificationForm === false" x-transition
         class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
         <div class="mb-3">
-            <x-input label="Nome *" placeholder="Informe seu nome completo" wire:model="registrationForm.name"
+            <x-input label="Nome Completo*" placeholder="Informe seu nome completo" wire:model="registrationForm.name"
                 required />
         </div>
         <div class="mb-3">
