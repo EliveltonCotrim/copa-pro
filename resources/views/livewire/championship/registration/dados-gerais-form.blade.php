@@ -1,7 +1,20 @@
 <div x-data="{
     showVerificationForm: @entangle('showVerificationForm'),
     showSearchPlayerForm: @entangle('showSearchPlayerForm'),
-}" class="mt-2 space-y-3">
+    disabled: false,
+    seconds: 0,
+    startCooldown(secs) {
+        this.disabled = true;
+        this.seconds = secs;
+        let interval = setInterval(() => {
+            this.seconds--;
+            if (this.seconds <= 0) {
+                clearInterval(interval);
+                this.disabled = false;
+            }
+        }, 1000);
+    }
+}" x-on:cooldown-started.window="startCooldown($event.detail.seconds)"class="mt-2 space-y-3">
     <x-loading loading="verifyCode, searchPlayer" />
 
     <div x-show="showSearchPlayerForm" x-transition>
@@ -17,7 +30,6 @@
                 text="Use o mesmo e-mail das inscrições anteriores.
             Caso seja sua primeira vez, basta informar um e-mail e clicar em 'Prosseguir'" /> --}}
                 <x-input label="E-mail *" wire:model="registrationForm.email">
-
                 </x-input>
             </div>
         </div>
@@ -26,10 +38,15 @@
         </div>
     </div>
     <div x-show="showVerificationForm" x-transition>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
+        <div class="grid grid-cols-1 gap-x-3">
             <div class="mb-3">
                 <x-pin length="5" label="Código" wire:model="registrationForm.verification_code"
                     hint="Enviamos um código de 5 dígitos para seu e-mail." />
+                <x-button sm icon="clock" text="Reenviar código" x-bind:disabled="disabled"
+                    x-bind:class="disabled ? 'opacity-50 cursor-not-allowed' : ''" wire:click="sendVerificationCode" />
+                <template x-if="disabled">
+                    <span class="text-xs text-gray-500 ml-2">Aguarde <span x-text="seconds"></span>s...</span>
+                </template>
             </div>
         </div>
         <div class="mt-2 grid grid-cols-1">
