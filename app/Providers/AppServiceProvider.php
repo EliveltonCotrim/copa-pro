@@ -61,5 +61,9 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Se você não requisitou o reset de senha, ignore essa mensagem.')
                 ->salutation("Atenciosamente,\n\nCopa Pro");
         });
+
+        Blade::directive('datetime', function (string $expression) {
+            return "<?php echo \Illuminate\Support\Carbon::parse($expression)->format('m/d/Y \à\s H:i'); ?>";
+        });
     }
 }
