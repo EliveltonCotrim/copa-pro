@@ -13,19 +13,20 @@ class AsaasWebhookController extends Controller
 {
     public function __invoke(AsaasWebHookRequest $request)
     {
+        // validar token - whsec_2Jbjz16wahUY
         $data = $request->validated();
         DB::beginTransaction();
 
         try {
-
             if ($data['event'] === 'PAYMENT_RECEIVED') {
+                // veirificar esse firstOrFail.
                 $payment = Payment::where('transaction_id', $data['payment']['id'])->firstOrFail();
 
                 $payment->update(
                     [
-                        'status'                  => PaymentStatusEnum::parse($data['payment']['status']),
-                        'payment_Date'            => $data['payment']['paymentDate'],
-                        'confirmed_date'          => $data['payment']['confirmedDate'],
+                        'status' => PaymentStatusEnum::parse($data['payment']['status']),
+                        'payment_Date' => $data['payment']['paymentDate'],
+                        'confirmed_date' => $data['payment']['confirmedDate'],
                         'transaction_receipt_url' => $data['payment']['transactionReceiptUrl'],
                     ]
                 );

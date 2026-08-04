@@ -45,7 +45,6 @@ class Payment extends Component
     public function mount($registrationForm)
     {
         $this->form->setArrayForm($registrationForm);
-
     }
 
     public function createPayment()
@@ -137,6 +136,9 @@ class Payment extends Component
                 'dueDate' => now()->format('Y-m-d'),
             ];
 
+            // TODO validar se já existe uma inscrição pendente para esse jogador. Se sim, cancelar e criar uma nova inscrição
+
+            // enviar email com QR Code para o jogador
             $payment = $this->gateway->payment()->create($paymentData);
 
             $this->hasError($payment);
@@ -158,6 +160,8 @@ class Payment extends Component
 
             $this->isCpfFormVisible = false;
 
+            // TODO verificar isso
+            // enviar email para o jogador  de inscrição realizada com sucesso
             CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(1));
 
             DB::commit();
