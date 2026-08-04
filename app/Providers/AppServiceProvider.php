@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Models\{Championship, Permission, Role, User};
 use App\Policies\{ChampionshipPolicy, PermissionPolicy, RolePolicy, UserPolicy};
-use Illuminate\Support\Facades\{Gate, URL};
+use Illuminate\Support\Facades\{Blade, Gate, URL};
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             URL::forceScheme('https');
         }
+
+        Blade::directive('datetime', function ($expression) {
+            return "<?php echo  \Illuminate\Support\Carbon::parse($expression)->format('d/m/Y \à\s H:i'); ?>";
+        });
     }
 
 }
