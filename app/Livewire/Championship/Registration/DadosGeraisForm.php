@@ -87,9 +87,15 @@ class DadosGeraisForm extends Component
         $this->showSearchPlayerForm = false;
     }
 
-    private function checkRateLimit()
+    private function checkRateLimit(bool $isSearch = true)
     {
-        $throttlekey = 'search-play:' . $this->registrationForm->email . '|' . request()->ip();
+        $throttlekeyCode = 'verify-code-play-id:' . $this->registrationForm->player_id . '|' . request()->ip();
+
+        if ($isSearch) {
+            $throttlekey = 'search-play:' . $this->registrationForm->email . '|' . request()->ip();
+        } else {
+            $throttlekey = $throttlekeyCode;
+        }
 
         if (RateLimiter::tooManyAttempts($throttlekey, 5)) {
             $seconds = RateLimiter::availableIn($throttlekey);
@@ -99,6 +105,9 @@ class DadosGeraisForm extends Component
         }
 
         RateLimiter::hit($throttlekey, $this->timeThrottle);
+        if ($isSearch) {
+            RateLimiter::clear($throttlekeyCode);
+        }
 
         return true;
     }
@@ -124,6 +133,10 @@ class DadosGeraisForm extends Component
 
     public function verifyCode()
     {
+        if (!$this->checkRateLimit(false)) {
+            return;
+        }
+
         $this->validate([
             'registrationForm.verification_code' => 'required|numeric|digits:5',
         ]);
@@ -139,7 +152,7 @@ class DadosGeraisForm extends Component
             return;
         }
 
-        if ($code == $this->registrationForm->verification_code) {
+        if (hash_equals($code, (string) $this->registrationForm->verification_code)) {
             $this->showVerificationForm = false;
             $this->showInitForm = false;
             $this->showForm = true;
