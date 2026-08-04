@@ -20,7 +20,7 @@ class RegistrationPlayerForm extends Form
 
     public string $heart_team_name = '';
 
-    public string $birth_dt = '';
+    public ?string $birth_dt = '';
 
     public ?int $sex;
 
@@ -28,7 +28,7 @@ class RegistrationPlayerForm extends Form
 
     public int $game_platform;
 
-    public int $level_experience;
+    public ?int $level_experience = null;
 
     public string $cpf_cnpj = '';
 
@@ -61,17 +61,17 @@ class RegistrationPlayerForm extends Form
         ];
     }
 
-    // public function messages()
-    // {
-    //     return [
-    //         'nickname.unique' => 'Este apelido já está em uso.',
-    //         'phone.celular_com_ddd' => 'O campo telefone não é um número de telefone válido.',
-    //         'game_platform.required' => 'O campo plataforma de jogo é obrigatório.',
-    //         'level_experience.required' => 'O campo nível de experiência é obrigatório.',
-    //         'name.regex' => 'O campo nome deve conter pelo menos um sobrenome.',
-    //         'email.unique' => 'Este e-mail já está em uso.',
-    //     ];
-    // }
+    public function messages()
+    {
+        return [
+            'nickname.unique' => 'Este apelido já está em uso.',
+            'phone.celular_com_ddd' => 'O campo telefone não é um número de telefone válido.',
+            'game_platform.required' => 'O campo plataforma de jogo é obrigatório.',
+            'level_experience.required' => 'O campo nível de experiência é obrigatório.',
+            'name.regex' => 'O campo nome deve conter pelo menos um sobrenome.',
+            'email.unique' => 'Este e-mail já está em uso.',
+        ];
+    }
 
     public function setForm(User $user)
     {

@@ -47,7 +47,7 @@ class DadosGeraisForm extends Component
     {
         $this->registrationForm->validate();
 
-        $params = ['step' => $step, 'registrationForm' => $this->registrationForm];
+        $params = ['step' => $step, 'registrationForm' => $this->registrationForm->all()];
 
         if ($this->player) {
             $params['player_id'] = $this->player->id;
@@ -145,8 +145,8 @@ class DadosGeraisForm extends Component
 
         if (empty($code)) {
             $this->toast()->error('Código expirou. Por favor, tente novamente.')->send();
-            $this->showVerificationForm = false;
-            $this->showInitForm = true;
+            // $this->showVerificationForm = false;
+            // $this->showInitForm = true;
             $this->registrationForm->verification_code = null;
 
             return;
@@ -154,8 +154,8 @@ class DadosGeraisForm extends Component
 
         if (hash_equals($code, (string) $this->registrationForm->verification_code)) {
             $this->showVerificationForm = false;
-            $this->showInitForm = false;
-            $this->showForm = true;
+            // $this->showInitForm = false;
+            // $this->showForm = true;
 
             return;
         }
