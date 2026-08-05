@@ -21,6 +21,7 @@
         "laravellegends/pt-br-validator": "^11.0",
         "leandrocfe/filament-ptbr-form-fields": "^3.0",
         "livewire/livewire": "^3.5",
+        "predis/predis": "^3.5",
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^6.10",
         "tallstackui/tallstackui": "^1.37",
