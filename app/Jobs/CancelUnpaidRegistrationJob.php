@@ -6,6 +6,7 @@ use App\Enum\PaymentStatusEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
 use App\Models\RegistrationPlayer;
 use App\Services\PaymentGateway\Gateway;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -24,6 +25,10 @@ class CancelUnpaidRegistrationJob implements ShouldQueue
 
     protected Gateway $gateway;
 
+    public int $tries = 3;
+    public array $backoff = [10, 30, 60];
+    public int $timeout = 60;
+
     /**
      * Create a new job instance.
      */
@@ -37,27 +42,43 @@ class CancelUnpaidRegistrationJob implements ShouldQueue
      */
     public function handle(): void
     {
-
-        $adapter = app(AsaasConnector::class);
-        $this->gateway = new Gateway($adapter);
-
         DB::transaction(function () {
-            $registration = RegistrationPlayer::with('payments')
-                ->find($this->registrationPlayerId);
+            $registration = RegistrationPlayer::where('id', $this->registrationPlayerId)
+                ->lockForUpdate()
+                ->with('payments')
+                ->first();
 
-            if(!$registration){
+            if (!$registration) {
                 return;
             }
 
-            if($registration->payment_status !== PaymentStatusEnum::RECEIVED && $registration->status === RegistrationPlayerStatusEnum::REGISTERED){
-                $payment = $registration->payments()->latest()->first();
-                Log::info('paymen: ' . $payment);
-                $this->gateway->payment()->delete($payment->transaction_id);
-                
-                $payment->delete();
-                $registration->delete();
+            $stillUnpaid = $registration->payment_status !== PaymentStatusEnum::RECEIVED
+                && $registration->status === RegistrationPlayerStatusEnum::REGISTERED;
+
+            if (!$stillUnpaid) {
+                return;
             }
 
+            $pendingPayments = $registration->payments->where('status', PaymentStatusEnum::PENDING);
+
+            if ($pendingPayments->isEmpty()) {
+                return;
+            }
+
+            $adapter = app(AsaasConnector::class);
+            $this->gateway = new Gateway($adapter);
+
+            foreach ($pendingPayments as $payment) {
+                try {
+                    $this->gateway->payment()->delete($payment->transaction_id);
+                } catch (Exception $e) {
+                    // Pode já ter sido deletado em uma tentativa anterior (retry),
+                    // ou não existir mais no gateway. Loga e segue sem travar o job.
+                    report($e);
+                }
+            }
+
+            $registration->delete();
         });
     }
 }

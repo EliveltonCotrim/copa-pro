@@ -57,42 +57,41 @@ class Payment extends Component
 
         try {
             // verificar esse lockfoUpdate
-            $this->championship->lockForUpdate();
-
-            // Verifica se o campeonato está aberto para inscrições
-            $totalPlayersApproved = $this->championship->registrationPlayers()
-                ->where('status', RegistrationPlayerStatusEnum::APPROVED)
-                ->whereHas('payments', function (Builder $query) {
-                    $query->where('status', PaymentStatusEnum::RECEIVED);
-                })->count();
+            // $this->championship->lockForUpdate();
+            $this->championship = Championship::where('id', $this->championship->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
             $registrationPlayersPending = $this->championship->registrationPlayers()
                 ->whereHas('payments', function (Builder $query) {
                     $query->where('status', PaymentStatusEnum::PENDING);
                 })->get();
 
-            foreach ($registrationPlayersPending as $key => $registrationPlayerPending) {
-                if ($registrationPlayerPending->created_at->timezone(config('app.timezone'))->addMinutes(15)->isPast()) {
-                    $registrationPlayerPending->delete();
-                }
-            }
+            // Verifica o total de inscrições aprovadas
+            $totalPlayersApproved = $this->championship
+                // ->where('status', ChampionshipStatusEnum::REGISTRATION_OPEN)
+                ->registrationPlayers()
+                ->where('status', RegistrationPlayerStatusEnum::APPROVED)
+                ->whereHas('payments', function (Builder $query) {
+                    $query->where('status', PaymentStatusEnum::RECEIVED);
+                })->count();
 
-            // $totalOccupiedSlots = $totalPlayersApproved + $totalPlayersPending;
+            $totalOccupiedSlots = $totalPlayersApproved + $registrationPlayersPending->count();
 
-            if ($totalPlayersApproved >= $this->championship->max_players) {
+            if ($totalOccupiedSlots >= $this->championship->max_players) {
                 $this->toast()
-                    ->error('Inscrições encerradas, limite de jogadores atingido.')
+                    ->error('Atingimos o limite de inscrições.')
+                    ->timeout(10)
                     ->flash()
                     ->send();
 
                 return $this->redirectRoute('championship.register', $this->championship);
             }
 
-            if ($totalPlayersApproved === $this->championship->max_players - 1) {
-                // processar ultima vaga
-                // dd($totalPlayersApproved, $totalPlayersPending, $totalPlayersApproved === $this->championship->max_players - 1);
-
-            }
+            // if ($totalPlayersApproved === $this->championship->max_players - 1) {
+            //     // processar ultima vaga
+            //     // dd($totalPlayersApproved, $totalPlayersApproved === $this->championship->max_players - 1);
+            // }
 
             if (!empty($this->form->customer_id)) {
 
@@ -127,6 +126,8 @@ class Payment extends Component
                 'player_id' => $this->player->id,
             ]);
 
+            DB::commit();
+
             $paymentData = [
                 'billingType' => PaymentMethodEnum::PIX->value,
                 'customer' => $this->form->customer_id,
@@ -136,9 +137,6 @@ class Payment extends Component
                 'dueDate' => now()->format('Y-m-d'),
             ];
 
-            // TODO validar se já existe uma inscrição pendente para esse jogador. Se sim, cancelar e criar uma nova inscrição
-
-            // enviar email com QR Code para o jogador
             $payment = $this->gateway->payment()->create($paymentData);
 
             $this->hasError($payment);
@@ -162,9 +160,8 @@ class Payment extends Component
 
             // TODO verificar isso
             // enviar email para o jogador  de inscrição realizada com sucesso
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(1));
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15));
 
-            DB::commit();
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -179,9 +176,7 @@ class Payment extends Component
                 ->send();
 
             return $this->redirectRoute('championship.register', $this->championship);
-
         }
-
     }
 
     public function checkPayment()

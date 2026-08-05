@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Championship\Registration;
 
-use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum};
+use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, RegistrationPlayerStatusEnum};
 use App\Livewire\Championship\RegistrationForm;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, User};
@@ -73,6 +73,7 @@ class DadosGeraisForm extends Component
 
         $existingRegistrationPlayer = $this->user->userable->registrationsChampionships()
             ->where('championship_id', $this->championship->id)
+            ->where('status', RegistrationPlayerStatusEnum::APPROVED)
             ->first();
 
         if ($existingRegistrationPlayer) {
