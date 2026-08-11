@@ -42,7 +42,7 @@ class SuccessfullyRegistered extends Notification implements ShouldQueue
     {
         return (new SuccessfullyRegisteredMail($this->championship, $notifiable))
             ->subject('Inscrição realizada com sucesso! ⚽')
-            ->from('suporte@profut.com.br')
+            ->from('suporte@gabiferreiraterapeuta.com.br')
             ->to($notifiable->email);
     }
 
