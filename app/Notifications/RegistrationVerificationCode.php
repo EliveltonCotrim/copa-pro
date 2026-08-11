@@ -40,7 +40,7 @@ class RegistrationVerificationCode extends Notification implements ShouldQueue
     {
         return (new VerificationCodeMail($this->verificationCode, $notifiable->name))
             ->subject('Código de verificação')
-            ->from('suporte@profut.com.br')
+            ->from('suporte@gabiferreiraterapeuta.com.br')
             ->to($notifiable->email);
     }
 
