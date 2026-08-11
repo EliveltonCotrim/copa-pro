@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
 
@@ -159,6 +160,8 @@ class Payment extends Component
 
         } catch (Exception $e) {
             DB::rollBack();
+
+            Log::error('Error creating payment: ' . $e->getMessage());
 
             if (isset($payment['id'])) {
                 $this->gateway->payment()->delete($payment['id']);
