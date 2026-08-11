@@ -137,6 +137,7 @@ class Payment extends Component
 
             $this->hasError($payment);
 
+            Log::info('Payment created: ', $payment);
             $paymentQrcode = $this->gateway->payment()->getPixQrCode($payment['id']);
 
             $this->playerCharge = $this->registrationPlayer->payments()->create([
@@ -161,7 +162,10 @@ class Payment extends Component
         } catch (Exception $e) {
             DB::rollBack();
 
-            Log::error('Error creating payment: ' . $e->getMessage());
+            Log::error('Error creating payment: ', [
+                $e->getMessage(),
+                $e->getTraceAsString(),
+            ]);
 
             if (isset($payment['id'])) {
                 $this->gateway->payment()->delete($payment['id']);
