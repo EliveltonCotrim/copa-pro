@@ -3,10 +3,10 @@
 namespace App\Livewire\Championship\Registration;
 
 use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
-use App\Enum\ChampionshipStatusEnum;
 use App\Jobs\CancelUnpaidRegistrationJob;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, RegistrationPlayer};
+use App\Notifications\SuccessfullyRegistered;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Exception;
@@ -153,10 +153,7 @@ class Payment extends Component
 
             $this->isCpfFormVisible = false;
 
-            // TODO verificar isso
-            // enviar email para o jogador  de inscrição realizada com sucesso
-            // Mudar para 15
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(4));
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15));
 
             DB::commit();
 
@@ -197,11 +194,11 @@ class Payment extends Component
             $this->playerCharge->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
             $this->playerCharge->registrationPlayer->save();
 
+            $this->registrationPlayer->player->user->notify(new SuccessfullyRegistered($this->championship));
+
             $this->toast()->success('Inscrição realizada com sucesso.')
                 ->flash()
                 ->send();
-
-            // TODO - Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
 
             return $this->redirectRoute('championship.register-success', $this->championship);
         }

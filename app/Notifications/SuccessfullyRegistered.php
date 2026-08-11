@@ -2,14 +2,17 @@
 
 namespace App\Notifications;
 
-use App\Mail\VerificationCodeMail;
+use App\Mail\SuccessfullyRegisteredMail;
+use App\Models\Championship;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
 
-class RegistrationVerificationCode extends Notification implements ShouldQueue
+class SuccessfullyRegistered extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, SerializesModels;
 
     public int $tries = 3;
     public array $backoff = [10, 30, 60];
@@ -18,9 +21,8 @@ class RegistrationVerificationCode extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public function __construct(
-        public string $verificationCode,
+        public Championship $championship
     ) {
-        //
     }
 
     /**
@@ -36,24 +38,12 @@ class RegistrationVerificationCode extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): VerificationCodeMail
+    public function toMail(object $notifiable): SuccessfullyRegisteredMail
     {
-        return (new VerificationCodeMail($this->verificationCode, $notifiable->name))
-            ->subject('Código de verificação')
+        return (new SuccessfullyRegisteredMail($this->championship, $notifiable))
+            ->subject('Inscrição realizada com sucesso! ⚽')
             ->from('suporte@profut.com.br')
             ->to($notifiable->email);
-    }
-
-    /**
-     * Determine which queues should be used for each notification channel.
-     *
-     * @return array<string, string>
-     */
-    public function viaQueues(): array
-    {
-        return [
-            'mail' => 'send-verification-code',
-        ];
     }
 
     /**
