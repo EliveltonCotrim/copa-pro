@@ -79,19 +79,16 @@ class Payment extends Component
             $totalOccupiedSlots = $totalPlayersApproved + $registrationPlayersPending->count();
 
             if ($totalOccupiedSlots >= $this->championship->max_players) {
+                DB::rollBack();
+
                 $this->toast()
-                    ->error('Atingimos o limite de inscrições.')
-                    ->timeout(10)
+                    ->info('Todas as vagas estão temporariamente ocupadas, incluindo inscrições aguardando pagamento. Tente novamente em alguns minutos — uma vaga pode abrir caso algum pagamento pendente expire.')
+                    ->timeout(20)
                     ->flash()
                     ->send();
 
-                return $this->redirectRoute('championship.register', $this->championship);
+                return $this->redirectRoute('championship.register', ['championship' => $this->championship->slug]);
             }
-
-            // if ($totalPlayersApproved === $this->championship->max_players - 1) {
-            //     // processar ultima vaga
-            //     // dd($totalPlayersApproved, $totalPlayersApproved === $this->championship->max_players - 1);
-            // }
 
             if (!empty($this->form->customer_id)) {
 
@@ -126,8 +123,6 @@ class Payment extends Component
                 'player_id' => $this->player->id,
             ]);
 
-            DB::commit();
-
             $paymentData = [
                 'billingType' => PaymentMethodEnum::PIX->value,
                 'customer' => $this->form->customer_id,
@@ -160,8 +155,10 @@ class Payment extends Component
 
             // TODO verificar isso
             // enviar email para o jogador  de inscrição realizada com sucesso
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15));
+            // Mudar para 15
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(4));
 
+            DB::commit();
 
         } catch (Exception $e) {
             DB::rollBack();
