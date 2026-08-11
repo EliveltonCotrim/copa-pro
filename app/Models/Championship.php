@@ -79,6 +79,7 @@ class Championship extends Model implements HasMedia
         'link_inscription',
         'start_date_formated',
         'end_date_formated',
+        'regulation_url'
     ];
 
     protected static function boot()

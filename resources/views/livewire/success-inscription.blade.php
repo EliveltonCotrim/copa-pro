@@ -15,7 +15,7 @@
                         </div>
                     </div>
                     <h1 class="text-xl font-bold text-gray-800 text-center">
-                        Registration Successful
+                        Inscrição Realizada com Sucesso
                     </h1>
                 </div>
 
@@ -24,9 +24,9 @@
                     <div class="space-y-6">
                         <div>
                             <div class="flex items-center mb-4">
-                                <h2 class="text-xl font-semibold text-gray-800">Championship Details</h2>
+                                <h2 class="text-xl font-semibold text-gray-800">Detalhes do Campeonato</h2>
                                 <span
-                                    class="ml-3 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Confirmed</span>
+                                    class="ml-3 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Confirmado</span>
                             </div>
 
                             <div class="grid md:grid-cols-2 gap-4">
@@ -36,9 +36,9 @@
                                         <i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-500">Title</p>
-                                        <p class="text-base text-gray-800 font-medium">2025 National Swimming
-                                            Championship</p>
+                                        <p class="text-sm font-medium text-gray-500">Título</p>
+                                        <p class="text-base text-gray-800 font-medium">{{ $this->championship->name }}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -48,41 +48,43 @@
                                         <i data-lucide="calendar" class="h-5 w-5 text-gray-500"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-500">Start Date</p>
-                                        <p class="text-base text-gray-800 font-medium">June 15, 2025</p>
+                                        <p class="text-sm font-medium text-gray-500">Data de Início</p>
+                                        <p class="text-base text-gray-800 font-medium">@datetime($this->championship->start_date)</p>
                                     </div>
                                 </div>
-
-                                <div class="flex items-start group md:col-span-2">
-                                    <div
-                                        class="flex-shrink-0 mt-1 p-2 rounded-lg bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                                        <i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i>
+                                @if (filled($championship->regulation_path))
+                                    <div class="flex items-start group md:col-span-2">
+                                        <div
+                                            class="flex-shrink-0 mt-1 p-2 rounded-lg bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                                            <i data-lucide="file-text" class="h-5 w-5 text-gray-500"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <p class="text-sm font-medium text-gray-500">Regulamento</p>
+                                            <a href="{{ $championship->regulation_url }}" target="_blank"
+                                                class="text-base text-teal-600 hover:text-teal-800 font-medium hover:underline transition-colors">
+                                                Ver Regulamento do Campeonato
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-500">Regulation</p>
-                                        <a href="/regulations/championship-2025.pdf"
-                                            class="text-base text-teal-600 hover:text-teal-800 font-medium hover:underline transition-colors">
-                                            View Championship Regulations
-                                        </a>
-                                    </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
 
                         <div class="bg-gradient-to-r from-blue-50 to-teal-50 p-4 rounded-xl border border-blue-100">
                             <p class="text-gray-800 font-medium mb-1">
                                 <i data-lucide="mail" class="inline h-4 w-4 mr-2 text-blue-500"></i>
-                                Email Confirmation
+                                Confirmação por E-mail
                             </p>
-                            <p class="text-gray-600 text-sm">A confirmation of your payment has been sent to your email.
+                            <p class="text-gray-600 text-sm">Uma confirmação do seu pagamento foi enviada para o seu
+                                e-mail.
                             </p>
                             <p class="text-gray-600 text-sm mt-1">
-                                You will also receive an email with all the championship details shortly.
+                                Você também receberá um e-mail com todos os detalhes do campeonato em breve.
                             </p>
                         </div>
 
                         <div class="pt-1">
-                            <h3 class="text-base font-medium text-gray-800 mb-2">Support Contact</h3>
+                            <h3 class="text-base font-medium text-gray-800 mb-2">Contato de Suporte</h3>
                             <div class="grid md:grid-cols-2 gap-2">
                                 <a href="mailto:support@championship.com"
                                     class="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors group">
@@ -114,9 +116,7 @@
             </div>
         </div>
 
-        <p class="text-center text-xs text-gray-500 pt-4">
-            © 2025 Championship Organization. All rights reserved.
-        </p>
+        <x-layouts.footer />
     </div>
 </div>
 

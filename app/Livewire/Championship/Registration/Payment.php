@@ -3,10 +3,10 @@
 namespace App\Livewire\Championship\Registration;
 
 use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
-use App\Enum\ChampionshipStatusEnum;
 use App\Jobs\CancelUnpaidRegistrationJob;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, RegistrationPlayer};
+use App\Notifications\SuccessfullyRegistered;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Exception;
@@ -79,19 +79,16 @@ class Payment extends Component
             $totalOccupiedSlots = $totalPlayersApproved + $registrationPlayersPending->count();
 
             if ($totalOccupiedSlots >= $this->championship->max_players) {
+                DB::rollBack();
+
                 $this->toast()
-                    ->error('Atingimos o limite de inscrições.')
-                    ->timeout(10)
+                    ->info('Todas as vagas estão temporariamente ocupadas, incluindo inscrições aguardando pagamento. Tente novamente em alguns minutos — uma vaga pode abrir caso algum pagamento pendente expire.')
+                    ->timeout(20)
                     ->flash()
                     ->send();
 
-                return $this->redirectRoute('championship.register', $this->championship);
+                return $this->redirectRoute('championship.register', ['championship' => $this->championship->slug]);
             }
-
-            // if ($totalPlayersApproved === $this->championship->max_players - 1) {
-            //     // processar ultima vaga
-            //     // dd($totalPlayersApproved, $totalPlayersApproved === $this->championship->max_players - 1);
-            // }
 
             if (!empty($this->form->customer_id)) {
 
@@ -126,8 +123,6 @@ class Payment extends Component
                 'player_id' => $this->player->id,
             ]);
 
-            DB::commit();
-
             $paymentData = [
                 'billingType' => PaymentMethodEnum::PIX->value,
                 'customer' => $this->form->customer_id,
@@ -158,10 +153,9 @@ class Payment extends Component
 
             $this->isCpfFormVisible = false;
 
-            // TODO verificar isso
-            // enviar email para o jogador  de inscrição realizada com sucesso
             CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15));
 
+            DB::commit();
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -200,11 +194,11 @@ class Payment extends Component
             $this->playerCharge->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
             $this->playerCharge->registrationPlayer->save();
 
+            $this->registrationPlayer->player->user->notify(new SuccessfullyRegistered($this->championship));
+
             $this->toast()->success('Inscrição realizada com sucesso.')
                 ->flash()
                 ->send();
-
-            // TODO - Enviar e-mail de confirmação de inscrição contemplando os detalhes do campeonato e o comprovante de pagamento
 
             return $this->redirectRoute('championship.register-success', $this->championship);
         }

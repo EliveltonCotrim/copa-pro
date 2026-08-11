@@ -26,7 +26,7 @@ class RegistrationForm extends Component
     public function stepControl(int $step, array $registrationForm, ?int $player_id = null)
     {
         $this->step = $step;
-        
+
         if ($step === 2) {
             $this->registrationForm = $registrationForm;
             $this->player           = $player_id ? Player::withTrashed()->where('id', $player_id)->first() : null;

@@ -60,7 +60,7 @@
                 required />
         </div>
         <div class="mb-3">
-            <x-input label="E-mail *" type="email" wire:model="registrationForm.email" required />
+            <x-input label="E-mail *" type="email" wire:model="registrationForm.email" required disabled/>
         </div>
         <div class="mb-3">
             <x-input label="Nickname *" wire:model="registrationForm.nickname" required />

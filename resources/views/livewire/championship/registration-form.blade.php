@@ -13,7 +13,8 @@
                     <div class="relative rounded-2xl overflow-hidden shadow-sm">
                         <!-- Banner Image with overlay -->
                         <div class="w-full h-48 overflow-hidden">
-                            <img src="{{ $championship->getFirstMediaUrl() ?: asset('images/copa_pro_banner.webp') }}" alt="Championship Image"
+                            <img src="{{ $championship->getFirstMediaUrl() ?: asset('images/copa_pro_banner.webp') }}"
+                                alt="Championship Image"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                         </div>
@@ -60,7 +61,7 @@
                                         <i data-lucide="file-text" class="h-5 w-5 text-gray-500 mr-3"></i>
                                         <div>
                                             <p class="text-xs font-medium text-gray-500">Regulamento</p>
-                                            <a href="{{ $championship->regulation_path }}" target="_blank"
+                                            <a href="{{ $championship->regulation_url }}" target="_blank"
                                                 class="text-sm font-medium text-teal-600 hover:text-teal-800 hover:underline transition-colors">
                                                 Ver Regulamento
                                             </a>
@@ -94,11 +95,7 @@
             </div>
         </div>
         <!-- Footer -->
-        <div class="pt-4 text-center">
-            <p class="text-sm text-gray-500">
-                © {{ now()->year }} Championship Organization. All rights reserved.
-            </p>
-        </div>
+        <x-layouts.footer />
     </div>
 </div>
 
