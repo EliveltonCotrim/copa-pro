@@ -7,6 +7,7 @@ namespace App\Services\PaymentGateway\Connectors;
 use App\Services\PaymentGateway\Connectors\Asaas\Concerns\{AsaasConfig, HandleHttpError};
 use App\Services\PaymentGateway\Contracts\AdapterInterface;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Log;
 
 class AsaasConnector implements AdapterInterface
 {
@@ -30,6 +31,10 @@ class AsaasConnector implements AdapterInterface
     {
 
         $request = $this->http->post($url, $params);
+
+        Log::info('Asaas request', [
+            'request' => $request->json()
+        ]);
 
         try {
             return $request

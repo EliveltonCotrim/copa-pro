@@ -4,6 +4,7 @@ namespace App\Services\PaymentGateway\Connectors\Asaas\Concerns;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait AsaasConfig
 {
@@ -11,9 +12,16 @@ trait AsaasConfig
         protected ?PendingRequest $http = null,
     ) {
         $enviroment = app()->isLocal() ? 'sandbox' : 'production';
-        $token      = config("asaas.{$enviroment}.token");
-        $baseUrl    = config("asaas.{$enviroment}.url");
+        $token = config("asaas.{$enviroment}.token");
+        $baseUrl = config("asaas.{$enviroment}.url");
 
         $this->http = Http::withHeader('access_token', $token)->baseUrl($baseUrl);
+
+        Log::info('Asaas config set', [
+            'http' => $this->http,
+            'baseUrl' => $baseUrl,
+            'token' => $token,
+            'enviroment' => $enviroment
+        ]);
     }
 }
