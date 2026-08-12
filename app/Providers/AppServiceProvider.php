@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
 
         if (app()->environment('production')) {
             URL::forceScheme('https');
+            request()->server->set('HTTPS', 'on');
         }
 
         Blade::directive('datetime', function ($expression) {
