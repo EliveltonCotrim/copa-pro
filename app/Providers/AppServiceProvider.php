@@ -27,8 +27,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
 
-        if (app()->environment('production') || app()->environment('local')) {
+        if (app()->environment('production')) {
             URL::forceScheme('https');
+            request()->server->set('HTTPS', 'on');
         }
 
         Blade::directive('datetime', function ($expression) {
