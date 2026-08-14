@@ -32,10 +32,6 @@ class AsaasConnector implements AdapterInterface
 
         $request = $this->http->post($url, $params);
 
-        Log::info('Asaas request', [
-            'request' => $request->json()
-        ]);
-
         try {
             return $request
                 ->throw()

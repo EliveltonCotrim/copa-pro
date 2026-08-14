@@ -71,6 +71,9 @@ class CancelUnpaidRegistrationJob implements ShouldQueue
             foreach ($pendingPayments as $payment) {
                 try {
                     $this->gateway->payment()->delete($payment->transaction_id);
+                    $registration->update(['status' => RegistrationPlayerStatusEnum::REJECTED]);
+                    $payment->delete();
+
                 } catch (Exception $e) {
                     // Pode já ter sido deletado em uma tentativa anterior (retry),
                     // ou não existir mais no gateway. Loga e segue sem travar o job.

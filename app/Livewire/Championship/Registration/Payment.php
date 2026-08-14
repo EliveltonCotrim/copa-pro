@@ -29,23 +29,25 @@ class Payment extends Component
 
     public ?Player $player = null;
 
-    protected Gateway $gateway;
+    protected ?Gateway $gateway = null;
 
     public \App\Models\Payment $playerCharge;
 
     public RegistrationPlayer $registrationPlayer;
 
-    // registrationForm
-
-    public function boot()
-    {
-        $adapter = app(AsaasConnector::class);
-        $this->gateway = new Gateway($adapter);
-    }
-
     public function mount($registrationForm)
     {
         $this->form->setArrayForm($registrationForm);
+    }
+
+    protected function gateway(): Gateway
+    {
+        if (!$this->gateway) {
+            $adapter = app(AsaasConnector::class);
+            $this->gateway = new Gateway($adapter);
+        }
+
+        return $this->gateway;
     }
 
     public function createPayment()
@@ -93,9 +95,12 @@ class Payment extends Component
 
             if (!empty($this->form->customer_id)) {
 
-                $asaasCustomer = $this->gateway->customer()->show($this->form->customer_id);
+                $asaasCustomer = $this->gateway()->customer()->show($this->form->customer_id);
 
-                $this->hasError($asaasCustomer);
+                if ($redirect = $this->hasError($asaasCustomer)) {
+                    DB::rollBack();
+                    return $redirect;
+                }
 
                 if ($asaasCustomer['deleted']) {
                     $asaasCustomer = $this->form->createCustomerAsaas();
@@ -133,12 +138,14 @@ class Payment extends Component
                 'dueDate' => now()->format('Y-m-d'),
             ];
 
-            $payment = $this->gateway->payment()->create($paymentData);
+            $payment = $this->gateway()->payment()->create($paymentData);
 
-            $this->hasError($payment);
+            if ($redirect = $this->hasError($payment)) {
+                DB::rollBack();
+                return $redirect;
+            }
 
-            Log::info('Payment created: ', $payment);
-            $paymentQrcode = $this->gateway->payment()->getPixQrCode($payment['id']);
+            $paymentQrcode = $this->gateway()->payment()->getPixQrCode($payment['id']);
 
             $this->playerCharge = $this->registrationPlayer->payments()->create([
                 'transaction_id' => $payment['id'],
@@ -155,11 +162,11 @@ class Payment extends Component
 
             $this->isCpfFormVisible = false;
 
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15));
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15))->afterCommit();
 
             DB::commit();
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
 
             Log::error('Error creating payment: ', [
@@ -168,7 +175,7 @@ class Payment extends Component
             ]);
 
             if (isset($payment['id'])) {
-                $this->gateway->payment()->delete($payment['id']);
+                $this->gateway()->payment()->delete($payment['id']);
             }
 
             $this->toast()
@@ -183,37 +190,59 @@ class Payment extends Component
     public function checkPayment()
     {
         $this->playerCharge->refresh();
-        $this->registrationPlayer->refresh();
+        $notify = false;
 
-        if (!empty($this->registrationPlayer->deleted_at)) {
-            $this->toast()->info('O QR Code da sua inscrição venceu. Tente gerar uma nova inscrição para garantir sua participação no campeonato.')
-                ->timeout(10)
-                ->flash()
-                ->send();
+        $redirect = DB::transaction(function () use (&$notify) {
 
-            return $this->redirectRoute('championship.register', ['championship' => $this->championship->slug]);
-        }
+            $this->registrationPlayer = RegistrationPlayer::withTrashed()
+                ->where('id', $this->registrationPlayer->id)
+                ->lockForUpdate()
+                ->first();
 
+            if (!empty($this->registrationPlayer->deleted_at)) {
+                $this->toast()->info('O QR Code da sua inscrição venceu. Tente gerar uma nova inscrição para garantir sua participação no campeonato.')
+                    ->timeout(10)
+                    ->flash()
+                    ->send();
 
-        if ($this->playerCharge->status === PaymentStatusEnum::RECEIVED) {
+                return $this->redirectRoute('championship.register', ['championship' => $this->championship->slug]);
+            }
 
-            $this->playerCharge->registrationPlayer->status = RegistrationPlayerStatusEnum::APPROVED;
-            $this->playerCharge->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
-            $this->playerCharge->registrationPlayer->save();
+            if ($this->playerCharge->status === PaymentStatusEnum::RECEIVED) {
 
+                $this->registrationPlayer->status = RegistrationPlayerStatusEnum::APPROVED;
+                $this->registrationPlayer->payment_status = PaymentStatusEnum::RECEIVED;
+                $this->registrationPlayer->save();
+
+                $notify = true;
+
+                $this->toast()->success('Inscrição realizada com sucesso.')
+                    ->flash()
+                    ->send();
+
+                return $this->redirectRoute('championship.register-success', $this->championship);
+            }
+
+            return null;
+        });
+
+        if ($notify) {
             $this->registrationPlayer->player->user->notify(new SuccessfullyRegistered($this->championship));
-
-            $this->toast()->success('Inscrição realizada com sucesso.')
-                ->flash()
-                ->send();
-
-            return $this->redirectRoute('championship.register-success', $this->championship);
         }
+
+        return $redirect;
     }
 
     public function hasError(array $response): ?RedirectResponse
     {
         if (isset($response['error']) && $response['error'] === true) {
+
+            Log::error('Erro na resposta do gateway de pagamento - creating payment: ', [
+                'response' => $response,
+                'registration_player_id' => $this->registrationPlayer?->id ?? null,
+                'championship_id' => $this->championship->id,
+            ]);
+
             $this->toast()
                 ->error('Houve um erro inesperado. Por favor, tente novamente em alguns instantes.')
                 ->flash()
