@@ -171,16 +171,17 @@
 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333;">
 
     <!-- Logo -->
-    <div class="header">
+    <div class="header" style="text-align: center; margin: 35px 0 20px;">
         <img src="{{ asset('images/logo-futpro-primary.png') }}" alt="{{ config('app.name') }}" class="logo">
     </div>
 
     <div class="container" style="width: 100%; max-width: 600px; margin: 30px auto; padding: 20px;">
 
-        <div class="card"  style="background-color: #fff; padding: 35px 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+        <div class="card"
+            style="background-color: #fff; padding: 35px 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
 
             <!-- Mensagem de sucesso -->
-            <div class="success">
+            <div class="success" style="text-align: center; margin-bottom: 25px;">
                 <div class="success-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                         viewBox="0 0 24 24" fill="none" stroke="#0bf427" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" class="lucide lucide-circle-check-big-icon lucide-circle-check-big">
@@ -201,7 +202,8 @@
             </div>
 
             <!-- Informações do campeonato -->
-            <div class="championship" style="background-color: #f7f7f7; border-radius: 8px; padding: 20px; margin: 25px 0;">
+            <div class="championship"
+                style="background-color: #f7f7f7; border-radius: 8px; padding: 20px; margin: 25px 0;">
 
                 <div class="championship-name">
                     {{ $championship->name }}
@@ -216,7 +218,7 @@
             </div>
 
             <!-- Links -->
-            <div class="buttons">
+            <div class="buttons" style="text-align: center; margin: 30px 0 10px;">
 
                 @if (!empty($regulationUrl))
                     <a href="{{ $regulationUrl }}" class="button button-primary"
@@ -239,7 +241,7 @@
             </div>
 
             <!-- Informações adicionais -->
-            <div class="info">
+            <div class="info" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
 
                 <p>
                     <strong>Importante:</strong>
