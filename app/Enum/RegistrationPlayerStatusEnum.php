@@ -9,6 +9,7 @@ enum RegistrationPlayerStatusEnum: int implements HasColor, HasIcon, HasLabel
     case REGISTERED = 1;
     case PENDING    = 2;
     case APPROVED   = 3;
+    case REJECTED   = 4;
 
     public function getLabel(): string
     {
@@ -16,6 +17,7 @@ enum RegistrationPlayerStatusEnum: int implements HasColor, HasIcon, HasLabel
             self::REGISTERED => 'INSCRITO',
             self::PENDING    => 'PENDENTE',
             self::APPROVED   => 'APROVADO',
+            self::REJECTED   => 'REJEITADO',
             default          => 'Status não encontrado',
         };
     }
@@ -26,6 +28,7 @@ enum RegistrationPlayerStatusEnum: int implements HasColor, HasIcon, HasLabel
             self::REGISTERED => 'primary',
             self::PENDING    => 'danger',
             self::APPROVED   => 'success',
+            self::REJECTED   => 'danger',
         };
     }
 
@@ -35,6 +38,7 @@ enum RegistrationPlayerStatusEnum: int implements HasColor, HasIcon, HasLabel
             self::REGISTERED => 'heroicon-m-check',
             self::PENDING    => 'heroicon-m-clock',
             self::APPROVED   => 'heroicon-m-check',
+            self::REJECTED   => 'heroicon-m-x-mark',
         };
     }
 

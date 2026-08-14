@@ -74,6 +74,7 @@ class DadosGeraisForm extends Component
         $existingRegistrationPlayer = $this->user->userable->registrationsChampionships()
             ->where('championship_id', $this->championship->id)
             ->where('status', RegistrationPlayerStatusEnum::APPROVED)
+            ->orWhere('status', RegistrationPlayerStatusEnum::REGISTERED)
             ->first();
 
         if ($existingRegistrationPlayer) {

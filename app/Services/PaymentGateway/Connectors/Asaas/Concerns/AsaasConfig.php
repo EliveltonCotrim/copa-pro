@@ -16,12 +16,5 @@ trait AsaasConfig
         $baseUrl = config("asaas.{$enviroment}.url");
 
         $this->http = Http::withHeader('access_token', $token)->baseUrl($baseUrl);
-
-        Log::info('Asaas config set', [
-            'http' => $this->http,
-            'baseUrl' => $baseUrl,
-            'token' => $token,
-            'enviroment' => $enviroment
-        ]);
     }
 }

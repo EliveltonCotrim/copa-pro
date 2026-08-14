@@ -219,28 +219,20 @@
             <div class="buttons">
 
                 @if (!empty($regulationUrl))
-                    <a href="{{ $regulationUrl }}" class="button button-primary" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                            fill="none" stroke="#ffff" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-cloud-download-icon lucide-cloud-download">
-                            <path d="M12 13v8l-4-4" />
-                            <path d="m12 21 4-4" />
-                            <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />
-                        </svg>
+                    <a href="{{ $regulationUrl }}" class="button button-primary"
+                        style="display: inline-block; background-color: #222; color: #fff !important; text-decoration: none; padding: 12px 21px; border-radius: 6px; font-size: 13px; font-weight: bold; margin: 5px;"
+                        target="_blank">
+                        <span style="margin-right: 6px;">⬇️</span>
                         <span>Baixar regulamento</span>
                     </a>
                 @endif
 
                 @if (!empty($groupUrl))
-                    <a href="{{ $groupUrl }}" class="button button-success" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
-                            fill="none" stroke="#ffff" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-messages-square-icon lucide-messages-square">
-                            <path
-                                d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                            <path
-                                d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1" />
-                        </svg> <span>Entrar no grupo</span>
+                    <a href="{{ $groupUrl }}" class="button button-success"
+                        style="display: inline-block; background-color: #28a745; color: #fff !important; text-decoration: none; padding: 12px 21px; border-radius: 6px; font-size: 13px; font-weight: bold; margin: 5px;"
+                        target="_blank">
+                        <span style="margin-right: 6px;">💬</span>
+                        <span>Entrar no grupo</span>
                     </a>
                 @endif
 

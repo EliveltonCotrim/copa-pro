@@ -42,14 +42,13 @@ class RegistrationPlayersRelationManager extends RelationManager
                     ->required()
                     ->label('Status'),
                 Select::make('player_id')
-                    ->options(Player::with('user')->get()->pluck('user.name', 'id'))
+                    ->options(Player::whereHas('user')->get()->pluck('user.name', 'id'))
                     ->unique('registration_players', 'player_id', ignoreRecord: true, modifyRuleUsing: function ($rule, $get, $livewire) {
                         return $rule->where('championship_id', $livewire->ownerRecord->id)->where('player_id', $get('player_id'))->withoutTrashed();
                     })
                     ->searchable()
                     ->required()
                     ->label('Jogador'),
-
             ]);
     }
 
