@@ -168,16 +168,16 @@
     </style>
 </head>
 
-<body>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333;">
 
     <!-- Logo -->
     <div class="header">
         <img src="{{ asset('images/logo-futpro-primary.png') }}" alt="{{ config('app.name') }}" class="logo">
     </div>
 
-    <div class="container">
+    <div class="container" style="width: 100%; max-width: 600px; margin: 30px auto; padding: 20px;">
 
-        <div class="card">
+        <div class="card"  style="background-color: #fff; padding: 35px 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
 
             <!-- Mensagem de sucesso -->
             <div class="success">
@@ -201,7 +201,7 @@
             </div>
 
             <!-- Informações do campeonato -->
-            <div class="championship">
+            <div class="championship" style="background-color: #f7f7f7; border-radius: 8px; padding: 20px; margin: 25px 0;">
 
                 <div class="championship-name">
                     {{ $championship->name }}
