@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Championship\Registration;
 
-use App\Enum\{PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, RegistrationPlayerStatusEnum};
+use App\Enum\{PaymentStatusEnum, PlayerExperienceLevelEnum, PlayerPlatformGameEnum, PlayerSexEnum, RegistrationPlayerStatusEnum};
 use App\Livewire\Championship\RegistrationForm;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, User};
@@ -35,6 +35,7 @@ class DadosGeraisForm extends Component
 
     public Championship $championship;
     public int $timeThrottle = 30;
+    public ?\App\Models\Payment $paymentPending = null;
 
     public function mount(Championship $championship)
     {
@@ -44,14 +45,21 @@ class DadosGeraisForm extends Component
         $this->experienceLevels = PlayerExperienceLevelEnum::optionsArrayWithLabelAndValues();
     }
 
-    public function nextStep(int $step)
+    public function nextStep(int $step, ?string $action = null)
     {
-        $this->registrationForm->validate();
+        if ($action !== 'show-pix-again') {
+            $this->registrationForm->validate();
+        }
 
-        $params = ['step' => $step, 'registrationForm' => $this->registrationForm->all()];
+        $params = ['step' => $step, 'registrationForm' => $this->registrationForm->all(), 'action' => $action];
 
         if ($this->player) {
             $params['player_id'] = $this->player->id;
+        }
+
+        if ($action === 'show-pix-again') {
+            $params['championship_id'] = $this->championship->id;
+            $params['payment_id'] = $this->paymentPending?->id ?? null;
         }
 
         $this->dispatch('nextStep', ...$params)->to(RegistrationForm::class);
@@ -72,16 +80,34 @@ class DadosGeraisForm extends Component
             return;
         }
 
-        $existingRegistrationPlayer = $this->user->userable->registrationsChampionships()
+        $registrationPlayer = $this->user->userable->registrationsChampionships()
+            ->with('payments')
             ->where('championship_id', $this->championship->id)
             ->where('status', RegistrationPlayerStatusEnum::APPROVED)
             ->orWhere('status', RegistrationPlayerStatusEnum::REGISTERED)
             ->first();
 
-        if ($existingRegistrationPlayer) {
+        if ($registrationPlayer && $registrationPlayer->status === RegistrationPlayerStatusEnum::APPROVED) {
             $this->toast()->warning('Você já está inscrito neste campeonato.')->send();
-
             return;
+        }
+
+        $this->paymentPending = $registrationPlayer?->payments->where('status', PaymentStatusEnum::PENDING)
+            ->sortByDesc('created_at')
+            ->first();
+
+            // verifica se é <= a 10 minutos
+        if ($this->paymentPending && ($this->paymentPending->created_at->lte(now()->subMinutes(1)) && $this->paymentPending->created_at->gte(now()->subMinutes(10)))) {
+            $this->toast()->warning('Identificamos um pagamento pendente para sua inscrição neste campeonato.')->timeout(10)->send();
+            $this->showSearchPlayerForm = false;
+            $this->showVerificationForm = false;
+            $this->nextStep(2, 'show-pix-again');
+            return;
+        }
+
+        // se nao tiver pagamento criado, apagar a inscrição
+        if (!$this->paymentPending && $registrationPlayer) {
+            $this->registrationPlayer->delete();
         }
 
         $this->sendVerificationCode();
