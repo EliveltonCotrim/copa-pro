@@ -35,9 +35,19 @@ class Payment extends Component
 
     public RegistrationPlayer $registrationPlayer;
 
-    public function mount($registrationForm)
+    public function mount($registrationForm, ?int $championshipId = null, ?int $paymentId = null)
     {
-        $this->form->setArrayForm($registrationForm);
+        if (!blank($registrationForm)) {
+            $this->form->setArrayForm($registrationForm);
+        } else {
+            $this->isCpfFormVisible = false;
+        }
+
+        if ($paymentId) {
+            $this->championship = Championship::findOrFail($championshipId);
+            $this->playerCharge = \App\Models\Payment::findOrFail($paymentId);
+            $this->registrationPlayer = $this->playerCharge->registrationPlayer;
+        }
     }
 
     protected function gateway(): Gateway
@@ -59,7 +69,6 @@ class Payment extends Component
         DB::beginTransaction();
 
         try {
-            // verificar esse lockfoUpdate
             // $this->championship->lockForUpdate();
             $this->championship = Championship::where('id', $this->championship->id)
                 ->lockForUpdate()
@@ -162,7 +171,7 @@ class Payment extends Component
 
             $this->isCpfFormVisible = false;
 
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(15))->afterCommit();
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(20))->afterCommit();
 
             DB::commit();
 

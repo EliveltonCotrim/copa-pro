@@ -79,14 +79,14 @@
                     <div class="my-2">
                         <x-step wire:model.live="step" panels>
                             <x-step.items step="1" title="Dados" description="Informe os dados abaixo">
-                                @if ($showFormGeral)
+                                @if ($showFormGeral && $action !== 'show-pix-again')
                                     <livewire:championship.registration.dados-gerais-form :$championship>
                                 @endif
                             </x-step.items>
                             <x-step.items step="2" title="Pagamento" description="Escolha a forma de pagamento">
                                 @if ($step === 2)
                                     <livewire:championship.registration.payment :$championship :$registrationForm
-                                        :$player>
+                                        :$player :$paymentId :$championshipId>
                                 @endif
                             </x-step.items>
                         </x-step>
