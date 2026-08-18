@@ -24,11 +24,6 @@
             padding: 20px;
         }
 
-        .header {
-            text-align: center;
-            margin: 35px 0 20px;
-        }
-
         .logo {
             width: 150px;
         }
@@ -171,35 +166,61 @@
 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333;">
 
     <!-- Logo -->
-    <div class="header" style="text-align: center; margin: 35px 0 20px;">
-        <img src="{{ asset('images/logo-futpro-primary.png') }}" alt="{{ config('app.name') }}" class="logo">
-    </div>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td align="center" style="padding: 45px 0 15px;">
+                <img style="width: 150px; display: block;" src="{{ asset('images/logo-futpro-primary.png') }}"
+                    alt="{{ config('app.name') }}">
+            </td>
+        </tr>
+    </table>
 
-    <div class="container" style="width: 100%; max-width: 600px; margin: 30px auto; padding: 20px;">
+    <div class="container" style="width: 100%; max-width: 600px; margin: 10px auto 30px; padding: 20px;">
 
         <div class="card"
             style="background-color: #fff; padding: 35px 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
 
             <!-- Mensagem de sucesso -->
-            <div class="success" style="text-align: center; margin-bottom: 25px;">
-                <div class="success-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                        viewBox="0 0 24 24" fill="none" stroke="#0bf427" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-circle-check-big-icon lucide-circle-check-big">
-                        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
-                        <path d="m9 11 3 3L22 4" />
-                    </svg></div>
-
-                <h1>Inscrição realizada com sucesso!</h1>
-
-                <p>
-                    Olá, <strong>{{ $name }}</strong>!
-                </p>
-
-                <p>
-                    Sua inscrição foi realizada com sucesso.
-                    Confira abaixo as informações do campeonato.
-                </p>
-            </div>
+            <table width="100%">
+                <thead>
+                    <tr>
+                        <th align="center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#0bf427" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-circle-check-big-icon lucide-circle-check-big">
+                                <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                                <path d="m9 11 3 3L22 4" />
+                            </svg>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th align="center">
+                            <h1 style="font-size: 22px; color: #222; margin: 0 0 10px;">Inscrição realizada com sucesso!
+                            </h1>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="center">
+                            <p style="font-size: 14px; margin: 0 0 15px;">Olá, <strong>{{ $name }}</strong>!
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <p style="font-size: 14px; margin: 0 0 0;">Sua inscrição foi realizada com sucesso.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <p style="font-size: 14px; margin: 0 0 15px;">Confira abaixo as informações do campeonato.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
             <!-- Informações do campeonato -->
             <div class="championship"
@@ -266,14 +287,10 @@
                 Saudações,<br>
                 <strong>{{ config('app.name') }}</strong>
             </p>
-
         </div>
-
     </div>
 
     <!-- Rodapé -->
     <X-layouts.footer />
-
 </body>
-
 </html>

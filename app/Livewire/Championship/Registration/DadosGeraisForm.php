@@ -7,6 +7,7 @@ use App\Livewire\Championship\RegistrationForm;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, User};
 use App\Notifications\RegistrationVerificationCode;
+use App\Notifications\SuccessfullyRegistered;
 use Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
@@ -64,6 +65,10 @@ class DadosGeraisForm extends Component
 
         $this->user = $this->findUserByEmail();
         $this->player = $this->user?->userable;
+
+        $this->user->notify(new SuccessfullyRegistered($this->championship));
+
+        dd('passou');
 
         if (!$this->player) {
             $this->showVerificationForm = false;
