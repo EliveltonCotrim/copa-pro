@@ -49,7 +49,7 @@
             <td align="center">
                 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
                     style="max-width: 600px; margin: 0 auto;">
-                    {{-- log --}}
+                    {{-- logo --}}
                     <tr>
                         <td align="center" style="padding: 45px 0 15px;">
                             <img style="width: 150px; display: block;"
