@@ -68,7 +68,7 @@ class DadosGeraisForm extends Component
 
         $this->user->notify(new SuccessfullyRegistered($this->championship));
 
-        dd('passou');
+        // dd('passou');
 
         if (!$this->player) {
             $this->showVerificationForm = false;
