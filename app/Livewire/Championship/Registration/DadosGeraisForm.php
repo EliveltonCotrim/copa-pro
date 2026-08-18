@@ -8,6 +8,8 @@ use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, User};
 use App\Notifications\RegistrationVerificationCode;
 use App\Notifications\SuccessfullyRegistered;
+use App\Services\PaymentGateway\Connectors\AsaasConnector;
+use App\Services\PaymentGateway\Gateway;
 use Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
@@ -36,6 +38,7 @@ class DadosGeraisForm extends Component
     public Championship $championship;
     public int $timeThrottle = 30;
     public ?\App\Models\Payment $paymentPending = null;
+    protected Gateway $gateway;
 
     public function mount(Championship $championship)
     {
@@ -83,11 +86,13 @@ class DadosGeraisForm extends Component
         $registrationPlayer = $this->user->userable->registrationsChampionships()
             ->with('payments')
             ->where('championship_id', $this->championship->id)
-            ->where('status', RegistrationPlayerStatusEnum::APPROVED)
-            ->orWhere('status', RegistrationPlayerStatusEnum::REGISTERED)
+            ->whereIn('status', [
+                RegistrationPlayerStatusEnum::APPROVED,
+                RegistrationPlayerStatusEnum::REGISTERED,
+            ])
             ->first();
 
-        if ($registrationPlayer && $registrationPlayer->status === RegistrationPlayerStatusEnum::APPROVED) {
+        if ($registrationPlayer?->status === RegistrationPlayerStatusEnum::APPROVED) {
             $this->toast()->warning('Você já está inscrito neste campeonato.')->send();
             return;
         }
@@ -96,18 +101,48 @@ class DadosGeraisForm extends Component
             ->sortByDesc('created_at')
             ->first();
 
-            // verifica se é <= a 10 minutos
-        if ($this->paymentPending && ($this->paymentPending->created_at->lte(now()->subMinutes(1)) && $this->paymentPending->created_at->gte(now()->subMinutes(10)))) {
-            $this->toast()->warning('Identificamos um pagamento pendente para sua inscrição neste campeonato.')->timeout(10)->send();
-            $this->showSearchPlayerForm = false;
-            $this->showVerificationForm = false;
-            $this->nextStep(2, 'show-pix-again');
-            return;
-        }
-
         // se nao tiver pagamento criado, apagar a inscrição
         if (!$this->paymentPending && $registrationPlayer) {
-            $this->registrationPlayer->delete();
+            $registrationPlayer->delete();
+        }
+
+        $createdAt = $this->paymentPending?->created_at;
+
+        // verifica se tem um pagamento pendente
+        if ($createdAt) {
+            if ($createdAt->lte(now()->subMinutes(1)) && $createdAt->gte(now()->subMinutes(10))) {
+                // Entre 1 e 10 minutos
+                $this->toast()->warning('Identificamos um pagamento pendente para sua inscrição neste campeonato.')->timeout(10)->send();
+                $this->showSearchPlayerForm = false;
+                $this->showVerificationForm = false;
+                $this->nextStep(2, 'show-pix-again');
+                return;
+            }
+
+            if ($createdAt->lte(now()->subMinutes(10))) {
+                // 10 minutos ou mais: expirou
+
+                $adapter = app(AsaasConnector::class);
+                $this->gateway = new Gateway($adapter);
+
+                $response = $this->gateway->payment()->delete($this->paymentPending->transaction_id);
+
+                if (!empty($response['deleted']) && $response['deleted']) {
+                    $this->paymentPending->delete();
+                    $registrationPlayer->delete();
+                }
+                // Continua o fluxo para criar uma nova inscrição/pagamento.
+            }
+
+            if ($createdAt->gte(now()->subMinutes(1))) {
+                // Menos de 1 minuto
+                $this->toast()
+                    ->warning('Seu pagamento foi gerado recentemente. Aguarde 1 minuto antes de tentar novamente.')
+                    ->timeout(10)
+                    ->send();
+
+                return;
+            }
         }
 
         $this->sendVerificationCode();
