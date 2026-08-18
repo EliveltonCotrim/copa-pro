@@ -166,7 +166,7 @@
 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333;">
 
     <!-- Logo -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0 auto;">
         <tr>
             <td align="center" style="padding: 45px 0 15px;">
                 <img style="width: 150px; display: block;" src="{{ asset('images/logo-futpro-primary.png') }}"
@@ -181,7 +181,7 @@
             style="background-color: #fff; padding: 35px 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
 
             <!-- Mensagem de sucesso -->
-            <table width="100%">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0 auto;">
                 <thead>
                     <tr>
                         <th align="center">
@@ -291,6 +291,11 @@
     </div>
 
     <!-- Rodapé -->
-    <X-layouts.footer />
+    <div style="padding: 10px 0; text-align: center;">
+        <p style="font-size: 14px; line-height: 20px; color: #6b7280;">
+            © {{ now()->year }} Championship Organization. All rights reserved.
+        </p>
+    </div>
 </body>
+
 </html>
