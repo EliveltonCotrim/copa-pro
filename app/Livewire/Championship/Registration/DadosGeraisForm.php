@@ -66,10 +66,6 @@ class DadosGeraisForm extends Component
         $this->user = $this->findUserByEmail();
         $this->player = $this->user?->userable;
 
-        $this->user->notify(new SuccessfullyRegistered($this->championship));
-
-        // dd('passou');
-
         if (!$this->player) {
             $this->showVerificationForm = false;
             $this->showSearchPlayerForm = false;
