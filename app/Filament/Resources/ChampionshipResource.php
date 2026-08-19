@@ -260,7 +260,8 @@ class ChampionshipResource extends Resource
                     ->toggleable()
                     ->sortable()
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return null;
+                        if (!$state)
+                            return null;
                         $date = Carbon::parse($state);
                         return $date->translatedFormat(
                             $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
@@ -272,7 +273,8 @@ class ChampionshipResource extends Resource
                     ->toggleable()
                     ->sortable()
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return null;
+                        if (!$state)
+                            return null;
                         $date = Carbon::parse($state);
                         return $date->translatedFormat(
                             $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
@@ -359,7 +361,8 @@ class ChampionshipResource extends Resource
                                                         ->label('Data de início')
                                                         ->color(color: 'primary')
                                                         ->formatStateUsing(function ($state) {
-                                                            if (!$state) return null;
+                                                            if (!$state)
+                                                                return null;
                                                             $date = Carbon::parse($state);
                                                             return $date->translatedFormat(
                                                                 $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
@@ -369,7 +372,8 @@ class ChampionshipResource extends Resource
                                                         ->label('Data de término')
                                                         ->color(color: 'danger')
                                                         ->formatStateUsing(function ($state) {
-                                                            if (!$state) return null;
+                                                            if (!$state)
+                                                                return null;
                                                             $date = Carbon::parse($state);
                                                             return $date->translatedFormat(
                                                                 $date->minute === 0 ? 'd/m/Y \à\s H\h' : 'd/m/Y \à\s H\hi'
@@ -391,6 +395,8 @@ class ChampionshipResource extends Resource
                                                 \Filament\Infolists\Components\Group::make(['default' => 1, 'md' => 1, 'lg' => 1])->schema([
                                                     TextEntry::make('wpp_group_link')
                                                         ->copyable()
+                                                        ->copyMessage('Link copiado com sucesso!')
+                                                        ->badge()
                                                         ->label('Link do grupo de WhatsApp'),
                                                     TextEntry::make('status')
                                                         ->badge()
