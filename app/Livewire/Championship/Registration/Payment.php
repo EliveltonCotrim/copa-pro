@@ -94,7 +94,7 @@ class Payment extends Component
                 DB::rollBack();
 
                 $this->toast()
-                    ->info('Todas as vagas estão temporariamente ocupadas, incluindo inscrições aguardando pagamento. Tente novamente em alguns minutos — uma vaga pode abrir caso algum pagamento pendente expire.')
+                    ->info('Todas as vagas estão temporariamente ocupadas, incluindo inscrições aguardando pagamento. Tente novamente em alguns minutos — uma vaga pode abrir caso alguma inscrição expire.')
                     ->timeout(20)
                     ->flash()
                     ->send();
