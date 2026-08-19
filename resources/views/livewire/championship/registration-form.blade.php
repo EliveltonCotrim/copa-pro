@@ -33,7 +33,7 @@
                         </div>
 
                         <!-- Championship Details - Improved horizontal layout -->
-                        <div class="bg-white/70 backdrop-blur-sm rounded-xl p-6">
+                        <div class="bg-white/70 backdrop-blur-sm rounded-xl p-2 space-y-6">
                             <div
                                 class="flex flex-col justify-center sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
                                 <!-- Championship Date -->
@@ -68,6 +68,28 @@
                                         </div>
                                     </div>
                                 @endif
+                            </div>
+                            <div
+                                class="flex flex-col justify-center sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+                                <!-- Plataform championship -->
+                                <div class="flex items-center py-3 sm:py-0 sm:px-4 sm:first:pl-0 sm:last:pr-0">
+                                    <i data-lucide="monitor-smartphone" class="h-5 w-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500">Plataforma</p>
+                                        <p class="text-sm font-medium text-gray-800">
+                                            {{ $championship->game_platform->getLabel() }}</p>
+                                    </div>
+                                </div>
+                                <!-- Game -->
+                                <div class="flex items-center py-3 sm:py-0 sm:px-4">
+                                    <i data-lucide="gamepad-2" class="h-5 w-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500">Jogo</p>
+                                        <p class="text-sm font-medium text-gray-800">
+                                            {{ $championship->game->getLabel() }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

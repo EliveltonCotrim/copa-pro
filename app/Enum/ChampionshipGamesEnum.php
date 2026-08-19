@@ -13,7 +13,7 @@ enum ChampionshipGamesEnum: int implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::EFOOTBALL => 'EFOOTBALL',
+            self::EFOOTBALL => 'eFootball',
             self::FIFA      => 'FIFA',
             self::UFL       => 'UFL',
             default         => 'Game não encontrado',
