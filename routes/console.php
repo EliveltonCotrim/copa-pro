@@ -4,18 +4,23 @@ use App\Services\AsaasPhp\Customer\CustomerCreate;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('play', function () {
+// Artisan::command('play', function () {
 
-    $adapter = new AsaasConnector();
+//     $adapter = new AsaasConnector();
 
-    $gateway = new Gateway($adapter);
+//     $gateway = new Gateway($adapter);
 
-    ds($gateway->customer()->show('cus_000006504209'));
-    // $clients = (new CustomerCreate(data: [
-    //     'name' => 'Elivelton',
-    //     'cpfCnpj' => '05493282542',
-    // ])->handle());
+//     ds($gateway->customer()->show('cus_000006504209'));
+//     // $clients = (new CustomerCreate(data: [
+//     //     'name' => 'Elivelton',
+//     //     'cpfCnpj' => '05493282542',
+//     // ])->handle());
 
-    // dd($clients);
-})->purpose('Display an inspiring quote')->hourly();
+//     // dd($clients);
+// })->purpose('Display an inspiring quote')->hourly();
+
+Schedule::command('app:notify-upcoming-championships')
+    ->timezone('America/Sao_Paulo')
+    ->everyMinute();
