@@ -9,6 +9,7 @@ use App\Notifications\ChampionshipStartingTomorrow;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class NotifyUpcomingChampionships extends Command
@@ -21,6 +22,8 @@ class NotifyUpcomingChampionships extends Command
      */
     public function handle()
     {
+        Log::info('Comando executado com sucesso');
+        
         $tomorrow = Carbon::tomorrow()->toDateString();
 
         $championships = Championship::whereHas('registrationPlayers', function (Builder $query) {
@@ -43,7 +46,7 @@ class NotifyUpcomingChampionships extends Command
             if ($usersToNotify->isNotEmpty()) {
                 // $registrationPlayer->notified_about_start_championship_at = Carbon::now();
                 // $registrationPlayer->save();
-                
+
                 Notification::send($usersToNotify, new ChampionshipStartingTomorrow($championship));
             }
 
