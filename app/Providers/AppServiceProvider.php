@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Permission::class, PermissionPolicy::class);
 
         if (app()->environment('production')) {
+            URL::forceRootUrl(config('app.url'));
             URL::forceScheme('https');
             request()->server->set('HTTPS', 'on');
         }
