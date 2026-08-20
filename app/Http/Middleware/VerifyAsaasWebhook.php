@@ -29,20 +29,20 @@ class VerifyAsaasWebhook
             abort(401, 'Token de autenticação inválido.');
         }
 
-        $allowedIps = [
-            // Production
-            '52.67.12.206',
-            '18.230.8.159',
-            '54.94.136.112',
-            '54.94.183.101',
+        // $allowedIps = [
+        //     // Production
+        //     '52.67.12.206',
+        //     '18.230.8.159',
+        //     '54.94.136.112',
+        //     '54.94.183.101',
 
-            // SandBox
-            '54.233.45.238'
-        ];
+        //     // SandBox
+        //     '54.233.45.238'
+        // ];
 
-        if (!in_array($request->ip(), $allowedIps)) {
-            abort(403, 'IP não autorizado.');
-        }
+        // if (!in_array($request->ip(), $allowedIps)) {
+        //     abort(403, 'IP não autorizado.');
+        // }
 
         return $next($request);
     }
