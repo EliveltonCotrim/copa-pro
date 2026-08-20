@@ -69,22 +69,22 @@
                                             <tr>
                                                 <td align="start" style="padding-bottom: 4px;">
                                                     <ul style="list-style: none; padding: 0; margin: 0;">
-                                                        <li style="margin-bottom: 8px;"><strong>Início:</strong>
+                                                        <li style="margin: 0px 0px 8px 0px;"><strong>Início:</strong>
                                                             @datetime($championship->start_date)
                                                         </li>
-                                                        <li style="margin-bottom: 8px;"><strong>Jogo:</strong>
+                                                        <li style="margin: 0px 0px 8px 0px;"><strong>Jogo:</strong>
                                                             {{ $championship->game->getLabel() }}
                                                         </li>
-                                                        <li style="margin-bottom: 8px;"><strong>Plataforma:</strong>
+                                                        <li style="margin: 0px 0px 8px 0px;"><strong>Plataforma:</strong>
                                                             {{ $championship->game_platform->getLabel() }}</li>
-                                                        <li style="margin-bottom: 8px;"><strong>Formato:</strong>
+                                                        <li style="margin: 0px 0px 8px 0px;"><strong>Formato:</strong>
                                                             {{ $championship->championship_format->getLabel() }}</li>
                                                         @if (!empty($address))
-                                                            <li style="margin-bottom: 8px;"><strong>Endereço:</strong>
+                                                            <li style="margin: 0px 0px 8px 0px;"><strong>Endereço:</strong>
                                                                 {{ $address }}</li>
                                                         @endif
                                                         @if (!empty($regulationUrl))
-                                                            <li style="margin-bottom: 8px;">
+                                                            <li style="margin: 0px 0px 8px 0px;">
                                                                 <strong>Regulamento:</strong>
                                                                 <a href="{{ $regulationUrl }}" __target="_blank"
                                                                     style="color: #3b82f6; text-decoration: none; font-weight: bold;">
@@ -96,7 +96,7 @@
                                                     </ul>
                                                 </td>
                                             </tr>
-                                            
+
                                             @if (!empty($groupUrl))
                                                 <tr>
                                                     <td align="start">
