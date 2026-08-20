@@ -52,7 +52,7 @@ class RegistrationVerificationCode extends Notification implements ShouldQueue
     public function viaQueues(): array
     {
         return [
-            'mail' => 'send-verification-code',
+            'mail' => 'send-mail-verification-code',
         ];
     }
 
