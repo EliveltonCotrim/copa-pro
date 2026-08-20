@@ -78,7 +78,8 @@ class ChampionshipResource extends Resource
                             DateTimePicker::make('start_date')
                                 ->label('Data de início')
                                 ->live()
-                                ->minDate(fn($record) => $record ? $record->start_date : now()->format('Y-m-d'))
+                                // ->minDate(fn($record) => $record ? $record->start_date : now()->format('Y-m-d'))
+                                ->minDate(now()->format('Y-m-d'))
                                 ->beforeOrEqual('end_date')
                                 ->validationMessages([
                                     'min_date' => 'A data de início deve ser igual ou posterior à data atual.',
