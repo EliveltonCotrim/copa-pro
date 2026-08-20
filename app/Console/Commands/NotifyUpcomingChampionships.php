@@ -5,11 +5,11 @@ namespace App\Console\Commands;
 use App\Enum\ChampionshipStatusEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
 use App\Models\Championship;
+use App\Models\RegistrationPlayer;
 use App\Notifications\ChampionshipStartingTomorrow;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class NotifyUpcomingChampionships extends Command
@@ -22,8 +22,7 @@ class NotifyUpcomingChampionships extends Command
      */
     public function handle()
     {
-        Log::info('Comando executado com sucesso');
-        
+
         $tomorrow = Carbon::tomorrow()->toDateString();
 
         $championships = Championship::whereHas('registrationPlayers', function (Builder $query) {
@@ -44,10 +43,13 @@ class NotifyUpcomingChampionships extends Command
             $usersToNotify = $championship->registrationPlayers->pluck('player.user');
 
             if ($usersToNotify->isNotEmpty()) {
-                // $registrationPlayer->notified_about_start_championship_at = Carbon::now();
-                // $registrationPlayer->save();
 
                 Notification::send($usersToNotify, new ChampionshipStartingTomorrow($championship));
+
+                $idsToUpdate = $championship->registrationPlayers->pluck('id')->toArray();
+                RegistrationPlayer::whereIn('id', $idsToUpdate)->update([
+                    'notified_about_start_championship_at' => Carbon::now(),
+                ]);
             }
 
         }
