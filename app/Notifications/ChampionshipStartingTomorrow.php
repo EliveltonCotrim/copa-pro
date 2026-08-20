@@ -54,7 +54,7 @@ class ChampionshipStartingTomorrow extends Notification implements ShouldQueue
     public function viaQueues(): array
     {
         return [
-            'mail' => 'send-championship-starting',
+            'mail' => 'send-mail-championship-starting',
         ];
     }
 

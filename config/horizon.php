@@ -182,11 +182,11 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'redis',
-            'queue' => ['default', 'registration-cancel', 'send-verification-code', 'send-championship-starting'],
+            'queue' => ['default', 'registration-cancel', 'send-mail-verification-code', 'send-mail-championship-starting'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
-            'maxTime' => 0,
+            'maxTime' => 3600,
             'maxJobs' => 0,
             'memory' => 128,
             'tries' => 1,
