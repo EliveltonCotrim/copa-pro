@@ -4,21 +4,24 @@ namespace App\Services\PaymentGateway;
 
 use App\Services\PaymentGateway\Connectors\Asaas\{Customer, Payment};
 use App\Services\PaymentGateway\Contracts\AdapterInterface;
+use App\Services\PaymentGateway\Contracts\CustomerInterface;
+use App\Services\PaymentGateway\Contracts\GatewayProviderInterface;
+use App\Services\PaymentGateway\Contracts\PaymentInterface;
 
 class Gateway
 {
     public function __construct(
-        public AdapterInterface $adapter,
+        public GatewayProviderInterface $provider,
     ) {
     }
 
-    public function customer(): Customer
+    public function customer(): CustomerInterface
     {
-        return new Customer($this->adapter);
+        return $this->provider->customer();
     }
 
-    public function payment(): Payment
+    public function payment(): PaymentInterface
     {
-        return new Payment($this->adapter);
+        return $this->provider->payment();
     }
 }

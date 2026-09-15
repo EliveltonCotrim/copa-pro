@@ -2,13 +2,17 @@
 
 namespace App\Livewire\Championship\Registration;
 
-use App\Enum\{PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
+use App\Enum\{PaymentCheckoutProviderEnum, PaymentMethodEnum, PaymentStatusEnum, RegistrationPlayerStatusEnum};
+use App\Exceptions\PaymentGatewayException;
 use App\Jobs\CancelUnpaidRegistrationJob;
 use App\Livewire\Forms\RegistrationPlayerForm;
 use App\Models\{Championship, Player, RegistrationPlayer};
 use App\Notifications\SuccessfullyRegistered;
+use App\Services\Internal\Payment\PaymentService;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
+use App\Services\PaymentGateway\Connectors\MercadoPagoConnector;
 use App\Services\PaymentGateway\Gateway;
+use App\Services\PaymentGateway\PaymentGatewayFactory;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +34,7 @@ class Payment extends Component
     public ?Player $player = null;
 
     protected ?Gateway $gateway = null;
+    protected PaymentService $paymentService;
 
     public \App\Models\Payment $playerCharge;
 
@@ -48,19 +53,26 @@ class Payment extends Component
             $this->playerCharge = \App\Models\Payment::findOrFail($paymentId);
             $this->registrationPlayer = $this->playerCharge->registrationPlayer;
         }
+
     }
 
-    protected function gateway(): Gateway
-    {
-        if (!$this->gateway) {
-            $adapter = app(AsaasConnector::class);
-            $this->gateway = new Gateway($adapter);
-        }
+    // protected function gateway(string $provider = 'asaas'): Gateway
+    // {
+    //     $provider = 'mercadopago';
 
-        return $this->gateway;
-    }
+    //     if (!$this->gateway) {
+    //         $connector = match ($provider) {
+    //             'mercadopago' => app(MercadoPagoConnector::class),
+    //             default => app(AsaasConnector::class),
+    //         };
 
-    public function createPayment()
+    //         $this->gateway = new Gateway($connector);
+    //     }
+
+    //     return $this->gateway;
+    // }
+
+    public function createPayment(PaymentService $paymentService)
     {
         $this->validate([
             'form.cpf_cnpj' => ['required', 'string', 'max:18', 'cpf_ou_cnpj'],
@@ -102,25 +114,6 @@ class Payment extends Component
                 return $this->redirectRoute('championship.register', ['championship' => $this->championship->slug]);
             }
 
-            if (!empty($this->form->customer_id)) {
-
-                $asaasCustomer = $this->gateway()->customer()->show($this->form->customer_id);
-
-                if ($redirect = $this->hasError($asaasCustomer)) {
-                    DB::rollBack();
-                    return $redirect;
-                }
-
-                if ($asaasCustomer['deleted']) {
-                    $asaasCustomer = $this->form->createCustomerAsaas();
-                }
-
-            } else {
-                $asaasCustomer = $this->form->createCustomerAsaas();
-            }
-
-            $this->form->customer_id = $asaasCustomer['id'] ?? null;
-
             if ($this->player) {
                 if ($this->player->trashed()) {
                     $this->player->restore();
@@ -145,35 +138,42 @@ class Payment extends Component
                 'value' => $this->championship->getFeeFormatedAttribute(false),
                 'description' => 'Inscrição no campeonato: ' . $this->championship->name,
                 'dueDate' => now()->format('Y-m-d'),
+                'customerName' => $this->form->name,
+                'customerEmail' => $this->form->email,
+                'customerPhone' => $this->form->phone,
             ];
 
-            $payment = $this->gateway()->payment()->create($paymentData);
-
-            if ($redirect = $this->hasError($payment)) {
+            $paymentResult = $paymentService->processPixPayment($paymentData, PaymentCheckoutProviderEnum::ASAAS->value);
+            if ($redirect = $this->hasError($paymentResult)) {
                 DB::rollBack();
                 return $redirect;
             }
 
-            $paymentQrcode = $this->gateway()->payment()->getPixQrCode($payment['id']);
-
-            $this->playerCharge = $this->registrationPlayer->payments()->create([
-                'transaction_id' => $payment['id'],
-                'value' => $payment['value'],
-                'description' => $payment['description'],
-                'net_value' => $payment['netValue'],
-                'due_date' => $payment['dueDate'],
-                'date_created' => $payment['dateCreated'],
-                'billing_type' => PaymentMethodEnum::PIX->value,
-                'status' => PaymentStatusEnum::parse($payment['status']),
-                'qr_code_64' => $paymentQrcode['encodedImage'],
-                'qr_code' => $paymentQrcode['payload'],
-            ]);
+            $this->playerCharge = $this->registrationPlayer->payments()->create($paymentResult);
 
             $this->isCpfFormVisible = false;
 
+            // passar o adaptor para o job
             CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(20))->afterCommit();
 
             DB::commit();
+
+        } catch (PaymentGatewayException $e) {
+            // API do Asaas/MP retornou erro (ex: CPF inválido).
+            DB::rollBack();
+
+            // Infomar o gateway
+            Log::error('Error creating payment: ', [
+                $e->getMessage(),
+                $e->getTraceAsString(),
+            ]);
+
+            $this->toast()
+                ->warning('Erro ao processar pagamento. Por favor, tente novamente em alguns instantes.')
+                ->flash()
+                ->send();
+
+            return $this->redirectRoute('championship.register', $this->championship);
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -183,9 +183,10 @@ class Payment extends Component
                 $e->getTraceAsString(),
             ]);
 
-            if (isset($payment['id'])) {
-                $this->gateway()->payment()->delete($payment['id']);
-            }
+            // Implementar isso
+            // if (isset($payment['id'])) {
+            //     $this->gateway()->payment()->delete($payment['id']);
+            // }
 
             $this->toast()
                 ->error('Houve um erro inesperado. Por favor, tente novamente em alguns instantes.')

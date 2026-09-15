@@ -15,4 +15,6 @@ interface CustomerInterface
     public function delete(int|string $id): array;
 
     public function restore(int|string $id): array;
+
+    public function resolve(array $customerData, ?string $gatewayId = null): string|array;
 }

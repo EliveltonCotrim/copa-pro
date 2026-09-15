@@ -29,6 +29,8 @@ class Payment extends Model
         'qr_code',
         'ticket_url',
         'transaction_receipt_url',
+        'taxes_amount',
+        'checkout_provider',
     ];
 
     protected $casts = [
