@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
+use Illuminate\Contracts\View\View;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,6 +38,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_AFTER,
                 fn (): string => Blade::render('@vite(\'resources/css/custom-login.css\')'),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): View|string => auth()->check() ? view('components.layouts.footer') : '',
             )
             ->default()
             ->id('admin')

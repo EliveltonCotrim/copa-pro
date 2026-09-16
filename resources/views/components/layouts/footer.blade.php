@@ -1,5 +1,3 @@
-<div class="pt-4 text-center">
-    <p class="text-sm text-gray-500">
-        © {{ now()->year }} Championship Organization. All rights reserved.
-    </p>
-</div>
+<footer class="w-full p-4 text-center text-xs text-gray-600">
+    © {{ now()->year }} Championship Organization. All rights reserved.
+</footer>
