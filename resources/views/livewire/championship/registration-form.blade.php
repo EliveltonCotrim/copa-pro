@@ -40,8 +40,15 @@
                                 <div class="flex items-center py-3 sm:py-0 sm:px-4 sm:first:pl-0 sm:last:pr-0">
                                     <i data-lucide="calendar" class="h-5 w-5 text-gray-500 mr-3"></i>
                                     <div>
-                                        <p class="text-xs font-medium text-gray-500">Data</p>
+                                        <p class="text-xs font-medium text-gray-500">Data de início</p>
                                         <p class="text-sm font-medium text-gray-800">@datetime($championship->start_date)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center py-3 sm:py-0 sm:px-4 sm:first:pl-0 sm:last:pr-0">
+                                    <i data-lucide="calendar" class="h-5 w-5 text-gray-500 mr-3"></i>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500">Data de termino</p>
+                                        <p class="text-sm font-medium text-gray-800">@datetime($championship->end_date)</p>
                                     </div>
                                 </div>
 
@@ -54,7 +61,9 @@
                                             {{ $championship->getFeeFormatedAttribute() }}</p>
                                     </div>
                                 </div>
-
+                            </div>
+                            <div
+                                class="flex flex-col justify-center sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
                                 @if (filled($championship->regulation_path))
                                     <!-- Rules Link -->
                                     <div class="flex items-center py-3 sm:py-0 sm:px-4">
@@ -68,9 +77,6 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>
-                            <div
-                                class="flex flex-col justify-center sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
                                 <!-- Plataform championship -->
                                 <div class="flex items-center py-3 sm:py-0 sm:px-4 sm:first:pl-0 sm:last:pr-0">
                                     <i data-lucide="monitor-smartphone" class="h-5 w-5 text-gray-500 mr-3"></i>
