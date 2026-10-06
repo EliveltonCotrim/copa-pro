@@ -26,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon('favicon.ico')
             ->brandLogo(asset('images/logo-futpro-primary.png'))
             ->brandLogoHeight(fn () => auth()->check() ? '1.6rem' : '3rem')
+            ->spa()
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn (): string => Blade::render('@vite(\'resources/css/custom-login.css\')'),

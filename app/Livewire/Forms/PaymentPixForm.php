@@ -6,7 +6,7 @@ use Livewire\Form;
 
 class PaymentPixForm extends Form
 {
-    public string $cpf_cnpj = '054.932.825-42';
+    public string $cpf_cnpj = '054.932.825-42'; // remover o cpf
 
     public ?string $customer;
 

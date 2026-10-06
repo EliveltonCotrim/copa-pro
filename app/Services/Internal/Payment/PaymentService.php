@@ -2,9 +2,7 @@
 
 namespace App\Services\Internal\Payment;
 
-use App\Enum\PaymentCheckoutProviderEnum;
-use App\Enum\PaymentMethodEnum;
-use App\Enum\PaymentStatusEnum;
+use App\Models\PaymentGatewaySetting;
 use App\Services\PaymentGateway\PaymentGatewayFactory;
 use Str;
 
@@ -15,8 +13,9 @@ class PaymentService
     ) {
     }
 
-    public function processPixPayment(array $data, string $provider): array
+    public function processPixPayment(array $data): array
     {
+        $provider = PaymentGatewaySetting::currentProvider();
         $gateway = $this->factory->make($provider);
 
         $resolvedCustomer = $gateway->customer()->resolve($data, $data['customer'] ?? null);

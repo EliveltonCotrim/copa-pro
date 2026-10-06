@@ -143,7 +143,8 @@ class Payment extends Component
                 'customerPhone' => $this->form->phone,
             ];
 
-            $paymentResult = $paymentService->processPixPayment($paymentData, PaymentCheckoutProviderEnum::ASAAS->value);
+            $paymentResult = $paymentService->processPixPayment($paymentData);
+            
             if ($redirect = $this->hasError($paymentResult)) {
                 DB::rollBack();
                 return $redirect;

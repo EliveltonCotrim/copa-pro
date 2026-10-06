@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PermissionsSeed::class,
             RolesSeed::class,
             UFSeeder::class,
+            PaymentGatewaySettingSeeder::class
         ]);
 
         User::updateOrCreate(
