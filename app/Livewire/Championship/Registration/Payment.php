@@ -151,9 +151,10 @@ class Payment extends Component
             }
 
             $this->playerCharge = $this->registrationPlayer->payments()->create($paymentResult);
+
             $this->isCpfFormVisible = false;
 
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id, $this->playerCharge->checkout_provider)->onQueue('registration-cancel')->delay(now()->addMinutes(20))->afterCommit();
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id, $this->playerCharge->checkout_provider)->onQueue('registration-cancel')->delay(now()->addMinutes(15))->afterCommit();
 
             DB::commit();
 

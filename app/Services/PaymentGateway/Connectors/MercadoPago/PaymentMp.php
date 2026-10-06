@@ -83,6 +83,22 @@ class PaymentMp implements PaymentInterface
         }
     }
 
+    public function cancel(int|string $id): array
+    {
+        try {
+            $payment = $this->client->cancel($id);
+
+            return [
+                'transaction_id' => $payment->id,
+                // 'description' => $payment->description,
+                'value' => $payment->transaction_amount,
+            ];
+
+        } catch (\MercadoPago\Exceptions\MPApiException $exception) {
+            return $this->handle($exception);
+        }
+    }
+
     public function update(int|string $id, array $data): array
     {
         return [];

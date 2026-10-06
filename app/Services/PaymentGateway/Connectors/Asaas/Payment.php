@@ -6,7 +6,6 @@ use App\Enum\PaymentCheckoutProviderEnum;
 use App\Enum\PaymentMethodEnum;
 use App\Enum\PaymentStatusEnum;
 use App\Services\PaymentGateway\Connectors\Asaas\Concerns\HasFilter;
-use App\Services\PaymentGateway\Connectors\Asaas\Concerns\InteractsWithGatewayResponses;
 use App\Services\PaymentGateway\Contracts\{AdapterInterface, PaymentInterface};
 use Illuminate\Support\Str;
 
@@ -81,5 +80,15 @@ class Payment implements PaymentInterface
     public function fees(): array
     {
         return $this->http->get('/myAccount/fees');
+    }
+
+    public function cancel(int|string $id): array
+    {
+        $response = $this->http->delete("/payments/{$id}");
+
+        return [
+            'transaction_id' => $response['id'],
+            'deleted' => $response['deleted'],
+        ];
     }
 }

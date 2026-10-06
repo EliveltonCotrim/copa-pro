@@ -14,14 +14,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
-
 class CancelUnpaidRegistrationJob implements ShouldQueue
 {
     use Queueable, InteractsWithQueue, Dispatchable, SerializesModels;
 
     protected int $registrationPlayerId;
     public int $tries = 3;
-    public array $backoff = [10, 30, 60];
+    public array $backoff = [20, 40, 60];
     public int $timeout = 60;
     protected string $checkoutProvider;
     protected PaymentGatewayFactory $factory;
@@ -68,8 +67,14 @@ class CancelUnpaidRegistrationJob implements ShouldQueue
 
             foreach ($pendingPayments as $payment) {
                 try {
-                    $gateway->payment()->delete($payment->transaction_id);
-                    $registration->update(['status' => RegistrationPlayerStatusEnum::CANCELLED]);
+                    $gateway->payment()->cancel($payment->transaction_id);
+
+                    $registration->update([
+                        'status' => RegistrationPlayerStatusEnum::CANCELLED,
+                        'payment_status' => PaymentStatusEnum::CANCELLED
+                    ]);
+
+                    $payment->update(['status' => PaymentStatusEnum::CANCELLED]);
                     $payment->delete();
 
                 } catch (Exception $e) {
