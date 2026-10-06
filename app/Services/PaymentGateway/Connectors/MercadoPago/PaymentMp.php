@@ -102,4 +102,9 @@ class PaymentMp implements PaymentInterface
     {
         return [];
     }
+
+    public function fees(): array
+    {
+        return [];
+    }
 }

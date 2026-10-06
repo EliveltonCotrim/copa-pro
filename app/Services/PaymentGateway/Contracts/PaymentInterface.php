@@ -17,4 +17,5 @@ interface PaymentInterface
     public function getPaymentStatus(int|string $id): array;
 
     public function getPixQrCode(int|string $id): array;
+    public function fees(): array;
 }

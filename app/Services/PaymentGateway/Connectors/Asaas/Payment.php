@@ -77,4 +77,9 @@ class Payment implements PaymentInterface
     {
         return $this->http->delete("/payments/{$id}");
     }
+
+    public function fees(): array
+    {
+        return $this->http->get('/myAccount/fees');
+    }
 }
