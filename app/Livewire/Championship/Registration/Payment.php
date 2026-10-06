@@ -144,18 +144,16 @@ class Payment extends Component
             ];
 
             $paymentResult = $paymentService->processPixPayment($paymentData);
-            
+
             if ($redirect = $this->hasError($paymentResult)) {
                 DB::rollBack();
                 return $redirect;
             }
 
             $this->playerCharge = $this->registrationPlayer->payments()->create($paymentResult);
-
             $this->isCpfFormVisible = false;
 
-            // passar o adaptor para o job
-            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id)->onQueue('registration-cancel')->delay(now()->addMinutes(20))->afterCommit();
+            CancelUnpaidRegistrationJob::dispatch($this->registrationPlayer->id, $this->playerCharge->checkout_provider)->onQueue('registration-cancel')->delay(now()->addMinutes(20))->afterCommit();
 
             DB::commit();
 

@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Enum\PaymentStatusEnum;
 use App\Enum\RegistrationPlayerStatusEnum;
 use App\Models\RegistrationPlayer;
-use App\Services\PaymentGateway\Gateway;
+use App\Services\PaymentGateway\PaymentGatewayFactory;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,8 +13,6 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use App\Services\PaymentGateway\Connectors\AsaasConnector;
-use Illuminate\Support\Facades\Log;
 
 
 class CancelUnpaidRegistrationJob implements ShouldQueue
@@ -22,19 +20,20 @@ class CancelUnpaidRegistrationJob implements ShouldQueue
     use Queueable, InteractsWithQueue, Dispatchable, SerializesModels;
 
     protected int $registrationPlayerId;
-
-    protected Gateway $gateway;
-
     public int $tries = 3;
     public array $backoff = [10, 30, 60];
     public int $timeout = 60;
+    protected string $checkoutProvider;
+    protected PaymentGatewayFactory $factory;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $registarionPlayerId)
+    public function __construct(int $registarionPlayerId, string $checkoutProvider)
     {
         $this->registrationPlayerId = $registarionPlayerId;
+        $this->checkoutProvider = $checkoutProvider;
+        $this->factory = new PaymentGatewayFactory();
     }
 
     /**
@@ -65,13 +64,12 @@ class CancelUnpaidRegistrationJob implements ShouldQueue
                 return;
             }
 
-            $adapter = app(AsaasConnector::class);
-            $this->gateway = new Gateway($adapter);
+            $gateway = $this->factory->make($this->checkoutProvider);
 
             foreach ($pendingPayments as $payment) {
                 try {
-                    $this->gateway->payment()->delete($payment->transaction_id);
-                    $registration->update(['status' => RegistrationPlayerStatusEnum::REJECTED]);
+                    $gateway->payment()->delete($payment->transaction_id);
+                    $registration->update(['status' => RegistrationPlayerStatusEnum::CANCELLED]);
                     $payment->delete();
 
                 } catch (Exception $e) {

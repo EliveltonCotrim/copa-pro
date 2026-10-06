@@ -18,6 +18,7 @@ class PaymentService
         $provider = PaymentGatewaySetting::currentProvider();
         $gateway = $this->factory->make($provider);
 
+        // trata o cliente, caso seja necessário
         $resolvedCustomer = $gateway->customer()->resolve($data, $data['customer'] ?? null);
 
         if (isset($resolvedCustomer['error']) && $resolvedCustomer['error'] === true) {
