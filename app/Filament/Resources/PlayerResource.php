@@ -70,8 +70,7 @@ class PlayerResource extends Resource
                 Select::make('sex')
                     ->options(PlayerSexEnum::class)
                     ->searchable()
-                    ->label('Gênero')
-                    ->required(),
+                    ->label('Gênero'),
                 PhoneInput::make('phone')
                     ->label('WhatsApp')
                     ->required(),

@@ -28,6 +28,21 @@ class CheckChampionshipStatus
             ], 403);
         }
 
+        $dateNow = now();
+
+        if ($dateNow->gt($championship->end_date)) {
+            // abort(403, 'As inscrições foram encerradas.');
+            $championship->update([
+                'status' => ChampionshipStatusEnum::REGISTRATION_CLOSED
+            ]);
+
+            return response()->view('championship.close-inscription', [
+                'championship' => $championship,
+                'message' => 'Inscrições foram encerradas.',
+                'description' => 'A inscrição para o campeonato foi encerrada, portanto, nenhuma nova inscrição pode ser realizada.'
+            ]);
+        }
+
         $totalPlayersApproved = $championship->registrationPlayers()->where('status', RegistrationPlayerStatusEnum::APPROVED)->whereHas('payments', function (Builder $query) {
             $query->where('status', PaymentStatusEnum::RECEIVED);
         })->count();

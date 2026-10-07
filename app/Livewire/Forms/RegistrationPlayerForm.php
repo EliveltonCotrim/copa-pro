@@ -16,9 +16,9 @@ class RegistrationPlayerForm extends Form
     public $championship_team_name = '';
 
     // player table
-    public string $nickname = '';
+    public ?string $nickname = '';
 
-    public string $heart_team_name = '';
+    public ?string $heart_team_name = '';
 
     public ?string $birth_dt = '';
 

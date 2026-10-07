@@ -21,6 +21,7 @@ enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
     case DUNNING_RECEIVED             = 13;
     case AWAITING_RISK_ANALYSIS       = 14;
     case PAYMENT_CREATED              = 15;
+    case CANCELLED                    = 16;
 
     public function getLabel(): ?string
     {
@@ -40,6 +41,7 @@ enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
             self::DUNNING_RECEIVED             => 'Dunning recebido',
             self::AWAITING_RISK_ANALYSIS       => 'Aguardando análise de risco',
             self::PAYMENT_CREATED              => 'Cobrança criada',
+            self::CANCELLED                    => 'Cancelado',
             default                            => 'Status não encontrado'
         };
     }
@@ -77,6 +79,8 @@ enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
                 return self::AWAITING_RISK_ANALYSIS;
             case 'PAYMENT_CREATED':
                 return self::PAYMENT_CREATED;
+            case 'CANCELLED':
+                return self::CANCELLED;
             default:
                 return null;
         }
@@ -100,6 +104,7 @@ enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
             self::DUNNING_RECEIVED             => 'warning',
             self::AWAITING_RISK_ANALYSIS       => 'warning',
             self::PAYMENT_CREATED              => 'warning',
+            self::CANCELLED                    => 'danger',
             default                            => 'Color não encontrado'
         };
     }
@@ -122,6 +127,7 @@ enum PaymentStatusEnum: int implements HasColor, HasIcon, HasLabel
             self::DUNNING_RECEIVED             => 'heroicon-m-check',
             self::AWAITING_RISK_ANALYSIS       => 'heroicon-m-clock',
             self::PAYMENT_CREATED              => 'heroicon-m-check',
+            self::CANCELLED                    => 'heroicon-m-x-mark',
             default                            => 'Icon não encontrado'
         };
     }

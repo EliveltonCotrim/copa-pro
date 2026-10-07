@@ -1,69 +1,32 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Services\PaymentGateway\Connectors;
 
-use App\Services\PaymentGateway\Connectors\Asaas\Concerns\{AsaasConfig, HandleHttpError};
-use App\Services\PaymentGateway\Contracts\AdapterInterface;
-use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Facades\Log;
+use App\Services\PaymentGateway\Connectors\Asaas\Concerns\AsaasHttpAdapter;
+use App\Services\PaymentGateway\Connectors\Asaas\Customer;
+use App\Services\PaymentGateway\Connectors\Asaas\Payment;
+use App\Services\PaymentGateway\Contracts\CustomerInterface;
+use App\Services\PaymentGateway\Contracts\GatewayProviderInterface;
+use App\Services\PaymentGateway\Contracts\PaymentInterface;
 
-class AsaasConnector implements AdapterInterface
+class AsaasConnector implements GatewayProviderInterface
 {
-    use AsaasConfig;
-    use HandleHttpError;
+    protected AsaasHttpAdapter $adapter;
 
-    public function get(string $url): array
+    public function __construct()
     {
-        $request = $this->http->get($url);
-
-        try {
-            return $request
-                ->throw()
-                ->json();
-        } catch (RequestException $exception) {
-            return $this->handle($exception);
-        }
+        $this->adapter = new AsaasHttpAdapter();
     }
 
-    public function post(string $url, array $params): array
+    public function customer(): CustomerInterface
     {
-
-        $request = $this->http->post($url, $params);
-
-        try {
-            return $request
-                ->throw()
-                ->json();
-        } catch (RequestException $exception) {
-            return $this->handle($exception);
-        }
+        return new Customer($this->adapter);
     }
 
-    public function delete(string $url): array
+    public function payment(): PaymentInterface
     {
-        $request = $this->http->delete($url);
-
-        try {
-            return $request
-                ->throw()
-                ->json();
-        } catch (RequestException $exception) {
-            return $this->handle($exception);
-        }
-    }
-
-    public function put(string $url, array $params): array
-    {
-        $request = $this->http->put($url, $params);
-
-        try {
-            return $request
-                ->throw()
-                ->json();
-        } catch (RequestException $exception) {
-            return $this->handle($exception);
-        }
+        return new Payment($this->adapter);
     }
 }

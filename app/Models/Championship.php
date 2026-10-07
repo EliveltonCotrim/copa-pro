@@ -73,6 +73,8 @@ class Championship extends Model implements HasMedia
         'status' => ChampionshipStatusEnum::class,
         'game' => ChampionshipGamesEnum::class,
         'game_platform' => PlayerPlatformGameEnum::class,
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     protected $appends = [
